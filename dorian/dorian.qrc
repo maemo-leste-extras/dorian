@@ -1,0 +1,39 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/document-properties.png</file>
+        <file>icons/preferences-system.png</file>
+        <file>icons/system-file-manager.png</file>
+        <file>icons/developer.png</file>
+        <file>icons/view-fullscreen.png</file>
+        <file>icons/mac/document-properties.png</file>
+        <file>icons/mac/preferences-system.png</file>
+        <file>icons/mac/system-file-manager.png</file>
+        <file>icons/mac/developer.png</file>
+        <file>icons/mac/view-fullscreen.png</file>
+        <file>icons/book.png</file>
+        <file>icons/back.png</file>
+        <file>icons/forward.png</file>
+        <file>icons/next.png</file>
+        <file>icons/mac/back.png</file>
+        <file>icons/mac/forward.png</file>
+        <file>icons/mac/previous.png</file>
+        <file>icons/mac/next.png</file>
+        <file>icons/style-day.png</file>
+        <file>icons/style-default.png</file>
+        <file>icons/style-night.png</file>
+        <file>icons/style-sand.png</file>
+        <file>icons/bookmark.png</file>
+        <file>icons/bookmarks.png</file>
+        <file>icons/mac/bookmarks.png</file>
+        <file>books/2 B R 0 2 B.epub</file>
+        <file>styles/day.js</file>
+        <file>styles/default.js</file>
+        <file>styles/night.js</file>
+        <file>styles/sand.js</file>
+        <file>icons/previous.png</file>
+        <file>icons/settings-portrait.png</file>
+        <file>icons/settings-landscape.png</file>
+        <file>icons/next-disabled.png</file>
+        <file>icons/previous-disabled.png</file>
+    </qresource>
+</RCC>

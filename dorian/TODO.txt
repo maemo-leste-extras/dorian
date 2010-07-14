@@ -1,0 +1,59 @@
+To Do
+-----
+
+2010-05-29 Submit to extras-devel
+2010-06-09 Table of contents
+2010-06-09 Symbian installable package
+2010-06-12 Smooth transitions to fullscreen and back
+2010-06-13 Add About box, mention icon licenses
+2010-06-19 Notes
+2010-06-20 Improve bookmark manager: Delete bookmarks
+2010-06-24 Add support for Project Gutenberg chapter navigation
+2010-06-24 Sort bookmarks by chapter/percent
+2010-06-28 Mac installable package
+2010-06-28 Mac icon, application menu
+2010-07-09 Direct access to Project Gutenberg and epubbooks.com library
+2010-07-09 Fancy bookshelf
+2010-07-10 Create proper library model and proxy model
+
+Done
+----
+
+0.0.5
+
+2010-07-10 2010-07-10 Show navigation arrows only when needed
+2010-07-10 2010-07-10 Confirm deleting from library
+2010-07-09 2010-07-10 Restart after clearing settings
+2010-07-09 2010-07-09 Portrait/landscape support
+2010-07-09 2010-06-09 Chapter navigation
+
+0.0.4
+
+2010-06-28 2010-06-20 Improve settings: Color schemes
+2010-06-25 2010-06-23 Bundle with an e-book
+
+0.0.3
+
+2010-06-24 2010-06-19 More book details
+2010-06-24 2010-06-24 Read Project Gutenberg e-books, too
+2010-06-20 2010-05-29 Settings
+2010-06-20 2010-06-09 Bookmarks
+2010-06-17 2010-05-29 Submit to Alphalabs
+
+0.0.2
+
+2010-06-17 2010-05-29 Maemo installable package
+2010-06-12 2010-06-12 Remember last position
+2010-06-12 2010-06-09 Pop up title bar
+2010-06-12 2010-05-31 Implement proper error handling
+2010-06-12 2010-06-09 Pop up navigation bar
+
+0.0.1
+
+2010-06-09 2010-05-29 Library management
+2010-05-31 2010-05-29 EPUB unzipper/reader
+
+Rejected
+--------
+
+2010-06-09 2010-05-29 Page flip transitions
