@@ -33,7 +33,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
     QLabel *zoomLabel = new QLabel(tr("Zoom level:"), contents);
     layout->addWidget(zoomLabel);
-    QSlider *zoomSlider = new QSlider(Qt::Horizontal, contents);
+    zoomSlider = new QSlider(Qt::Horizontal, contents);
     zoomSlider->setMinimum(50);
     zoomSlider->setMaximum(300);
     zoomSlider->setValue(Settings::instance()->value("zoom").toInt());
@@ -43,7 +43,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     layout->addWidget(fontLabel);
     QString defaultFamily = fontLabel->fontInfo().family();
     QString family = Settings::instance()->value("font", defaultFamily).toString();
-    QFontComboBox *fontButton = new QFontComboBox(contents);
+    fontButton = new QFontComboBox(contents);
     fontButton->setCurrentFont(QFont(family));
     fontButton->setEditable(false);
     layout->addWidget(fontButton);
@@ -172,12 +172,20 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
 void SettingsWindow::onSliderValueChanged(int value)
 {
+#ifdef Q_WS_MAEMO_5 // Re-scaling the book view is too much for the N900
+    Q_UNUSED(value);
+#else
     Settings::instance()->setValue("zoom", value);
+#endif // Q_WS_MAEMO_5
 }
 
 void SettingsWindow::onCurrentFontChanged(const QFont &font)
 {
+#ifdef Q_WS_MAEMO_5
+    Q_UNUSED(font);
+#else
     Settings::instance()->setValue("font", font.family());
+#endif // Q_WS_MAEMO_5
 }
 
 void SettingsWindow::onSchemeButtonClicked(int id)
@@ -201,3 +209,14 @@ void SettingsWindow::onOrientationButtonClicked(int id)
     }
     Settings::instance()->setValue("orientation", orientation);
 }
+
+#ifdef Q_WS_MAEMO_5
+
+void SettingsWindow::closeEvent(QCloseEvent *e)
+{
+    Settings::instance()->setValue("zoom", zoomSlider->value());
+    Settings::instance()->setValue("font", fontButton->currentFont().family());
+    e->accept();
+}
+
+#endif // Q_WS_MAEMO_5

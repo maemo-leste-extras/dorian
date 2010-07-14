@@ -140,6 +140,7 @@ void BookView::onLoadFinished(bool ok)
     loadFinished = true;
     addNavigationBar();
     onSettingsChanged("scheme");
+    emit chapterLoaded(contentIndex);
     if (restore) {
         restore = false;
         if (ok && mBook) {
@@ -227,8 +228,9 @@ void BookView::addBookmark()
 
 void BookView::addNavigationBar()
 {
-    QWebFrame *frame = page()->currentFrame();
-    frame->addToJavaScriptWindowObject("bv", this);
+    if (!mBook) {
+        return;
+    }
 
     QString naviPrev =
             "<a href=\"javascript:bv.goPrevious();\">"
@@ -244,7 +246,6 @@ void BookView::addNavigationBar()
             + tmpPath() +
             "/next.png\" />"
             "</a>";
-
     if (contentIndex == 0) {
         naviPrev = "";
     }
@@ -252,6 +253,8 @@ void BookView::addNavigationBar()
         naviNext = "";
     }
 
+    QWebFrame *frame = page()->currentFrame();
+    frame->addToJavaScriptWindowObject("bv", this);
     QString headerScript = "document.body.innerHTML = '" +
         naviPrev + naviNext + "<br />" + "' + document.body.innerHTML;";
     QString trailerScript = "document.body.innerHTML += '<br /><br />" +
@@ -259,8 +262,6 @@ void BookView::addNavigationBar()
 
     frame->evaluateJavaScript(headerScript);
     frame->evaluateJavaScript(trailerScript);
-
-    // qDebug() << page()->currentFrame()->toHtml();
 }
 
 QString BookView::tmpPath()

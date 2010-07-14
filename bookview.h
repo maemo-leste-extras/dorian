@@ -22,6 +22,9 @@ public:
     void addBookmark();
     void setLastBookmark();
 
+signals:
+    void chapterLoaded(int index);
+
 public slots:
     void goPrevious();
     void goNext();
