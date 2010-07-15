@@ -21,12 +21,13 @@ rm -rf ${AUTO_DIR}/dorian-${VERSION}
 cp -Rf ${BUILD_DIR} ${AUTO_DIR}/dorian-${VERSION}
 cd ${AUTO_DIR}/dorian-${VERSION}
 mkdir debian
-cp pkg/changelog pkg/maemo/control pkg/maemo/rules debian
+cp pkg/changelog pkg/maemo/control pkg/maemo/rules pkg/maemo/postinst debian
+chmod a+rx debian/postinst
 echo "Version: $VERSION" >> debian/control
 echo "Installed-Size: "`du -c -k ${AUTO_DIR} | tail -1 | cut -f1` \
     >> debian/control
 echo "XB-Maemo-Icon-26:" >> debian/control
-uuencode -m pkg/maemo/dorian-48.png dorian.png | \
+uuencode -m pkg/maemo/icon-48/dorian.png dorian.png | \
     (read; cat) | grep -v '^====' | \
     sed 's/^/ /' >> debian/control
 

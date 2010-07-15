@@ -71,7 +71,7 @@ windows {
 maemo5 {
     QT += maemo5
     isEmpty(PREFIX) {
-      PREFIX = /usr
+        PREFIX = /usr
     }
     BINDIR = $$PREFIX/bin
     DATADIR =$$PREFIX/share
@@ -84,11 +84,11 @@ maemo5 {
     target.path = $$BINDIR
 
     desktop.path = $$DATADIR/applications/hildon
-    desktop.files += dorian.desktop
+    desktop.files += pkg/maemo/dorian.desktop
 
-    icon48.path = $$DATADIR/icons/hicolor/48x48
+    icon48.path = $$DATADIR/icons/hicolor/48x48/hildon
     icon48.files += pkg/maemo/icon-48/dorian.png
 
-    icon64.path = $$DATADIR/icons/hicolor/64x64/apps
-    icon64.files += pkg/maemo/icon-scalable/dorian.png
+    iconscalable.path = $$DATADIR/icons/hicolor/scalable/hildon
+    iconscalable.files += pkg/maemo/icon-scalable/dorian.png
 }

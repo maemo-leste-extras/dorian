@@ -1,26 +1,13 @@
 #!/usr/bin/make -f
 
 APPNAME := dorian
-builddir:
-	mkdir -p builddir
 
-builddir/Makefile: builddir
-	cd builddir && qmake PREFIX=/usr ../$(APPNAME).pro
-
-build: build-stamp
-
-build-stamp: builddir/Makefile
-	dh_testdir
-	# Add here commands to compile the package.
-	cd builddir && $(MAKE)
-	touch $@
+build: 
+	qmake PREFIX=/usr $(APPNAME).pro && make
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
-	# Add here commands to clean up after the build process.
-	rm -rf builddir
 	dh_clean
 
 install: build
@@ -29,11 +16,12 @@ install: build
 	dh_clean -k
 	dh_installdirs
 	# Add here commands to install the package into debian/your_appname
-	cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
+	# $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
+	$(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
 # Build architecture-independent files here.
 binary-indep: build install
-# We have nothing to do by default.
+	# We have nothing to do by default.
 
 # Build architecture-dependent files here.
 binary-arch: build install
@@ -43,7 +31,7 @@ binary-arch: build install
 	dh_installexamples
 	dh_installman
 	dh_link
-	dh_strip --dbg-package=my-application-dbg
+	dh_strip --dbg-package=dorian-dbg
 	dh_compress
 	dh_fixperms
 	dh_installdeb

@@ -2,7 +2,6 @@ Source: dorian
 Section: user/education
 Priority: extra
 Maintainer: Akos Polster <akos@pipacs.com>
-Standards-Version: 3.7.3
 Build-Depends: debhelper (>= 5), libqt4-dev, libhildon1-dev, libhildondesktop1-dev
 Homepage: http://akos.pipacs.com
 
