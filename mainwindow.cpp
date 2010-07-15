@@ -34,8 +34,6 @@ MainWindow::MainWindow(QWidget *parent):
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
-    // setAttribute(Qt::WA_Maemo5AutoOrientation, true);
-    // FIXME: There is not enough space for the toolbar in portrait mode
 #endif
     setWindowTitle("Dorian");
 
@@ -112,6 +110,9 @@ MainWindow::MainWindow(QWidget *parent):
             this, SLOT(onSettingsChanged(const QString &)));
     Settings::instance()->setValue("orientation",
                                    Settings::instance()->value("orientation"));
+
+    // Handle loading chapters
+    connect(view, SIGNAL(chapterLoaded(int)), this, SLOT(onChapterLoaded(int)));
 }
 
 void MainWindow::onCurrentBookChanged()
@@ -241,6 +242,28 @@ void MainWindow::onSettingsChanged(const QString &key)
         }
     }
 #else
-    (void)key;
+    Q_UNUSED(key);
 #endif // Q_WS_MAEMO_5
+}
+
+void MainWindow::onChapterLoaded(int index)
+{
+    bool enablePrevious = false;
+    bool enableNext = false;
+    if (book) {
+        if (index > 0) {
+            enablePrevious = true;
+        }
+        if (index < (book->toc.size() - 1)) {
+            enableNext = true;
+        }
+    }
+#ifdef Q_WS_MAEMO_5
+    previousAction->setIcon(QIcon(enablePrevious?
+        ":/icons/previous.png" : ":/icons/previous-disabled.png"));
+    nextAction->setIcon(QIcon(enableNext?
+        ":/icons/next.png": ":/icons/next-disabled.png"));
+#endif // Q_WS_MAEMO_5
+    previousAction->setEnabled(enablePrevious);
+    nextAction->setEnabled(enableNext);
 }

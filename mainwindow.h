@@ -27,6 +27,7 @@ public slots:
     void showNormal();
     void showFullScreen();
     void onSettingsChanged(const QString &key);
+    void onChapterLoaded(int index);
 
 protected:
 #ifdef Q_WS_MAEMO5

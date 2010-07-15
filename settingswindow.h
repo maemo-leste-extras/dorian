@@ -6,6 +6,8 @@
 class QPushButton;
 class QFontComboBox;
 class QFont;
+class QSlider;
+class QFontComboBox;
 
 class SettingsWindow: public QMainWindow
 {
@@ -24,7 +26,14 @@ public slots:
     void onSchemeButtonClicked(int id);
     void onOrientationButtonClicked(int id);
 
+protected:
+#ifdef Q_WS_MAEMO_5
+    void closeEvent(QCloseEvent *e);
+#endif
+
 private:
+    QSlider *zoomSlider;
+    QFontComboBox *fontButton;
 };
 
 #endif // SETTINGSWINDOW_H
