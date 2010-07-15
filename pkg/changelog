@@ -1,3 +1,9 @@
+dorian (0.0.7-1) unstable; urgency=low
+
+  * Make building and packaging with Maemo autobuilder work
+
+ -- Akos Polster <akos@pipacs.com>  Thu, 15 Jul 2010 19:00:00 +0200
+
 dorian (0.0.6-1) unstable; urgency=low
 
   * Fix crash when deleting book: https://code.nokia.com/dorian/ticket/1

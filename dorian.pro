@@ -65,7 +65,30 @@ DEFINES += \
     USE_FILE32API
 
 unix: LIBS += -lz
-maemo5: QT += maemo5
 windows {
     # FIXME: Build zlib, too
+}
+maemo5 {
+    QT += maemo5
+    isEmpty(PREFIX) {
+      PREFIX = /usr
+    }
+    BINDIR = $$PREFIX/bin
+    DATADIR =$$PREFIX/share
+    DEFINES += DATADIR=\\\"$$DATADIR\\\" PKGDATADIR=\\\"$$PKGDATADIR\\\"
+
+    # For "make install"
+
+    INSTALLS += target desktop icon48 iconscalable
+
+    target.path = $$BINDIR
+
+    desktop.path = $$DATADIR/applications/hildon
+    desktop.files += dorian.desktop
+
+    icon48.path = $$DATADIR/icons/hicolor/48x48
+    icon48.files += pkg/maemo/icon-48/dorian.png
+
+    icon64.path = $$DATADIR/icons/hicolor/64x64/apps
+    icon64.files += pkg/maemo/icon-scalable/dorian.png
 }

@@ -20,7 +20,6 @@ mkdir -p ${AUTO_DIR}
 rm -rf ${AUTO_DIR}/dorian-${VERSION}
 cp -Rf ${BUILD_DIR} ${AUTO_DIR}/dorian-${VERSION}
 cd ${AUTO_DIR}/dorian-${VERSION}
-rm -rf books
 mkdir debian
 cp pkg/changelog pkg/maemo/control pkg/maemo/rules debian
 echo "Version: $VERSION" >> debian/control
