@@ -3,12 +3,12 @@ Section: user/education
 Priority: extra
 Maintainer: Akos Polster <akos@pipacs.com>
 Standards-Version: 3.7.3
-Build-Depends: debhelper (>= 5)
+Build-Depends: debhelper (>= 5), libqt4-dev, libhildon1-dev, libhildondesktop1-dev
 Homepage: http://akos.pipacs.com
 
 Package: dorian
 Architecture: armel
-Depends: zlib1g
+Depends: zlib1g, libqt4-core (>= 4.6.1), libqt4-gui (>= 4.6.1), libqt4-webkit (>= 4.6.1), libqt4-xml (>= 4.6.1)
 Description: E-book reader
  Read books published in DRM-free EPUB format
 XB-Maemo-Display-Name: Dorian
