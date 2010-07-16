@@ -1,3 +1,9 @@
+dorian (0.0.9-1) unstable; urgency=low
+
+  * Optify Maemo package
+
+ -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
+
 dorian (0.0.8-1) unstable; urgency=low
 
   * Ensure icons and desktop file are installed, too

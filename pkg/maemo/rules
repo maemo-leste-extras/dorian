@@ -15,13 +15,11 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	# Add here commands to install the package into debian/your_appname
-	# $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
 	$(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
 # Build architecture-independent files here.
 binary-indep: build install
-	# We have nothing to do by default.
+	# Nothing to do.
 
 # Build architecture-dependent files here.
 binary-arch: build install
@@ -37,6 +35,7 @@ binary-arch: build install
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
+	maemo-optify dorian debian/tmp
 	dh_md5sums
 	dh_builddeb
 

@@ -16,12 +16,13 @@ VERSION=`cat ${BUILD_DIR}/pkg/version.txt`
 cd ${BUILD_DIR}
 make distclean 2>/dev/null || true
 
+rm -rf ${AUTO_DIR}
 mkdir -p ${AUTO_DIR}
-rm -rf ${AUTO_DIR}/dorian-${VERSION}
 cp -Rf ${BUILD_DIR} ${AUTO_DIR}/dorian-${VERSION}
 cd ${AUTO_DIR}/dorian-${VERSION}
 mkdir debian
-cp pkg/changelog pkg/maemo/control pkg/maemo/rules pkg/maemo/postinst debian
+cp pkg/changelog pkg/maemo/control pkg/maemo/rules pkg/maemo/postinst \
+    pkg/maemo/optify debian
 chmod a+rx debian/postinst
 echo "Version: $VERSION" >> debian/control
 echo "Installed-Size: "`du -c -k ${AUTO_DIR} | tail -1 | cut -f1` \
