@@ -35,7 +35,7 @@ binary-arch: build install
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
-	maemo-optify dorian debian/tmp
+	# maemo-optify dorian debian/tmp
 	dh_md5sums
 	dh_builddeb
 
