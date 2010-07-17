@@ -131,8 +131,12 @@ void LibraryDialog::onRemove()
     int row = list->row(item);
     QString title = Library::instance()->at(row)->title;
     if (QMessageBox::Yes ==
-        QMessageBox::question(this, "Delete book", "Delete book " + title,
-                              QMessageBox::Yes, QMessageBox::No)) {
+        QMessageBox::question(this, "Delete book",
+                              "Delete book \"" + title + "\"?", QMessageBox::Yes
+#ifndef Q_WS_MAEMO_5
+                              , QMessageBox::No
+#endif
+                              )) {
         list->takeItem(row);
         Library::instance()->remove(row);
     }

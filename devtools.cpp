@@ -38,7 +38,12 @@ void DevTools::onClear()
     if (QMessageBox::Yes ==
         QMessageBox::question(this, "Clear persistent data?",
                               "Library and settings data will be cleared, "
-                              "application will be restarted. Continue?")) {
+                              "application will be restarted. Continue?",
+                              QMessageBox::Yes
+#ifndef Q_WS_MAEMO_5
+                              , QMessageBox::No
+#endif
+                              )) {
         QSettings().clear();
         QApplication::exit(1000);
     }

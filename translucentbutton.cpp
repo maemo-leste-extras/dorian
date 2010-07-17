@@ -1,4 +1,4 @@
-#include "translucentbutton.h" 
+#include "translucentbutton.h"
 
 #ifdef Q_WS_MAC
 #   define ICON_PREFIX ":/icons/mac/"
@@ -25,7 +25,7 @@ void TranslucentButton::paintEvent(QPaintEvent *e)
 void TranslucentButton::flash()
 {
     QPropertyAnimation *ani = new QPropertyAnimation(this, "opacity", 0);
-    ani->setDuration(2000);
+    ani->setDuration(5000);
     ani->setStartValue(0.);
     ani->setEndValue(1.);
     ani->setEasingCurve(QEasingCurve::OutQuart);

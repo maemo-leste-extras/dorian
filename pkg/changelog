@@ -1,6 +1,8 @@
 dorian (0.0.9-1) unstable; urgency=low
 
   * Optify Maemo package
+  * Better dialogs on Mac
+  * Make returning from full screen mode more obvious
 
  -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
 
