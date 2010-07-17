@@ -15,7 +15,7 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     foreach (Book::Bookmark bookmark, book_->bookmarks()) {
-        list->addItem("Chapter " + QString::number(bookmark.chapter) + ", at " +
+        list->addItem("Volume " + QString::number(bookmark.chapter + 1) + ", at " +
                       QString::number((int)(bookmark.pos * 100)) + "%");
     }
 

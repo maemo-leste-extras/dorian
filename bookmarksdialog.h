@@ -7,6 +7,7 @@ class Book;
 class QListWidget;
 class QListWidgetItem;
 
+/** Dialog box managing bookmarks. */
 class BookmarksDialog: public QDialog
 {
     Q_OBJECT

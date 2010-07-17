@@ -17,7 +17,7 @@
 #endif
 
 BookView::BookView(QWidget *parent):
-        QWebView(parent), contentIndex(0), mBook(0), restore(true), restorePos(0),
+        QWebView(parent), contentIndex(-1), mBook(0), restore(true), restorePos(0),
         loadFinished(false)
 {
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
@@ -91,10 +91,12 @@ void BookView::setBook(Book *book)
     if (book != mBook) {
         mBook = book;
         if (book) {
+            contentIndex = -1;
             book->open();
             goToBookmark(book->lastBookmark());
         }
         else {
+            contentIndex = 0;
             setHtml(tr("No book"));
         }
     }
@@ -130,7 +132,11 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
     if (mBook) {
         restore = true;
         restorePos = bookmark.pos;
-        loadContent(bookmark.chapter);
+        if (bookmark.chapter != contentIndex) {
+            loadContent(bookmark.chapter);
+        } else {
+            onLoadFinished(true);
+        }
     }
 }
 

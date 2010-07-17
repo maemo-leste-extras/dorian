@@ -9,6 +9,7 @@
 
 #include "book.h"
 
+/** Visual representation of a book. */
 class BookView: public QWebView
 {
     Q_OBJECT

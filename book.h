@@ -18,13 +18,20 @@ public:
         QString type;
     };
 
-    /** Bookmark: a chapter index and a relative position in chapter. */
+    /** Bookmark: a volume index and a relative position in volume. */
     struct Bookmark
     {
         Bookmark(int chapter_, qreal pos_): chapter(chapter_), pos(pos_) {}
         Bookmark() {chapter = pos = 0;}
         int chapter;
         qreal pos;
+        bool operator<(const Bookmark&other) const {
+            if (chapter != other.chapter) {
+                return chapter < other.chapter;
+            } else {
+                return pos < other.pos;
+            }
+        }
     };
 
     /** Construct a book from an EPUB file in path. */

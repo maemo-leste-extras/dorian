@@ -5,6 +5,7 @@
 #include <qtextdocument.h>  // Qt::escape is currently defined here...
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QtAlgorithms>
 
 #include "book.h"
 #include "opshandler.h"
@@ -263,6 +264,7 @@ Book::Bookmark Book::lastBookmark() const
 void Book::addBookmark(int chapter, qreal position)
 {
     mBookmarks.append(Bookmark(chapter, position));
+    qSort(mBookmarks.begin(), mBookmarks.end());
     save();
 }
 
