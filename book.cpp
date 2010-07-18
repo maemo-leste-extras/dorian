@@ -14,6 +14,10 @@
 #include "library.h"
 #include "containerhandler.h"
 
+Book::Book()
+{
+}
+
 Book::Book(const QString &path_)
 {
     mPath = "";

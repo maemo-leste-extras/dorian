@@ -1,20 +1,24 @@
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
-#include <QObject>
+#include <QAbstractListModel>
+#include <QVariant>
 #include <QString>
 #include <QList>
 
-#include "book.h"
+class QObject;
+class Book;
 
 /** Library of books. */
-class Library: public QObject
+class Library: public QAbstractListModel
 {
     Q_OBJECT
 
 public:
     static Library *instance();
     static void close();
+    int rowCount(const QModelIndex & parent = QModelIndex()) const;
+    QVariant data(const QModelIndex &index, int role) const;
     void save();
     int find(QString path) const;
     int find(const Book *book) const;
@@ -31,7 +35,7 @@ signals:
     void currentBookChanged();
 
 private:
-    Library();
+    explicit Library(QObject *parent = 0);
     ~Library();
     void load();
     void clear();

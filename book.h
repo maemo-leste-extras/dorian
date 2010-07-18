@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QHash>
 #include <QIcon>
+#include <QMetaType>
 
 /** A book. */
 class Book
@@ -35,7 +36,10 @@ public:
     };
 
     /** Construct a book from an EPUB file in path. */
-    explicit Book(const QString &path);
+    Book(const QString &path);
+
+    /** Default constructor. */
+    Book();
 
     /** Load book from persistent storage. */
     void load();
@@ -110,5 +114,7 @@ protected:
     QList<Bookmark> mBookmarks;             //< List of bookmarks.
     QString mRootPath;                      //< Path to root item in EPUB dir.
 };
+
+Q_DECLARE_METATYPE(Book)
 
 #endif // BOOK_H

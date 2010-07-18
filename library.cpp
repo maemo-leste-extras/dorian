@@ -1,13 +1,13 @@
 #include <QSettings>
-#include <QString>
 #include <QDebug>
 #include <QFileInfo>
 
 #include "library.h"
+#include "book.h"
 
 Library *Library::mInstance = 0;
 
-Library::Library(): mCurrent(0)
+Library::Library(QObject *parent): QAbstractListModel(parent), mCurrent(0)
 {
     load();
 }
@@ -23,6 +23,19 @@ Library *Library::instance()
         mInstance = new Library();
     }
     return mInstance;
+}
+
+int Library::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return mBooks.size();
+}
+
+QVariant Library::data(const QModelIndex &index, int role) const
+{
+    Q_UNUSED(role);
+    Book *book = mBooks[index.row()];
+    return QVariant::fromValue<Book>(*book);
 }
 
 void Library::close()
