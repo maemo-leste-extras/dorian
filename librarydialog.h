@@ -6,11 +6,12 @@
 #include <QModelIndexList>
 
 class QMainWindow;
-class QListWidget;
-class QListWidgetItem;
+class QListView;
 class QPushButton;
+class QModelIndex;
 class Book;
 class InfoWindow;
+class SortedLibrary;
 
 class LibraryDialog: public QDialog
 {
@@ -18,12 +19,13 @@ class LibraryDialog: public QDialog
 
 public:
     explicit LibraryDialog(QWidget *parent = 0);
-    QListWidget *list;
+    QListView *list;
+    SortedLibrary *sortedLibrary;
 #ifndef Q_WS_MAEMO_5
     QPushButton *detailsButton;
     QPushButton *removeButton;
     QPushButton *readButton;
-#endif
+#endif // Q_WS_MAEMO_5
     QPushButton *addButton;
     QString lastDir;
 
@@ -34,9 +36,9 @@ public slots:
     void onDetails();
     void onRead();
     void onItemSelectionChanged();
-#endif
+#endif // Q_WS_MAEMO_5
     void onBookAdded();
-    void onItemActivated(QListWidgetItem *item);
+    void onItemActivated(const QModelIndex &index);
     void onCurrentBookChanged();
 
 private:

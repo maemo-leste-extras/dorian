@@ -16,7 +16,8 @@ SOURCES += \
     translucentbutton.cpp \
     settingswindow.cpp \
     settings.cpp \
-    bookmarksdialog.cpp
+    bookmarksdialog.cpp \
+    sortedlibrary.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -37,7 +38,8 @@ HEADERS += \
     settings.h \
     bookmarksdialog.h \
     opserrorhandler.h \
-    containerhandler.h
+    containerhandler.h \
+    sortedlibrary.h
 
 RESOURCES += \
     dorian.qrc

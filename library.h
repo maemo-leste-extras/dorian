@@ -15,6 +15,10 @@ class Library: public QAbstractListModel
     Q_OBJECT
 
 public:
+    enum {
+        BookRole = Qt::UserRole + 1,
+    };
+
     static Library *instance();
     static void close();
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
@@ -30,8 +34,6 @@ public:
     void setCurrent(int index);
 
 signals:
-    void bookAdded();
-    void bookRemoved(int index);
     void currentBookChanged();
 
 private:

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
+#include <QModelIndex>
 
 #ifdef Q_WS_MAEMO_5
 #include <QtMaemo5/QMaemo5InformationBox>
@@ -9,6 +10,7 @@
 
 #include "librarydialog.h"
 #include "library.h"
+#include "sortedlibrary.h"
 #include "book.h"
 #include "infodialog.h"
 
@@ -17,21 +19,20 @@ LibraryDialog::LibraryDialog(QWidget *parent):
                 Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint)
 {
     setWindowTitle(tr("Library"));
-    list = new QListWidget(this);
+    list = new QListView(this);
+    sortedLibrary = new SortedLibrary(this);
+    list->setModel(sortedLibrary);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
 #ifndef Q_WS_MAEMO_5
     setSizeGripEnabled(true);
 #endif
 
-    Library *library = Library::instance();
-    for (int i = 0; i < library->size(); i++) {
-        Book *book = library->at(i);
-        (void)new QListWidgetItem(book->cover, createItemText(book), list);
-    }
+#if 0 // FIXME
     Book *current = library->current();
     if (library->size() && current) {
         list->setItemSelected(list->item(library->find(current)), true);
     }
+#endif
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->addWidget(list);
@@ -53,9 +54,11 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     horizontalLayout->addWidget(buttonBox);
 
-    connect(library, SIGNAL(bookAdded()), this, SLOT(onBookAdded()));
+#if 0 // FIXME
     connect(library, SIGNAL(currentBookChanged()),
             this, SLOT(onCurrentBookChanged()));
+#endif
+
 #ifndef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemSelectionChanged()),
             this, SLOT(onItemSelectionChanged()));
@@ -98,7 +101,7 @@ void LibraryDialog::onAdd()
     if (library->find(path) != -1) {
 #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this,
-            tr("Book is alreadButtony in the library"),
+            tr("This book is already in the library"),
             QMaemo5InformationBox::DefaultTimeout);
 #endif
         // FIXME: Select existing book
@@ -110,6 +113,7 @@ void LibraryDialog::onAdd()
 
 void LibraryDialog::onBookAdded()
 {
+#if 0
     Library *library = Library::instance();
     int index = library->size() - 1;
     Book *book = library->at(index);
@@ -117,12 +121,14 @@ void LibraryDialog::onBookAdded()
                                                 createItemText(book));
     list->addItem(item);
     list->setCurrentItem(item);
+#endif
 }
 
 #ifndef Q_WS_MAEMO_5
 
 void LibraryDialog::onRemove()
 {
+#if 0
     qDebug() << "LibraryDialog::onRemove";
     if (list->selectedItems().isEmpty()) {
         return;
@@ -140,33 +146,40 @@ void LibraryDialog::onRemove()
         list->takeItem(row);
         Library::instance()->remove(row);
     }
+#endif
 }
 
 void LibraryDialog::onRead()
 {
     qDebug() << "LibraryDialog::onRead";
+#if 0 // FIXME
     if (list->selectedItems().isEmpty()) {
         return;
     }
     QListWidgetItem *item = list->selectedItems()[0];
     int row = list->row(item);
     Library::instance()->setCurrent(row);
+#endif
 }
 
 void LibraryDialog::onDetails()
 {
+#if 0 // FIXME
     onItemActivated(list->selectedItems()[0]);
+#endif
 }
 
 #endif // Q_WS_MAEMO_5
 
-void LibraryDialog::onItemActivated(QListWidgetItem *item)
+void LibraryDialog::onItemActivated(const QModelIndex &index)
 {
     qDebug() << "LibraryDialog::onItemActivated";
+#if 0 // FIXME
     int row = list->row(item);
     Book *book = Library::instance()->at(row);
     InfoDialog *info = new InfoDialog(book, this);
     info->exec();
+#endif
 }
 
 QString LibraryDialog::createItemText(const Book *book)
@@ -185,6 +198,7 @@ QString LibraryDialog::createItemText(const Book *book)
 
 void LibraryDialog::onItemSelectionChanged()
 {
+#if 0 // FIXME
     bool enable = list->selectedItems().size();
     qDebug() << "LibraryDialog::onItemSelectionChanged" << enable;
     readButton->setEnabled(enable);
@@ -193,6 +207,7 @@ void LibraryDialog::onItemSelectionChanged()
     qDebug() << " detailsButton";
     removeButton->setEnabled(enable);
     qDebug() << " removeButton";
+#endif
 }
 
 #endif // Q_WS_MAEMO_5
