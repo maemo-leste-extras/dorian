@@ -63,9 +63,9 @@ void Library::load()
         mBooks.append(book);
     }
     QString currentPath = settings.value("lib/current").toString();
-    int index = find(currentPath);
-    if (-1 != index) {
-        mCurrent = mBooks[index];
+    QModelIndex index = find(currentPath);
+    if (index.isValid()) {
+        mCurrent = mBooks[index.row()];
         qDebug() << "Library::load: Current book is" << mCurrent->path();
     }
 }
@@ -85,10 +85,13 @@ void Library::save()
 
 bool Library::add(QString path)
 {
+    qDebug() << "Library::add" << path;
     if (path == "") {
+        qWarning() << "Library::add: Empty path";
         return false;
     }
-    if (find(path) != -1) {
+    if (find(path).isValid()) {
+        qDebug() << " Book already exists in library";
         return false;
     }
     int size = mBooks.size();
@@ -100,14 +103,15 @@ bool Library::add(QString path)
     return true;
 }
 
-void Library::remove(int index)
+void Library::remove(const QModelIndex &index)
 {
-    if ((index < 0) || (index >= mBooks.size())) {
+    int row = index.row();
+    if ((row < 0) || (row >= mBooks.size())) {
         return;
     }
-    beginRemoveRows(QModelIndex(), index, index + 1);
-    Book *book = mBooks[index];
-    mBooks.removeAt(index);
+    beginRemoveRows(QModelIndex(), row, row + 1);
+    Book *book = mBooks[row];
+    mBooks.removeAt(row);
     save();
     endRemoveRows();
     if (book == mCurrent) {
@@ -117,29 +121,18 @@ void Library::remove(int index)
     delete book;
 }
 
-int Library::size() const
-{
-    return mBooks.size();
-}
-
-Book *Library::at(int index) const
-{
-    return mBooks[index];
-}
-
 Book *Library::current() const
 {
     return mCurrent;
 }
 
-void Library::setCurrent(int index)
+void Library::setCurrent(const QModelIndex index)
 {
-    qDebug() << "Library::setCurrent" << index;
-    if ((index >= 0) && (index < mBooks.size()))
-    {
-        mCurrent = mBooks[index];
+    int row = index.row();
+    qDebug() << "Library::setCurrent" << row;
+    if ((row >= 0) && (row < mBooks.size())) {
+        mCurrent = mBooks[row];
         save();
-        qDebug() << " Emit currentBookChanged()";
         emit currentBookChanged();
     }
 }
@@ -153,25 +146,25 @@ void Library::clear()
     mCurrent = 0;
 }
 
-int Library::find(QString path) const
+QModelIndex Library::find(QString path) const
 {
     if (path != "") {
         QString absolutePath = QFileInfo(path).absoluteFilePath();
         for (int i = 0; i < mBooks.size(); i++) {
             if (absolutePath == mBooks[i]->path()) {
-                return i;
+                return index(i);
             }
         }
     }
-    return -1;
+    return QModelIndex();
 }
 
-int Library::find(const Book *book) const
+QModelIndex Library::find(const Book *book) const
 {
     for (int i = 0; i < mBooks.size(); i++) {
         if (book == mBooks[i]) {
-            return i;
+            return index(i);
         }
     }
-    return -1;
+    return QModelIndex();
 }

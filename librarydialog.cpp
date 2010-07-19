@@ -23,6 +23,7 @@ LibraryDialog::LibraryDialog(QWidget *parent):
     sortedLibrary = new SortedLibrary(this);
     list->setModel(sortedLibrary);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
+    list->setUniformItemSizes(true);
 #ifndef Q_WS_MAEMO_5
     setSizeGripEnabled(true);
 #endif
@@ -54,11 +55,8 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     horizontalLayout->addWidget(buttonBox);
 
-#if 0 // FIXME
-    connect(library, SIGNAL(currentBookChanged()),
+    connect(Library::instance(), SIGNAL(currentBookChanged()),
             this, SLOT(onCurrentBookChanged()));
-#endif
-
 #ifndef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemSelectionChanged()),
             this, SLOT(onItemSelectionChanged()));
@@ -81,15 +79,21 @@ void LibraryDialog::onAdd()
 {
     Library *library = Library::instance();
 
+    // Figure out directory to show
     if (lastDir == "") {
-        if (library->size()) {
-            QFileInfo info(library->at(library->size() - 1)->path());
+        if (library->rowCount()) {
+            QModelIndex lastIndex = library->index(library->rowCount() - 1);
+            Book lastBook = library->data(lastIndex,
+                                          Library::BookRole).value<Book>();
+            QFileInfo info(lastBook.path());
             lastDir = info.absolutePath();
         }
     }
     if (lastDir == "") {
         lastDir = QDir::homePath();
     }
+
+    // Get book file name
     QString path = QFileDialog::getOpenFileName(this, tr("Add Book"),
                                                 lastDir, "Books (*.epub)");
     qDebug() << "LibraryDialog::onAdd" << path;
@@ -97,8 +101,9 @@ void LibraryDialog::onAdd()
         return;
     }
 
+    // Add book to library
     lastDir = QFileInfo(path).absolutePath();
-    if (library->find(path) != -1) {
+    if (library->find(path).isValid()) {
 #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this,
             tr("This book is already in the library"),
@@ -113,7 +118,7 @@ void LibraryDialog::onAdd()
 
 void LibraryDialog::onBookAdded()
 {
-#if 0
+#if 0 // FIXME
     Library *library = Library::instance();
     int index = library->size() - 1;
     Book *book = library->at(index);
@@ -128,38 +133,32 @@ void LibraryDialog::onBookAdded()
 
 void LibraryDialog::onRemove()
 {
-#if 0
     qDebug() << "LibraryDialog::onRemove";
-    if (list->selectedItems().isEmpty()) {
-        return;
-    }
-    QListWidgetItem *item = list->selectedItems()[0];
-    int row = list->row(item);
-    QString title = Library::instance()->at(row)->title;
-    if (QMessageBox::Yes ==
-        QMessageBox::question(this, "Delete book",
-                              "Delete book \"" + title + "\"?", QMessageBox::Yes
+    QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
+    if (current.isValid()) {
+        Book currentBook =
+                Library::instance()->data(current, Library::BookRole).value<Book>();
+        QString title = currentBook.title;
+        if (QMessageBox::Yes ==
+            QMessageBox::question(this, "Delete book",
+                                  "Delete book \"" + title + "\"?",
+                                  QMessageBox::Yes
 #ifndef Q_WS_MAEMO_5
-                              , QMessageBox::No
+                                  , QMessageBox::No
 #endif
-                              )) {
-        list->takeItem(row);
-        Library::instance()->remove(row);
+                                  )) {
+            Library::instance()->remove(current);
+        }
     }
-#endif
 }
 
 void LibraryDialog::onRead()
 {
     qDebug() << "LibraryDialog::onRead";
-#if 0 // FIXME
-    if (list->selectedItems().isEmpty()) {
-        return;
+    QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
+    if (current.isValid()) {
+        Library::instance()->setCurrent(current);
     }
-    QListWidgetItem *item = list->selectedItems()[0];
-    int row = list->row(item);
-    Library::instance()->setCurrent(row);
-#endif
 }
 
 void LibraryDialog::onDetails()

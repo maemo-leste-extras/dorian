@@ -7,6 +7,7 @@
 #include <QList>
 
 class QObject;
+class QModelIndex;
 class Book;
 
 /** Library of books. */
@@ -21,17 +22,15 @@ public:
 
     static Library *instance();
     static void close();
-    int rowCount(const QModelIndex & parent = QModelIndex()) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
     void save();
-    int find(QString path) const;
-    int find(const Book *book) const;
-    Book *at(int index) const;
-    int size() const;
+    QModelIndex find(QString path) const;
+    QModelIndex find(const Book *book) const;
     Book *current() const;
     bool add(QString path);
-    void remove(int index);
-    void setCurrent(int index);
+    void remove(const QModelIndex &index);
+    void setCurrent(const QModelIndex index);
 
 signals:
     void currentBookChanged();

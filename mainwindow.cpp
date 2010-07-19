@@ -87,8 +87,8 @@ MainWindow::MainWindow(QWidget *parent):
     if (QCoreApplication::arguments().size() == 2) {
         QString path = QCoreApplication::arguments()[1];
         library->add(path);
-        int index = library->find(path);
-        if (index != -1) {
+        QModelIndex index = library->find(path);
+        if (index.isValid()) {
             library->setCurrent(index);
         }
     }
@@ -98,10 +98,10 @@ MainWindow::MainWindow(QWidget *parent):
             setCurrentBook(current);
         }
         else {
-            if (!library->size()) {
+            if (!library->rowCount()) {
                 library->add(":/books/2 B R 0 2 B.epub");
             }
-            library->setCurrent(0);
+            library->setCurrent(library->index(0));
         }
     }
 
