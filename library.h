@@ -16,10 +16,6 @@ class Library: public QAbstractListModel
     Q_OBJECT
 
 public:
-    enum {
-        BookRole = Qt::UserRole + 1,
-    };
-
     static Library *instance();
     static void close();
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -27,13 +23,14 @@ public:
     void save();
     QModelIndex find(QString path) const;
     QModelIndex find(const Book *book) const;
-    Book *current() const;
     bool add(QString path);
     void remove(const QModelIndex &index);
-    void setCurrent(const QModelIndex index);
+    void setNowReading(const QModelIndex index);
+    QModelIndex nowReading() const;
+    Book *book(const QModelIndex &index);
 
 signals:
-    void currentBookChanged();
+    void nowReadingChanged();
 
 private:
     explicit Library(QObject *parent = 0);
@@ -42,7 +39,7 @@ private:
     void clear();
     static Library *mInstance;
     QList<Book *> mBooks;
-    Book *mCurrent;
+    Book *mNowReading;
 };
 
 #endif // LIBRARY_H

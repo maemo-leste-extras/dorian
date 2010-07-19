@@ -17,14 +17,15 @@
 #endif
 
 BookView::BookView(QWidget *parent):
-        QWebView(parent), contentIndex(-1), mBook(0), restore(true), restorePos(0),
-        loadFinished(false)
+    QWebView(parent), contentIndex(-1), mBook(0),
+    restore(true), restorePos(0), loadFinished(false)
 {
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
     settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     settings()->setAttribute(QWebSettings::PluginsEnabled, false);
     settings()->setAttribute(QWebSettings::ZoomTextOnly, true);
-    settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, false);
+    settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls,
+                             false);
     page()->setContentEditable(false);
 
 #if defined(Q_WS_MAEMO_5)

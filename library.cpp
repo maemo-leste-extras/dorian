@@ -7,7 +7,7 @@
 
 Library *Library::mInstance = 0;
 
-Library::Library(QObject *parent): QAbstractListModel(parent), mCurrent(0)
+Library::Library(QObject *parent): QAbstractListModel(parent), mNowReading(0)
 {
     load();
 }
@@ -45,10 +45,17 @@ QVariant Library::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
         return mBooks[index.row()]->name();
-    case BookRole:
-        return QVariant::fromValue<Book>(*mBooks[index.row()]);
     default:
         return QVariant();
+    }
+}
+
+Book *Library::book(const QModelIndex &index)
+{
+    if (index.isValid()) {
+        return mBooks[index.row()];
+    } else {
+        return 0;
     }
 }
 
@@ -71,11 +78,11 @@ void Library::load()
         qDebug() << "Library::load: Add" << book->title << "from" << path;
         mBooks.append(book);
     }
-    QString currentPath = settings.value("lib/current").toString();
+    QString currentPath = settings.value("lib/nowreading").toString();
     QModelIndex index = find(currentPath);
     if (index.isValid()) {
-        mCurrent = mBooks[index.row()];
-        qDebug() << "Library::load: Current book is" << mCurrent->path();
+        mNowReading = mBooks[index.row()];
+        qDebug() << "Library::load: Now reading" << mNowReading->path();
     }
 }
 
@@ -89,7 +96,8 @@ void Library::save()
         QString key = "lib/book" + QString::number(i);
         settings.setValue(key, mBooks[i]->path());
     }
-    settings.setValue("lib/current", mCurrent? mCurrent->path(): QString());
+    settings.setValue("lib/nowreading",
+                      mNowReading? mNowReading->path(): QString());
 }
 
 bool Library::add(QString path)
@@ -126,27 +134,30 @@ void Library::remove(const QModelIndex &index)
     mBooks.removeAt(row);
     save();
     endRemoveRows();
-    if (book == mCurrent) {
-        mCurrent = 0;
-        emit currentBookChanged();
+    if (book == mNowReading) {
+        mNowReading = 0;
+        emit nowReadingChanged();
     }
     delete book;
 }
 
-Book *Library::current() const
+QModelIndex Library::nowReading() const
 {
-    return mCurrent;
+    return find(mNowReading);
 }
 
-void Library::setCurrent(const QModelIndex index)
+void Library::setNowReading(const QModelIndex index)
 {
-    int row = index.row();
-    qDebug() << "Library::setCurrent" << row;
-    if ((row >= 0) && (row < mBooks.size())) {
-        mCurrent = mBooks[row];
-        save();
-        emit currentBookChanged();
+    if (index.isValid()) {
+        int row = index.row();
+        if ((row >= 0) && (row < mBooks.size())) {
+            mNowReading = mBooks[row];
+        }
+    } else {
+        mNowReading = 0;
     }
+    save();
+    emit nowReadingChanged();
 }
 
 void Library::clear()
@@ -155,7 +166,7 @@ void Library::clear()
         delete mBooks[i];
     }
     mBooks.clear();
-    mCurrent = 0;
+    mNowReading = 0;
 }
 
 QModelIndex Library::find(QString path) const

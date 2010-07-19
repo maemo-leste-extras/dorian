@@ -9,6 +9,8 @@
 
 #include "book.h"
 
+class QModelIndex;
+
 /** Visual representation of a book. */
 class BookView: public QWebView
 {

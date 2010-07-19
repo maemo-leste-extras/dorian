@@ -28,13 +28,13 @@ InfoDialog::InfoDialog(Book *book_, QWidget *parent):
 
 void InfoDialog::onReadBook()
 {
-    Library::instance()->setCurrent(Library::instance()->find(book));
+    Library::instance()->setNowReading(Library::instance()->find(book));
     close();
 }
 
 void InfoDialog::onRemoveBook()
 {
-    QString title = book->title;
+    QString title = book->name();
     if (QMessageBox::Yes ==
         QMessageBox::question(this, "Delete book", "Delete book " + title,
                               QMessageBox::Yes

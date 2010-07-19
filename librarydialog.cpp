@@ -83,9 +83,8 @@ void LibraryDialog::onAdd()
     if (lastDir == "") {
         if (library->rowCount()) {
             QModelIndex lastIndex = library->index(library->rowCount() - 1);
-            Book lastBook = library->data(lastIndex,
-                                          Library::BookRole).value<Book>();
-            QFileInfo info(lastBook.path());
+            Book *lastBook = library->book(lastIndex);
+            QFileInfo info(lastBook->path());
             lastDir = info.absolutePath();
         }
     }
@@ -118,7 +117,7 @@ void LibraryDialog::onAdd()
 
 void LibraryDialog::onBookAdded()
 {
-#if 0 // FIXME
+#if 0
     Library *library = Library::instance();
     int index = library->size() - 1;
     Book *book = library->at(index);
@@ -136,9 +135,8 @@ void LibraryDialog::onRemove()
     qDebug() << "LibraryDialog::onRemove";
     QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
     if (current.isValid()) {
-        Book currentBook =
-                Library::instance()->data(current, Library::BookRole).value<Book>();
-        QString title = currentBook.name();
+        Book *currentBook = Library::instance()->book(current);
+        QString title = currentBook->name();
         if (QMessageBox::Yes ==
             QMessageBox::question(this, "Delete book",
                                   "Delete book \"" + title + "\"?",
@@ -157,7 +155,7 @@ void LibraryDialog::onRead()
     qDebug() << "LibraryDialog::onRead";
     QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
     if (current.isValid()) {
-        Library::instance()->setCurrent(current);
+        Library::instance()->setNowReading(current);
     }
 }
 

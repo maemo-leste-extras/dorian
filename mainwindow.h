@@ -4,6 +4,7 @@
 #include <QtGui>
 
 class QString;
+class QModelIndex;
 class DevTools;
 class BookView;
 class Book;
@@ -40,7 +41,7 @@ protected:
     virtual void closeEvent(QCloseEvent *event);
 
 private:
-    void setCurrentBook(Book *book);
+    void setCurrentBook(const QModelIndex &current);
     QAction *addToolBarAction(const QObject *receiver, const char *member,
                               const QString &name);
     QRect fullScreenZone() const;

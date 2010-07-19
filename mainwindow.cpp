@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent):
                                         "view-fullscreen");
 
     // Handle model changes
-    connect(Library::instance(), SIGNAL(currentBookChanged()),
+    connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
 
     normalFlags = windowFlags();
@@ -93,19 +93,19 @@ MainWindow::MainWindow(QWidget *parent):
         library->add(path);
         QModelIndex index = library->find(path);
         if (index.isValid()) {
-            library->setCurrent(index);
+            library->setNowReading(index);
         }
     }
     else {
-        Book *current = library->current();
-        if (current) {
-            setCurrentBook(current);
+        QModelIndex index = library->nowReading();
+        if (index.isValid()) {
+            library->setNowReading(index);
         }
         else {
             if (!library->rowCount()) {
                 library->add(":/books/2 B R 0 2 B.epub");
             }
-            library->setCurrent(library->index(0));
+            library->setNowReading(library->index(0));
         }
     }
 
@@ -125,7 +125,7 @@ MainWindow::MainWindow(QWidget *parent):
 
 void MainWindow::onCurrentBookChanged()
 {
-    setCurrentBook(Library::instance()->current());
+    setCurrentBook(Library::instance()->nowReading());
 }
 
 void MainWindow::showNormal()
@@ -151,14 +151,20 @@ void MainWindow::showFullScreen()
     restoreButton->flash();
 }
 
-void MainWindow::setCurrentBook(Book *current)
+void MainWindow::setCurrentBook(const QModelIndex &current)
 {
-    book = current;
-    view->setBook(current);
-    setWindowTitle(current? current->title: "Dorian");
+    if (current.isValid()) {
+        Book *book = Library::instance()->book(current);
+        view->setBook(book);
+        setWindowTitle(book->name());
+    } else {
+        view->setBook(0);
+        setWindowTitle("Dorian");
+    }
 }
 
-QAction *MainWindow::addToolBarAction(const QObject *receiver, const char *member,
+QAction *MainWindow::addToolBarAction(const QObject *receiver,
+                                      const char *member,
                                       const QString &name)
 {
     return toolBar->
