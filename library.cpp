@@ -27,15 +27,24 @@ Library *Library::instance()
 
 int Library::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent);
-    return mBooks.size();
+    if (parent.isValid()) {
+        return 0;
+    } else {
+        return mBooks.size();
+    }
 }
 
 QVariant Library::data(const QModelIndex &index, int role) const
 {
+    qDebug() << "Library::data, row" << index.row() << "role" << role;
+
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
     switch (role) {
     case Qt::DisplayRole:
-        return mBooks[index.row()]->title;
+        return mBooks[index.row()]->name();
     case BookRole:
         return QVariant::fromValue<Book>(*mBooks[index.row()]);
     default:
@@ -96,7 +105,7 @@ bool Library::add(QString path)
     }
     int size = mBooks.size();
     Book *book = new Book(path);
-    beginInsertRows(QModelIndex(), size - 1, size);
+    beginInsertRows(QModelIndex(), size, size);
     mBooks.append(book);
     save();
     endInsertRows();
@@ -105,11 +114,14 @@ bool Library::add(QString path)
 
 void Library::remove(const QModelIndex &index)
 {
+    if (!index.isValid()) {
+        return;
+    }
     int row = index.row();
     if ((row < 0) || (row >= mBooks.size())) {
         return;
     }
-    beginRemoveRows(QModelIndex(), row, row + 1);
+    beginRemoveRows(QModelIndex(), row, row);
     Book *book = mBooks[row];
     mBooks.removeAt(row);
     save();

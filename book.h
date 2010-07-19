@@ -80,6 +80,12 @@ public:
     /** List bookmarks. */
     QList<Bookmark> bookmarks() const;
 
+    /**
+     * Get friendly name.
+     * @return  @see title or path name if title is not available yet.
+     */
+    QString name() const;
+
     QString title;                          //< Book title from EPUB.
     QStringList toc;                        //< Table of contents from EPUB.
     QHash<QString, ContentItem> content;    //< Content items from EPUB.

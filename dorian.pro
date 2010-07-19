@@ -64,11 +64,13 @@ OTHER_FILES += \
     styles/day.js
 
 DEFINES += \
-    USE_FILE32API
+    USE_FILE32API \
+    DORIAN_TEST_MODEL
+
+include(modeltest/modeltest.pri)
 
 unix {
     LIBS += -lz
-    include(modeltest/modeltest.pri)
 }
 windows {
     # FIXME: Build zlib, too

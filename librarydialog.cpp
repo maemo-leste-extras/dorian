@@ -138,7 +138,7 @@ void LibraryDialog::onRemove()
     if (current.isValid()) {
         Book currentBook =
                 Library::instance()->data(current, Library::BookRole).value<Book>();
-        QString title = currentBook.title;
+        QString title = currentBook.name();
         if (QMessageBox::Yes ==
             QMessageBox::question(this, "Delete book",
                                   "Delete book \"" + title + "\"?",

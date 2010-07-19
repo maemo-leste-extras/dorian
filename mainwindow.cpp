@@ -19,6 +19,10 @@
 #include "bookmarksdialog.h"
 #include "settings.h"
 
+#ifdef DORIAN_TEST_MODEL
+#include "modeltest.h"
+#endif
+
 #ifdef Q_WS_MAC
 #   define ICON_PREFIX ":/icons/mac/"
 #else
@@ -113,6 +117,10 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Handle loading chapters
     connect(view, SIGNAL(chapterLoaded(int)), this, SLOT(onChapterLoaded(int)));
+
+#ifdef DORIAN_TEST_MODEL
+    (void)new ModelTest(Library::instance(), this);
+#endif
 }
 
 void MainWindow::onCurrentBookChanged()

@@ -304,3 +304,12 @@ QString Book::rootPath() const
 {
     return mRootPath;
 }
+
+QString Book::name() const
+{
+    if (title != "") {
+        return title;
+    } else {
+        return path();
+    }
+}
