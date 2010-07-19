@@ -66,7 +66,10 @@ OTHER_FILES += \
 DEFINES += \
     USE_FILE32API
 
-unix: LIBS += -lz
+unix {
+    LIBS += -lz
+    include(modeltest/modeltest.pri)
+}
 windows {
     # FIXME: Build zlib, too
 }
