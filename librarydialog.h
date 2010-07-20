@@ -34,7 +34,8 @@ public slots:
 
 private:
     QString createItemText(const Book *book);
-    void select(const QModelIndex &index);
+    void setSelected(const QModelIndex &index);
+    QModelIndex selected() const;
     QListView *list;
     SortedLibrary *sortedLibrary;
 #ifndef Q_WS_MAEMO_5

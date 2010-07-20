@@ -31,7 +31,7 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
-    select(current);
+    setSelected(current);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->addWidget(list);
@@ -59,25 +59,24 @@ LibraryDialog::LibraryDialog(QWidget *parent):
             SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this,
             SLOT(onBookAdded()));
-#ifndef Q_WS_MAEMO_5
-    connect(list, SIGNAL(itemSelectionChanged()),
-            this, SLOT(onItemSelectionChanged()));
-    connect(detailsButton, SIGNAL(clicked()), this, SLOT(onDetails()));
-    connect(readButton, SIGNAL(clicked()), this, SLOT(onRead()));
-    connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemove()));
-#endif
     connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
 #ifdef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemActivated(QListWidgetItem *)),
             this, SLOT(onItemActivated(QListWidgetItem *)));
 #else
+    connect(list, SIGNAL(itemSelectionChanged()),
+            this, SLOT(onItemSelectionChanged()));
+    connect(detailsButton, SIGNAL(clicked()), this, SLOT(onDetails()));
+    connect(readButton, SIGNAL(clicked()), this, SLOT(onRead()));
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemove()));
     connect(list, SIGNAL(doubleClicked(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
-#endif
-
-#ifndef Q_WS_MAEMO_5
+    connect(list->selectionModel(),
+            SIGNAL(selectionChanged(const QItemSelection &,
+                                    const QItemSelection &)),
+            this, SLOT(onItemSelectionChanged()));
     onItemSelectionChanged();
-#endif
+#endif // Q_WS_MAEMO_5
 }
 
 void LibraryDialog::onAdd()
@@ -111,7 +110,7 @@ void LibraryDialog::onAdd()
         (void)QMessageBox::information(this, tr("Dorian"),
             tr("This book is already in the library"), QMessageBox::Ok);
 #endif // Q_WS_MAEMO_5
-        select(index);
+        setSelected(index);
     }
     else {
         library->add(path);
@@ -121,7 +120,7 @@ void LibraryDialog::onAdd()
 void LibraryDialog::onBookAdded()
 {
     Library *library = Library::instance();
-    select(library->index(library->rowCount() - 1));
+    setSelected(library->index(library->rowCount() - 1));
 }
 
 #ifndef Q_WS_MAEMO_5
@@ -167,8 +166,7 @@ void LibraryDialog::onItemActivated(const QModelIndex &index)
     qDebug() << "LibraryDialog::onItemActivated";
     QModelIndex libraryIndex = sortedLibrary->mapToSource(index);
     Book *book = Library::instance()->book(libraryIndex);
-    InfoDialog *info = new InfoDialog(book, this);
-    info->exec();
+    (new InfoDialog(book, this))->exec();
 }
 
 QString LibraryDialog::createItemText(const Book *book)
@@ -187,8 +185,7 @@ QString LibraryDialog::createItemText(const Book *book)
 
 void LibraryDialog::onItemSelectionChanged()
 {
-#if 0 // FIXME
-    bool enable = list->selectedItems().size();
+    bool enable = selected().isValid();
     qDebug() << "LibraryDialog::onItemSelectionChanged" << enable;
     readButton->setEnabled(enable);
     qDebug() << " readButton";
@@ -196,7 +193,6 @@ void LibraryDialog::onItemSelectionChanged()
     qDebug() << " detailsButton";
     removeButton->setEnabled(enable);
     qDebug() << " removeButton";
-#endif
 }
 
 #endif // Q_WS_MAEMO_5
@@ -206,7 +202,7 @@ void LibraryDialog::onCurrentBookChanged()
     close();
 }
 
-void LibraryDialog::select(const QModelIndex &libraryIndex)
+void LibraryDialog::setSelected(const QModelIndex &libraryIndex)
 {
     QModelIndex sortedIndex = sortedLibrary->mapFromSource(libraryIndex);
     list->selectionModel()->clearSelection();
@@ -215,4 +211,13 @@ void LibraryDialog::select(const QModelIndex &libraryIndex)
                                        QItemSelectionModel::Select);
         list->setCurrentIndex(sortedIndex);
     }
+}
+
+QModelIndex LibraryDialog::selected() const
+{
+    QModelIndexList selectedItems = list->selectionModel()->selectedIndexes();
+    if (selectedItems.size()) {
+        return sortedLibrary->mapToSource(selectedItems[0]);
+    }
+    return QModelIndex();
 }
