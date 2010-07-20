@@ -61,7 +61,8 @@ OTHER_FILES += \
     styles/sand.js \
     styles/night.js \
     styles/default.js \
-    styles/day.js
+    styles/day.js \
+    www/index.html
 
 DEFINES += \
     USE_FILE32API \
