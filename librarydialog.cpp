@@ -31,7 +31,7 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
-    list->setCurrentIndex(current);
+    select(current);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->addWidget(list);
@@ -55,6 +55,10 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
+    connect(Library::instance(),
+            SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+            this,
+            SLOT(onBookAdded()));
 #ifndef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemSelectionChanged()),
             this, SLOT(onItemSelectionChanged()));
@@ -94,7 +98,8 @@ void LibraryDialog::onAdd()
     Settings::instance()->setValue("lastdir", QFileInfo(path).absolutePath());
 
     // Add book to library
-    if (library->find(path).isValid()) {
+    QModelIndex index = library->find(path);
+    if (index.isValid()) {
 #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this,
             tr("This book is already in the library"),
@@ -103,7 +108,7 @@ void LibraryDialog::onAdd()
         (void)QMessageBox::information(this, tr("Dorian"),
             tr("This book is already in the library"), QMessageBox::Ok);
 #endif // Q_WS_MAEMO_5
-        // FIXME: Select existing book
+        select(index);
     }
     else {
         library->add(path);
@@ -112,15 +117,8 @@ void LibraryDialog::onAdd()
 
 void LibraryDialog::onBookAdded()
 {
-#if 0
     Library *library = Library::instance();
-    int index = library->size() - 1;
-    Book *book = library->at(index);
-    QListWidgetItem *item = new QListWidgetItem(book->cover,
-                                                createItemText(book));
-    list->addItem(item);
-    list->setCurrentItem(item);
-#endif
+    select(library->index(library->rowCount() - 1));
 }
 
 #ifndef Q_WS_MAEMO_5
@@ -207,4 +205,15 @@ void LibraryDialog::onItemSelectionChanged()
 void LibraryDialog::onCurrentBookChanged()
 {
     close();
+}
+
+void LibraryDialog::select(const QModelIndex &libraryIndex)
+{
+    QModelIndex sortedIndex = sortedLibrary->mapFromSource(libraryIndex);
+    list->selectionModel()->clearSelection();
+    if (sortedIndex.isValid()) {
+        list->selectionModel()->select(sortedIndex,
+                                       QItemSelectionModel::Select);
+        list->setCurrentIndex(sortedIndex);
+    }
 }

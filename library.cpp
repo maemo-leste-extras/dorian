@@ -52,8 +52,6 @@ Book *Library::book(const QModelIndex &index)
 {
     if (index.isValid()) {
         if ((index.row() >= 0) && (index.row() < mBooks.size())) {
-            qDebug() << "Library::book:" << index.row() << "is"
-                    << mBooks[index.row()]->name();
             return mBooks[index.row()];
         } else {
             qWarning() << "*** Library::book: Bad index" << index.row();
@@ -78,7 +76,6 @@ void Library::load()
         QString path = settings.value(key).toString();
         Book *book = new Book(path);
         book->load();
-        qDebug() << "Library::load: Add" << book->title << "from" << path;
         mBooks.append(book);
     }
     QString currentPath = settings.value("lib/nowreading").toString();
@@ -87,8 +84,6 @@ void Library::load()
 
 void Library::save()
 {
-    qDebug() << "Library::save";
-
     QSettings settings;
     settings.setValue("lib/size", mBooks.size());
     for (int i = 0; i < mBooks.size(); i++) {
@@ -102,13 +97,12 @@ void Library::save()
 
 bool Library::add(QString path)
 {
-    qDebug() << "Library::add" << path;
     if (path == "") {
-        qWarning() << "Library::add: Empty path";
+        qWarning() << "*** Library::add: Empty path";
         return false;
     }
     if (find(path).isValid()) {
-        qDebug() << " Book already exists in library";
+        qDebug() << "Library::add: Book already exists in library";
         return false;
     }
     int size = mBooks.size();

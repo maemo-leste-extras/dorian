@@ -19,14 +19,6 @@ class LibraryDialog: public QDialog
 
 public:
     explicit LibraryDialog(QWidget *parent = 0);
-    QListView *list;
-    SortedLibrary *sortedLibrary;
-#ifndef Q_WS_MAEMO_5
-    QPushButton *detailsButton;
-    QPushButton *removeButton;
-    QPushButton *readButton;
-#endif // Q_WS_MAEMO_5
-    QPushButton *addButton;
 
 public slots:
     void onAdd();
@@ -42,6 +34,15 @@ public slots:
 
 private:
     QString createItemText(const Book *book);
+    void select(const QModelIndex &index);
+    QListView *list;
+    SortedLibrary *sortedLibrary;
+#ifndef Q_WS_MAEMO_5
+    QPushButton *detailsButton;
+    QPushButton *removeButton;
+    QPushButton *readButton;
+#endif // Q_WS_MAEMO_5
+    QPushButton *addButton;
 };
 
 #endif // LIBRARYDIALOG_H
