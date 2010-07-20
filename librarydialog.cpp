@@ -41,7 +41,7 @@ LibraryDialog::LibraryDialog(QWidget *parent):
     detailsButton = new QPushButton(tr("Details"), this);
     readButton = new QPushButton(tr("Read"), this);
     removeButton = new QPushButton(tr("Delete"), this);
-#endif
+#endif // Q_WS_MAEMO_5
     addButton = new QPushButton(tr("Add"), this);
 
 #ifndef Q_WS_MAEMO_5
@@ -60,23 +60,20 @@ LibraryDialog::LibraryDialog(QWidget *parent):
             this,
             SLOT(onBookAdded()));
     connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
-#ifdef Q_WS_MAEMO_5
-    connect(list, SIGNAL(itemActivated(QListWidgetItem *)),
-            this, SLOT(onItemActivated(QListWidgetItem *)));
-#else
+    connect(list, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
+#ifndef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemSelectionChanged()),
             this, SLOT(onItemSelectionChanged()));
     connect(detailsButton, SIGNAL(clicked()), this, SLOT(onDetails()));
     connect(readButton, SIGNAL(clicked()), this, SLOT(onRead()));
     connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemove()));
-    connect(list, SIGNAL(doubleClicked(const QModelIndex &)),
-            this, SLOT(onItemActivated(const QModelIndex &)));
     connect(list->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection &,
                                     const QItemSelection &)),
             this, SLOT(onItemSelectionChanged()));
     onItemSelectionChanged();
-#endif // Q_WS_MAEMO_5
+#endif // !Q_WS_MAEMO_5
 }
 
 void LibraryDialog::onAdd()
@@ -135,11 +132,7 @@ void LibraryDialog::onRemove()
         if (QMessageBox::Yes ==
             QMessageBox::question(this, "Delete book",
                                   "Delete book \"" + title + "\"?",
-                                  QMessageBox::Yes
-#ifndef Q_WS_MAEMO_5
-                                  , QMessageBox::No
-#endif
-                                  )) {
+                                  QMessageBox::Yes, QMessageBox::No)) {
             Library::instance()->remove(current);
         }
     }
