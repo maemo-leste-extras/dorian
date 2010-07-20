@@ -34,7 +34,7 @@ const Qt::WindowFlags WIN_BIG_FLAGS =
 const int WIN_BIG_TIMER = 3000;
 
 MainWindow::MainWindow(QWidget *parent):
-        QMainWindow(parent), view(0), book(0), isFullscreen(false)
+        QMainWindow(parent), view(0), isFullscreen(false)
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -153,6 +153,7 @@ void MainWindow::showFullScreen()
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
 {
+    mCurrent = current;
     if (current.isValid()) {
         Book *book = Library::instance()->book(current);
         view->setBook(book);
@@ -185,8 +186,9 @@ void MainWindow::showSettings()
 
 void MainWindow::showInfo()
 {
-    if (book) {
-        InfoDialog *info = new InfoDialog(book, this);
+    if (mCurrent.isValid()) {
+        InfoDialog *info =
+            new InfoDialog(Library::instance()->book(mCurrent), this);
         info->exec();
     }
 }
@@ -199,6 +201,7 @@ void MainWindow::showDevTools()
 
 void MainWindow::showBookmarks()
 {
+    Book *book = Library::instance()->book(mCurrent);
     if (book) {
         BookmarksDialog *bookmarks = new BookmarksDialog(book, this);
         int ret = bookmarks->exec();
@@ -264,6 +267,7 @@ void MainWindow::onChapterLoaded(int index)
 {
     bool enablePrevious = false;
     bool enableNext = false;
+    Book *book = Library::instance()->book(mCurrent);
     if (book) {
         if (index > 0) {
             enablePrevious = true;

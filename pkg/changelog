@@ -1,6 +1,7 @@
 dorian (0.0.10-1) unstable; urgency=low
 
   * Turn library into proper model
+  * Show message if selected book is already in the library
 
  -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
 

@@ -36,8 +36,6 @@ int Library::rowCount(const QModelIndex &parent) const
 
 QVariant Library::data(const QModelIndex &index, int role) const
 {
-    qDebug() << "Library::data, row" << index.row() << "role" << role;
-
     if (!index.isValid()) {
         return QVariant();
     }
@@ -52,7 +50,9 @@ QVariant Library::data(const QModelIndex &index, int role) const
 
 Book *Library::book(const QModelIndex &index)
 {
-    if (index.isValid()) {
+    if (index.isValid() &&
+        (index.row() >= 0) &&
+        (index.row() < mBooks.size())) {
         return mBooks[index.row()];
     } else {
         return 0;
@@ -122,23 +122,20 @@ bool Library::add(QString path)
 
 void Library::remove(const QModelIndex &index)
 {
-    if (!index.isValid()) {
+    Book *toRemove = book(index);
+    if (!toRemove) {
         return;
     }
     int row = index.row();
-    if ((row < 0) || (row >= mBooks.size())) {
-        return;
-    }
     beginRemoveRows(QModelIndex(), row, row);
-    Book *book = mBooks[row];
     mBooks.removeAt(row);
     save();
     endRemoveRows();
-    if (book == mNowReading) {
+    if (toRemove == mNowReading) {
         mNowReading = 0;
         emit nowReadingChanged();
     }
-    delete book;
+    delete toRemove;
 }
 
 QModelIndex Library::nowReading() const
@@ -148,14 +145,7 @@ QModelIndex Library::nowReading() const
 
 void Library::setNowReading(const QModelIndex index)
 {
-    if (index.isValid()) {
-        int row = index.row();
-        if ((row >= 0) && (row < mBooks.size())) {
-            mNowReading = mBooks[row];
-        }
-    } else {
-        mNowReading = 0;
-    }
+    mNowReading = book(index);
     save();
     emit nowReadingChanged();
 }

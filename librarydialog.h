@@ -27,7 +27,6 @@ public:
     QPushButton *readButton;
 #endif // Q_WS_MAEMO_5
     QPushButton *addButton;
-    QString lastDir;
 
 public slots:
     void onAdd();

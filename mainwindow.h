@@ -59,7 +59,7 @@ private:
     QToolBar *toolBar;
     QDialog *settings;
     DevTools *devTools;
-    Book *book;
+    QModelIndex mCurrent;
     Qt::WindowFlags normalFlags;
     TranslucentButton *restoreButton;
     bool isFullscreen;

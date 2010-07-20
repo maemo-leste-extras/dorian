@@ -13,6 +13,7 @@
 #include "sortedlibrary.h"
 #include "book.h"
 #include "infodialog.h"
+#include "settings.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent):
         QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
@@ -55,7 +56,7 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     horizontalLayout->addWidget(buttonBox);
 
-    connect(Library::instance(), SIGNAL(currentBookChanged()),
+    connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
 #ifndef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemSelectionChanged()),
@@ -80,14 +81,7 @@ void LibraryDialog::onAdd()
     Library *library = Library::instance();
 
     // Figure out directory to show
-    if (lastDir == "") {
-        if (library->rowCount()) {
-            QModelIndex lastIndex = library->index(library->rowCount() - 1);
-            Book *lastBook = library->book(lastIndex);
-            QFileInfo info(lastBook->path());
-            lastDir = info.absolutePath();
-        }
-    }
+    QString lastDir = Settings::instance()->value("lastdir").toString();
     if (lastDir == "") {
         lastDir = QDir::homePath();
     }
@@ -95,19 +89,23 @@ void LibraryDialog::onAdd()
     // Get book file name
     QString path = QFileDialog::getOpenFileName(this, tr("Add Book"),
                                                 lastDir, "Books (*.epub)");
-    qDebug() << "LibraryDialog::onAdd" << path;
     if (path == "") {
         return;
     }
 
+    // Save directory selected
+    Settings::instance()->setValue("lastdir", QFileInfo(path).absolutePath());
+
     // Add book to library
-    lastDir = QFileInfo(path).absolutePath();
     if (library->find(path).isValid()) {
 #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this,
             tr("This book is already in the library"),
             QMaemo5InformationBox::DefaultTimeout);
-#endif
+#else
+        (void)QMessageBox::information(this, tr("Dorian"),
+            tr("This book is already in the library"), QMessageBox::Ok);
+#endif // Q_WS_MAEMO_5
         // FIXME: Select existing book
     }
     else {
