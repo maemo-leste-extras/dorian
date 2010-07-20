@@ -25,7 +25,7 @@ public:
     QModelIndex find(const Book *book) const;
     bool add(QString path);
     void remove(const QModelIndex &index);
-    void setNowReading(const QModelIndex index);
+    void setNowReading(const QModelIndex &index);
     QModelIndex nowReading() const;
     Book *book(const QModelIndex &index);
 
@@ -39,7 +39,7 @@ private:
     void clear();
     static Library *mInstance;
     QList<Book *> mBooks;
-    Book *mNowReading;
+    QModelIndex mNowReading;
 };
 
 #endif // LIBRARY_H

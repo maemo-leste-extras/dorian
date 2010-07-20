@@ -154,14 +154,9 @@ void MainWindow::showFullScreen()
 void MainWindow::setCurrentBook(const QModelIndex &current)
 {
     mCurrent = current;
-    if (current.isValid()) {
-        Book *book = Library::instance()->book(current);
-        view->setBook(book);
-        setWindowTitle(book->name());
-    } else {
-        view->setBook(0);
-        setWindowTitle("Dorian");
-    }
+    Book *book = Library::instance()->book(current);
+    view->setBook(book);
+    setWindowTitle(book? book->name(): tr("Dorian"));
 }
 
 QAction *MainWindow::addToolBarAction(const QObject *receiver,

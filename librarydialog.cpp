@@ -29,12 +29,9 @@ LibraryDialog::LibraryDialog(QWidget *parent):
     setSizeGripEnabled(true);
 #endif
 
-#if 0 // FIXME
-    Book *current = library->current();
-    if (library->size() && current) {
-        list->setItemSelected(list->item(library->find(current)), true);
-    }
-#endif
+    Library *library = Library::instance();
+    QModelIndex current = library->nowReading();
+    list->setCurrentIndex(current);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->addWidget(list);

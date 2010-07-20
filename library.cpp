@@ -7,7 +7,7 @@
 
 Library *Library::mInstance = 0;
 
-Library::Library(QObject *parent): QAbstractListModel(parent), mNowReading(0)
+Library::Library(QObject *parent): QAbstractListModel(parent)
 {
     load();
 }
@@ -50,13 +50,16 @@ QVariant Library::data(const QModelIndex &index, int role) const
 
 Book *Library::book(const QModelIndex &index)
 {
-    if (index.isValid() &&
-        (index.row() >= 0) &&
-        (index.row() < mBooks.size())) {
-        return mBooks[index.row()];
-    } else {
-        return 0;
+    if (index.isValid()) {
+        if ((index.row() >= 0) && (index.row() < mBooks.size())) {
+            qDebug() << "Library::book:" << index.row() << "is"
+                    << mBooks[index.row()]->name();
+            return mBooks[index.row()];
+        } else {
+            qWarning() << "*** Library::book: Bad index" << index.row();
+        }
     }
+    return 0;
 }
 
 void Library::close()
@@ -79,11 +82,7 @@ void Library::load()
         mBooks.append(book);
     }
     QString currentPath = settings.value("lib/nowreading").toString();
-    QModelIndex index = find(currentPath);
-    if (index.isValid()) {
-        mNowReading = mBooks[index.row()];
-        qDebug() << "Library::load: Now reading" << mNowReading->path();
-    }
+    mNowReading = find(currentPath);
 }
 
 void Library::save()
@@ -96,8 +95,9 @@ void Library::save()
         QString key = "lib/book" + QString::number(i);
         settings.setValue(key, mBooks[i]->path());
     }
+    Book *currentBook = book(mNowReading);
     settings.setValue("lib/nowreading",
-                      mNowReading? mNowReading->path(): QString());
+                      currentBook? currentBook->path(): QString());
 }
 
 bool Library::add(QString path)
@@ -131,8 +131,8 @@ void Library::remove(const QModelIndex &index)
     mBooks.removeAt(row);
     save();
     endRemoveRows();
-    if (toRemove == mNowReading) {
-        mNowReading = 0;
+    if (index == mNowReading) {
+        mNowReading = QModelIndex();
         emit nowReadingChanged();
     }
     delete toRemove;
@@ -140,12 +140,13 @@ void Library::remove(const QModelIndex &index)
 
 QModelIndex Library::nowReading() const
 {
-    return find(mNowReading);
+    qDebug() << "Library::nowReading" << mNowReading.row();
+    return mNowReading;
 }
 
-void Library::setNowReading(const QModelIndex index)
+void Library::setNowReading(const QModelIndex &index)
 {
-    mNowReading = book(index);
+    mNowReading = index;
     save();
     emit nowReadingChanged();
 }
@@ -156,7 +157,7 @@ void Library::clear()
         delete mBooks[i];
     }
     mBooks.clear();
-    mNowReading = 0;
+    mNowReading = QModelIndex();
 }
 
 QModelIndex Library::find(QString path) const
@@ -174,9 +175,11 @@ QModelIndex Library::find(QString path) const
 
 QModelIndex Library::find(const Book *book) const
 {
-    for (int i = 0; i < mBooks.size(); i++) {
-        if (book == mBooks[i]) {
-            return index(i);
+    if (book) {
+        for (int i = 0; i < mBooks.size(); i++) {
+            if (book == mBooks[i]) {
+                return index(i);
+            }
         }
     }
     return QModelIndex();
