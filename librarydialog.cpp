@@ -70,6 +70,9 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 #ifdef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemActivated(QListWidgetItem *)),
             this, SLOT(onItemActivated(QListWidgetItem *)));
+#else
+    connect(list, SIGNAL(doubleClicked(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
 #endif
 
 #ifndef Q_WS_MAEMO_5
@@ -154,9 +157,7 @@ void LibraryDialog::onRead()
 
 void LibraryDialog::onDetails()
 {
-#if 0 // FIXME
-    onItemActivated(list->selectedItems()[0]);
-#endif
+    onItemActivated(list->currentIndex());
 }
 
 #endif // Q_WS_MAEMO_5
@@ -164,12 +165,10 @@ void LibraryDialog::onDetails()
 void LibraryDialog::onItemActivated(const QModelIndex &index)
 {
     qDebug() << "LibraryDialog::onItemActivated";
-#if 0 // FIXME
-    int row = list->row(item);
-    Book *book = Library::instance()->at(row);
+    QModelIndex libraryIndex = sortedLibrary->mapToSource(index);
+    Book *book = Library::instance()->book(libraryIndex);
     InfoDialog *info = new InfoDialog(book, this);
     info->exec();
-#endif
 }
 
 QString LibraryDialog::createItemText(const Book *book)
