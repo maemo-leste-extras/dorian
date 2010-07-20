@@ -4,16 +4,17 @@
 #include <QDialog>
 #include <QString>
 #include <QModelIndexList>
+#include <QMainWindow>
 
-class QMainWindow;
 class QListView;
 class QPushButton;
 class QModelIndex;
+class QCloseEvent;
 class Book;
 class InfoWindow;
 class SortedLibrary;
 
-class LibraryDialog: public QDialog
+class LibraryDialog: public QMainWindow
 {
     Q_OBJECT
 
@@ -31,6 +32,9 @@ public slots:
     void onBookAdded();
     void onItemActivated(const QModelIndex &index);
     void onCurrentBookChanged();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     QString createItemText(const Book *book);

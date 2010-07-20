@@ -34,16 +34,11 @@ void InfoDialog::onReadBook()
 
 void InfoDialog::onRemoveBook()
 {
-    QString title = book->name();
     if (QMessageBox::Yes ==
         QMessageBox::question(this,
-                              "Delete book",
-                              "Delete book \"" + title + "\"",
-                              QMessageBox::Yes
-#ifndef Q_WS_MAEMO_5
-                              , QMessageBox::No
-#endif
-                              )) {
+                              tr("Delete book"),
+                              "Delete book \"" + book->name() + "\"?",
+                              QMessageBox::Yes | QMessageBox::No)) {
         Library::instance()->remove(Library::instance()->find(book));
         close();
     }

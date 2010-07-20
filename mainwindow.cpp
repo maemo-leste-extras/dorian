@@ -116,7 +116,10 @@ MainWindow::MainWindow(QWidget *parent):
                                    Settings::instance()->value("orientation"));
 
     // Handle loading chapters
-    connect(view, SIGNAL(chapterLoaded(int)), this, SLOT(onChapterLoaded(int)));
+    connect(view, SIGNAL(chapterLoadStart(int)),
+            this, SLOT(onChapterLoadStart()));
+    connect(view, SIGNAL(chapterLoadEnd(int)),
+            this, SLOT(onChapterLoadEnd(int)));
 
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
@@ -169,8 +172,8 @@ QAction *MainWindow::addToolBarAction(const QObject *receiver,
 
 void MainWindow::showLibrary()
 {
-    LibraryDialog *dialog = new LibraryDialog();
-    dialog->exec();
+    LibraryDialog *dialog = new LibraryDialog(this);
+    dialog->show();
 }
 
 void MainWindow::showSettings()
@@ -258,7 +261,14 @@ void MainWindow::onSettingsChanged(const QString &key)
 #endif // Q_WS_MAEMO_5
 }
 
-void MainWindow::onChapterLoaded(int index)
+void MainWindow::onChapterLoadStart()
+{
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
+#endif
+}
+
+void MainWindow::onChapterLoadEnd(int index)
 {
     bool enablePrevious = false;
     bool enableNext = false;
@@ -272,6 +282,7 @@ void MainWindow::onChapterLoaded(int index)
         }
     }
 #ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
     previousAction->setIcon(QIcon(enablePrevious?
         ":/icons/previous.png" : ":/icons/previous-disabled.png"));
     nextAction->setIcon(QIcon(enableNext?

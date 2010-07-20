@@ -15,43 +15,44 @@
 #include "infodialog.h"
 #include "settings.h"
 
-LibraryDialog::LibraryDialog(QWidget *parent):
-        QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
-                Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint)
+LibraryDialog::LibraryDialog(QWidget *parent): QMainWindow(parent)
 {
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5StackedWindow, true);
+#endif
     setWindowTitle(tr("Library"));
+
+    QFrame *frame = new QFrame(this);
+    setCentralWidget(frame);
+    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
+    frame->setLayout(horizontalLayout);
+
     list = new QListView(this);
     sortedLibrary = new SortedLibrary(this);
     list->setModel(sortedLibrary);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     list->setUniformItemSizes(true);
-#ifndef Q_WS_MAEMO_5
-    setSizeGripEnabled(true);
-#endif
 
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
     setSelected(current);
-
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->addWidget(list);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
 #ifndef Q_WS_MAEMO_5
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
     detailsButton = new QPushButton(tr("Details"), this);
     readButton = new QPushButton(tr("Read"), this);
     removeButton = new QPushButton(tr("Delete"), this);
-#endif // Q_WS_MAEMO_5
     addButton = new QPushButton(tr("Add"), this);
 
-#ifndef Q_WS_MAEMO_5
     buttonBox->addButton(detailsButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(readButton, QDialogButtonBox::AcceptRole);
     buttonBox->addButton(removeButton, QDialogButtonBox::ActionRole);
-#endif // Q_WS_MAEMO_5
     buttonBox->addButton(addButton, QDialogButtonBox::ActionRole);
-
     horizontalLayout->addWidget(buttonBox);
+#else
+    QAction *addBookAction = menuBar()->addAction(tr("Add book"));
+#endif // Q_WS_MAEMO_5
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
@@ -59,12 +60,12 @@ LibraryDialog::LibraryDialog(QWidget *parent):
             SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this,
             SLOT(onBookAdded()));
-    connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
 #ifndef Q_WS_MAEMO_5
     connect(list, SIGNAL(itemSelectionChanged()),
             this, SLOT(onItemSelectionChanged()));
+    connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
     connect(detailsButton, SIGNAL(clicked()), this, SLOT(onDetails()));
     connect(readButton, SIGNAL(clicked()), this, SLOT(onRead()));
     connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemove()));
@@ -73,6 +74,8 @@ LibraryDialog::LibraryDialog(QWidget *parent):
                                     const QItemSelection &)),
             this, SLOT(onItemSelectionChanged()));
     onItemSelectionChanged();
+#else
+    connect(addBookAction, SIGNAL(triggered()), this, SLOT(onAdd()));
 #endif // !Q_WS_MAEMO_5
 }
 
@@ -124,7 +127,6 @@ void LibraryDialog::onBookAdded()
 
 void LibraryDialog::onRemove()
 {
-    qDebug() << "LibraryDialog::onRemove";
     QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
     if (current.isValid()) {
         Book *currentBook = Library::instance()->book(current);
@@ -132,7 +134,7 @@ void LibraryDialog::onRemove()
         if (QMessageBox::Yes ==
             QMessageBox::question(this, "Delete book",
                                   "Delete book \"" + title + "\"?",
-                                  QMessageBox::Yes, QMessageBox::No)) {
+                                  QMessageBox::Yes | QMessageBox::No)) {
             Library::instance()->remove(current);
         }
     }
@@ -179,13 +181,9 @@ QString LibraryDialog::createItemText(const Book *book)
 void LibraryDialog::onItemSelectionChanged()
 {
     bool enable = selected().isValid();
-    qDebug() << "LibraryDialog::onItemSelectionChanged" << enable;
     readButton->setEnabled(enable);
-    qDebug() << " readButton";
     detailsButton->setEnabled(enable);
-    qDebug() << " detailsButton";
     removeButton->setEnabled(enable);
-    qDebug() << " removeButton";
 }
 
 #endif // Q_WS_MAEMO_5
@@ -213,4 +211,12 @@ QModelIndex LibraryDialog::selected() const
         return sortedLibrary->mapToSource(selectedItems[0]);
     }
     return QModelIndex();
+}
+
+void LibraryDialog::closeEvent(QCloseEvent *event)
+{
+#ifdef Q_WS_MAEMO_5
+    menuBar()->clear();
+#endif
+    event->accept();
 }

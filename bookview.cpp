@@ -79,6 +79,7 @@ void BookView::loadContent(int index)
     }
     else {
         loadFinished = false;
+        emit chapterLoadStart(index);
         load(QUrl(contentFile));
     }
     contentIndex = index;
@@ -147,7 +148,7 @@ void BookView::onLoadFinished(bool ok)
     loadFinished = true;
     addNavigationBar();
     onSettingsChanged("scheme");
-    emit chapterLoaded(contentIndex);
+    emit chapterLoadEnd(contentIndex);
     if (restore) {
         restore = false;
         if (ok && mBook) {

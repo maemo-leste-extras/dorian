@@ -26,7 +26,8 @@ public:
     void setLastBookmark();
 
 signals:
-    void chapterLoaded(int index);
+    void chapterLoadStart(int index);
+    void chapterLoadEnd(int index);
 
 public slots:
     void goPrevious();
