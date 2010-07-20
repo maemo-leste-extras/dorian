@@ -2,6 +2,8 @@ dorian (0.0.10-1) unstable; urgency=low
 
   * Turn library into proper model
   * Show message if selected book is already in the library
+  * Make library window full screen on Maemo
+  * Show busy indicator while loading book
 
  -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
 
