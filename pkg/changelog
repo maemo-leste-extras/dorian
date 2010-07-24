@@ -4,7 +4,9 @@ dorian (0.0.10-1) unstable; urgency=low
   * Show message if selected book is already in the library
   * Make library window full screen on Maemo
   * Show busy indicator while loading book
-  * Create Maemo Garage web pages
+  * Create Maemo Garage web page
+  * Read chapter titles from NCX directory
+  * Display chapter titles for bookmarks
 
  -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
 

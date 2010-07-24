@@ -16,7 +16,7 @@ public:
     struct ContentItem
     {
         QString href;
-        QString type;
+        QString name;
     };
 
     /** Bookmark: a volume index and a relative position in volume. */
@@ -97,6 +97,9 @@ public:
     QString subject;                        //< Subject.
     QString source;                         //< Source.
     QString rights;                         //< Rights.
+    QString tocPath;                        //< Path to toc ncx.
+    QString coverPath;                      //< Path to cover html.
+    QString coverImagePath;                 //< Path to cover image.
 
 protected:
     /** Indicate failure by creating a single "error" content item. */

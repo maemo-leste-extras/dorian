@@ -9,10 +9,11 @@
 
 #include "book.h"
 #include "opshandler.h"
-#include "opserrorhandler.h"
+#include "xmlerrorhandler.h"
 #include "extractzip.h"
 #include "library.h"
 #include "containerhandler.h"
+#include "ncxhandler.h"
 
 Book::Book()
 {
@@ -77,7 +78,7 @@ void Book::fail(const QString &details, const QString &error)
         "</title></head><body><h1>" + Qt::escape(error) + "</h1><p>" +
         Qt::escape(details) + "</p></body></html>";
     content["error"].href = errorPage;
-    content["error"].type = "text/html";
+    content["error"].name = "Error";
 }
 
 bool Book::extract()
@@ -128,21 +129,37 @@ bool Book::parse()
     qDebug() << "Book::parse";
 
     bool ret = false;
-    QFile bookFile(opsPath());
+    QString opsFileName = opsPath();
+    qDebug() << " Parsing OPS file" << opsFileName;
+    QFile opsFile(opsFileName);
     QXmlSimpleReader reader;
-    QXmlInputSource *source = new QXmlInputSource(&bookFile);
+    QXmlInputSource *source = new QXmlInputSource(&opsFile);
     OpsHandler *opsHandler = new OpsHandler(*this);
-    OpsErrorHandler *opsErrorHandler = new OpsErrorHandler();
+    XmlErrorHandler *errorHandler = new XmlErrorHandler();
     reader.setContentHandler(opsHandler);
-    reader.setErrorHandler(opsErrorHandler);
-
+    reader.setErrorHandler(errorHandler);
     ret = reader.parse(source);
-    if (!ret) {
-        qCritical() << "*** Book::parse: XML parsing failed";
-    }
-
+    delete errorHandler;
     delete opsHandler;
     delete source;
+
+    // If there is an "ncx" item in content, parse it: That's the real table of
+    // contents
+    if (content.contains("ncx")) {
+        QString ncxFileName = content["ncx"].href;
+        qDebug() << " Parsing NCX file" << ncxFileName;
+        QFile ncxFile(ncxFileName);
+        source = new QXmlInputSource(&ncxFile);
+        NcxHandler *ncxHandler = new NcxHandler(*this);
+        errorHandler = new XmlErrorHandler();
+        reader.setContentHandler(ncxHandler);
+        reader.setErrorHandler(errorHandler);
+        ret = reader.parse(source);
+        delete ncxHandler;
+        delete errorHandler;
+        delete source;
+    }
+
     return ret;
 }
 
@@ -286,15 +303,16 @@ QString Book::opsPath()
     QXmlSimpleReader reader;
     QXmlInputSource *source = new QXmlInputSource(&container);
     ContainerHandler *containerHandler = new ContainerHandler();
-    OpsErrorHandler *opsErrorHandler = new OpsErrorHandler();
+    XmlErrorHandler *errorHandler = new XmlErrorHandler();
     reader.setContentHandler(containerHandler);
-    reader.setErrorHandler(opsErrorHandler);
+    reader.setErrorHandler(errorHandler);
     if (reader.parse(source)) {
         ret = tmpDir() + "/" + containerHandler->rootFile;
         mRootPath = QFileInfo(ret).absoluteDir().absolutePath();
         qDebug() << " OSP path" << ret;
         qDebug() << " Root dir" << mRootPath;
     }
+    delete errorHandler;
     delete containerHandler;
     delete source;
     return ret;

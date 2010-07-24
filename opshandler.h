@@ -9,7 +9,7 @@
 class OpsHandler: public QXmlContentHandler
 {
 public:
-    OpsHandler(Book &book): mBook(book) {}
+    OpsHandler(Book &b): book(b), partCount(0) {}
     bool endDocument() {return true;}
     bool endPrefixMapping(const QString &) {return true;}
     QString errorString() const {return "";}
@@ -24,7 +24,7 @@ public:
 
     bool characters(const QString &ch)
     {
-        mCurrentText += ch;
+        currentText += ch;
         return true;
     }
 
@@ -33,24 +33,24 @@ public:
     {
         (void)namespaceUri;
         (void)qName;
-        if (mCurrentText != "") {
+        if (currentText != "") {
             if (name == "title") {
-                mBook.title = mCurrentText;
+                book.title = currentText;
             }
             else if (name == "creator") {
-                mBook.creators.append(mCurrentText);
+                book.creators.append(currentText);
             }
             else if (name == "publisher") {
-                mBook.publisher = mCurrentText;
+                book.publisher = currentText;
             }
             else if (name == "subject") {
-                mBook.subject = mCurrentText;
+                book.subject = currentText;
             }
             else if (name == "source") {
-                mBook.source = mCurrentText;
+                book.source = currentText;
             }
             else if (name == "rights") {
-                mBook.rights = mCurrentText;
+                book.rights = currentText;
             }
         }
         return true;
@@ -60,30 +60,27 @@ public:
                       const QString &qName, const QXmlAttributes &attrs)
     {
         (void)namespaceUri;
-        (void)name;
         (void)qName;
-        (void)attrs;
-        mCurrentText = "";
+        currentText = "";
 
         if (name == "item") {
             Book::ContentItem item;
-            item.href = mBook.rootPath() + "/" + attrs.value("href");
-            item.type = attrs.value("media-type");
+            item.href = book.rootPath() + "/" + attrs.value("href");
+            item.name = QString("Part %1").arg(partCount + 1);
             QString key = attrs.value("id");
-            mBook.content[key] = item;
-            qDebug() << "OpsHandler::startElement: item" << key << "type"
-                    << item.type << "href" << item.href;
+            book.content[key] = item;
+            partCount++;
         }
         else if (name == "itemref") {
-            mBook.toc.append(attrs.value("idref"));
-            qDebug() << "OpsHandler::startElement: itemref" << attrs.value("idref");
+            book.toc.append(attrs.value("idref"));
         }
         return true;
     }
 
 private:
-    Book &mBook;
-    QString mCurrentText;
+    Book &book;
+    QString currentText;
+    int partCount;
 };
 
 #endif // OPSHANDLER_H

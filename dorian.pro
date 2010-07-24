@@ -37,9 +37,10 @@ HEADERS += \
     settingswindow.h \
     settings.h \
     bookmarksdialog.h \
-    opserrorhandler.h \
+    xmlerrorhandler.h \
     containerhandler.h \
-    sortedlibrary.h
+    sortedlibrary.h \
+    ncxhandler.h
 
 RESOURCES += \
     dorian.qrc

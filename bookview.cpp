@@ -167,13 +167,11 @@ void BookView::onSettingsChanged(const QString &key)
     }
     else if (key == "font") {
         QString face = Settings::instance()->value("font").toString();
-        qDebug() << "" << face;
         settings()->setFontFamily(QWebSettings::StandardFont, face);
     }
     else if (key == "scheme") {
         QWebFrame *frame = page()->mainFrame();
         QString scheme = Settings::instance()->value("scheme").toString();
-        qDebug() << "" << scheme;
         if ((scheme != "day") && (scheme != "night") && (scheme != "sand") &&
             (scheme != "default")) {
             scheme = "default";
@@ -183,8 +181,6 @@ void BookView::onSettingsChanged(const QString &key)
         QString scriptText = script.readAll();
         script.close();
         QVariant ret = frame->evaluateJavaScript(scriptText);
-        qDebug() << "" << script.fileName() << ":" << scriptText;
-        qDebug() << "" << ret;
     }
 }
 
