@@ -1,11 +1,12 @@
 #ifndef INFODIALOG_H
 #define INFODIALOG_H
 
-#include <QDialog>
+#include "dialog.h"
 
+class QWidget;
 class Book;
 
-class InfoDialog: public QDialog
+class InfoDialog: public Dialog
 {
     Q_OBJECT
 

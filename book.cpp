@@ -289,6 +289,12 @@ void Book::addBookmark(int chapter, qreal position)
     save();
 }
 
+void Book::deleteBookmark(int index)
+{
+    mBookmarks.removeAt(index);
+    save();
+}
+
 QList<Book::Bookmark> Book::bookmarks() const
 {
     return mBookmarks;

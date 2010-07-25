@@ -1,3 +1,10 @@
+dorian (0.0.11-1) unstable; urgency=low
+
+  * Facelift bookmark manager
+  * Make Maemo friendly dialog box class
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 25 Jul 2010 20:00:00 +0200
+
 dorian (0.0.10-1) unstable; urgency=low
 
   * Turn library into proper model
@@ -8,7 +15,7 @@ dorian (0.0.10-1) unstable; urgency=low
   * Read chapter titles from NCX directory
   * Display chapter titles for bookmarks
 
- -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
+ -- Akos Polster <akos@pipacs.com>  Sat, 24 Jul 2010 20:00:00 +0200
 
 dorian (0.0.9-1) unstable; urgency=low
 

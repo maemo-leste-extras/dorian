@@ -2,62 +2,108 @@
 
 #include "bookmarksdialog.h"
 #include "book.h"
+#include "bookmarkinfodialog.h"
 
 BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
-    QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
-            Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint)
+    QMainWindow(parent), book(book_)
 {
-    setWindowTitle(tr("Bookmarks"));
-#ifndef Q_WS_MAEMO_5
-    setSizeGripEnabled(true);
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
+    setWindowTitle(tr("Bookmarks"));
+
+    QFrame *frame = new QFrame(this);
+    setCentralWidget(frame);
+    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
+    frame->setLayout(horizontalLayout);
 
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     foreach (Book::Bookmark bookmark, book_->bookmarks()) {
         QString contentId = book_->toc[bookmark.chapter];
         QString contentTitle = book_->content[contentId].name;
-        list->addItem(contentTitle + ", at " +
-                      QString::number((int)(bookmark.pos * 100)) + "%");
+        (void)new QListWidgetItem(QIcon(":icons/bookmark.png"), contentTitle +
+            "\nAt " + QString::number((int)(bookmark.pos*100)) + "%", list);
     }
 
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->addWidget(list);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
 #ifndef Q_WS_MAEMO_5
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
+
     QPushButton *goButton = new QPushButton(tr("Go"), this);
-    buttonBox->addButton(goButton, QDialogButtonBox::AcceptRole);
+    buttonBox->addButton(goButton, QDialogButtonBox::ActionRole);
     connect(goButton, SIGNAL(clicked()), this, SLOT(onGo()));
-#endif
+
+    QPushButton *closeButton = new QPushButton(tr("Close"), this);
+    buttonBox->addButton(closeButton, QDialogButtonBox::AcceptRole);
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(onClose()));
+
     QPushButton *addButton = new QPushButton(tr("Add"), this);
     buttonBox->addButton(addButton, QDialogButtonBox::ActionRole);
     connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
 
-    horizontalLayout->addWidget(buttonBox);
+    QPushButton *deleteButton = new QPushButton(tr("Delete"), this);
+    buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(onDelete()));
 
-#ifdef Q_WS_MAEMO_5
+    horizontalLayout->addWidget(buttonBox);
+#else
+    QAction *addBookmarkAction = menuBar()->addAction(tr("Add bookmark"));
+    connect(addBookmarkAction, SIGNAL(triggered()), this, SLOT(onAdd()));
+#endif // Q_WS_MAEMO_5
     connect(list, SIGNAL(itemActivated(QListWidgetItem *)),
             this, SLOT(onItemActivated(QListWidgetItem *)));
-#endif
 }
 
 void BookmarksDialog::onGo()
 {
-    if (list->selectedItems().isEmpty()) {
-        return;
+    if (!list->selectedItems().isEmpty()) {
+        QListWidgetItem *item = list->selectedItems()[0];
+        emit goToBookmark(list->row(item));
+        close();
     }
-    QListWidgetItem *item = list->selectedItems()[0];
-    int index = list->row(item) + 1;
-    done(index);
 }
 
 void BookmarksDialog::onItemActivated(QListWidgetItem *item)
 {
-    done(list->row(item) + 1);
+    switch ((new BookmarkInfoDialog(book, list->row(item), this))->exec()) {
+    case BookmarkInfoDialog::GoTo:
+        onGo();
+        break;
+    case BookmarkInfoDialog::Delete:
+        onDelete();
+        break;
+    default:
+        ;
+    }
 }
 
 void BookmarksDialog::onAdd()
 {
-    done(-1);
+    emit addBookmark();
+    close();
+}
+
+void BookmarksDialog::onClose()
+{
+    close();
+}
+
+void BookmarksDialog::onDelete()
+{
+    if (!list->selectedItems().isEmpty()) {
+        QListWidgetItem *item = list->selectedItems()[0];
+        int row = list->row(item);
+        book->deleteBookmark(row);
+        delete item;
+    }
+}
+
+void BookmarksDialog::closeEvent(QCloseEvent *event)
+{
+#ifdef Q_WS_MAEMO_5
+    menuBar()->clear();
+#endif
+    event->accept();
 }

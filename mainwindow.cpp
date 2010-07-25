@@ -202,14 +202,11 @@ void MainWindow::showBookmarks()
     Book *book = Library::instance()->book(mCurrent);
     if (book) {
         BookmarksDialog *bookmarks = new BookmarksDialog(book, this);
-        int ret = bookmarks->exec();
-        if (ret > 0) {
-            int index = ret - 1;
-            view->goToBookmark(book->bookmarks()[index]);
-        }
-        else if (ret < 0) {
-            view->addBookmark();
-        }
+        bookmarks->setWindowModality(Qt::WindowModal);
+        connect(bookmarks, SIGNAL(addBookmark()), this, SLOT(onAddBookmark()));
+        connect(bookmarks, SIGNAL(goToBookmark(int)),
+                this, SLOT(onGoToBookmark(int)));
+        bookmarks->show();
     }
 }
 
@@ -290,4 +287,15 @@ void MainWindow::onChapterLoadEnd(int index)
 #endif // Q_WS_MAEMO_5
     previousAction->setEnabled(enablePrevious);
     nextAction->setEnabled(enableNext);
+}
+
+void MainWindow::onAddBookmark()
+{
+    view->addBookmark();
+}
+
+void MainWindow::onGoToBookmark(int index)
+{
+    Book *book = Library::instance()->book(mCurrent);
+    view->goToBookmark(book->bookmarks()[index]);
 }

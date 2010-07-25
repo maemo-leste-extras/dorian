@@ -77,6 +77,9 @@ public:
     /** Add bookmark. */
     void addBookmark(int chapter, qreal position);
 
+    /** Delete bookmark. */
+    void deleteBookmark(int index);
+
     /** List bookmarks. */
     QList<Bookmark> bookmarks() const;
 

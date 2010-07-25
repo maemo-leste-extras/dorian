@@ -9,7 +9,6 @@ SOURCES += \
     extractzip.cpp \
     library.cpp \
     book.cpp \
-    info.cpp \
     librarydialog.cpp \
     devtools.cpp \
     infodialog.cpp \
@@ -17,7 +16,9 @@ SOURCES += \
     settingswindow.cpp \
     settings.cpp \
     bookmarksdialog.cpp \
-    sortedlibrary.cpp
+    sortedlibrary.cpp \
+    bookmarkinfodialog.cpp \
+    dialog.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -29,7 +30,6 @@ HEADERS += \
     extractzip.h \
     library.h \
     book.h \
-    info.h \
     librarydialog.h \
     devtools.h \
     infodialog.h \
@@ -40,7 +40,9 @@ HEADERS += \
     xmlerrorhandler.h \
     containerhandler.h \
     sortedlibrary.h \
-    ncxhandler.h
+    ncxhandler.h \
+    bookmarkinfodialog.h \
+    dialog.h
 
 RESOURCES += \
     dorian.qrc

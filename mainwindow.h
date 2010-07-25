@@ -30,6 +30,8 @@ public slots:
     void onSettingsChanged(const QString &key);
     void onChapterLoadStart();
     void onChapterLoadEnd(int index);
+    void onAddBookmark();
+    void onGoToBookmark(int index);
 
 protected:
 #ifdef Q_WS_MAEMO5
