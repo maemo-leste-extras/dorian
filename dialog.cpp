@@ -47,3 +47,8 @@ void Dialog::addButton(QPushButton *button, QDialogButtonBox::ButtonRole role)
 {
     buttonBox->addButton(button, role);
 }
+
+QPushButton *Dialog::addButton(QDialogButtonBox::StandardButton button)
+{
+    return buttonBox->addButton(button);
+}

@@ -27,6 +27,9 @@ public:
     void addButton(QPushButton *button,
         QDialogButtonBox::ButtonRole role = QDialogButtonBox::AcceptRole);
 
+    /** Add standard button to the dialog button box. */
+    QPushButton *addButton(QDialogButtonBox::StandardButton button);
+
 protected:
     QScrollArea *scroller;
     QWidget *content;

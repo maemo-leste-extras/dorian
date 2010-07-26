@@ -25,7 +25,7 @@ public slots:
     void onAdd();
     void onItemActivated(QListWidgetItem *);
     void onClose();
-    void onDelete();
+    void onDelete(bool really = false);
 
 protected:
     void closeEvent(QCloseEvent *e);

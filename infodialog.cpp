@@ -47,7 +47,7 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent): Dialog(parent), book(b)
     connect(read, SIGNAL(clicked()), this, SLOT(onReadBook()));
     connect(remove, SIGNAL(clicked()), this, SLOT(onRemoveBook()));
     addButton(read, QDialogButtonBox::ActionRole);
-    addButton(remove, QDialogButtonBox::ActionRole);
+    addButton(remove, QDialogButtonBox::DestructiveRole);
 }
 
 void InfoDialog::onReadBook()

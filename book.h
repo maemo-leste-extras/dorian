@@ -85,7 +85,7 @@ public:
 
     /**
      * Get friendly name.
-     * @return  @see title or path name if title is not available yet.
+     * @return @see title or path name if title is not available yet.
      */
     QString name() const;
 

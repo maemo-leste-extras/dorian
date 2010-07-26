@@ -23,7 +23,7 @@ BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
     connect(read, SIGNAL(clicked()), this, SLOT(onRead()));
     connect(remove, SIGNAL(clicked()), this, SLOT(onRemove()));
     addButton(read, QDialogButtonBox::ActionRole);
-    addButton(remove, QDialogButtonBox::ActionRole);
+    addButton(remove, QDialogButtonBox::DestructiveRole);
 }
 
 void BookmarkInfoDialog::onRead()
@@ -33,5 +33,10 @@ void BookmarkInfoDialog::onRead()
 
 void BookmarkInfoDialog::onRemove()
 {
-    done(Delete);
+    if (QMessageBox::Yes ==
+        QMessageBox::question(this, tr("Delete bookmark"),
+                              tr("Delete bookmark?"),
+                              QMessageBox::Yes | QMessageBox::No)) {
+        done(Delete);
+    }
 }

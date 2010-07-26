@@ -31,12 +31,11 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
 #ifndef Q_WS_MAEMO_5
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
 
-    QPushButton *goButton = new QPushButton(tr("Go"), this);
+    QPushButton *goButton = new QPushButton(tr("Go to"), this);
     buttonBox->addButton(goButton, QDialogButtonBox::ActionRole);
     connect(goButton, SIGNAL(clicked()), this, SLOT(onGo()));
 
-    QPushButton *closeButton = new QPushButton(tr("Close"), this);
-    buttonBox->addButton(closeButton, QDialogButtonBox::AcceptRole);
+    QPushButton *closeButton = buttonBox->addButton(QDialogButtonBox::Close);
     connect(closeButton, SIGNAL(clicked()), this, SLOT(onClose()));
 
     QPushButton *addButton = new QPushButton(tr("Add"), this);
@@ -72,7 +71,7 @@ void BookmarksDialog::onItemActivated(QListWidgetItem *item)
         onGo();
         break;
     case BookmarkInfoDialog::Delete:
-        onDelete();
+        onDelete(true);
         break;
     default:
         ;
@@ -90,14 +89,23 @@ void BookmarksDialog::onClose()
     close();
 }
 
-void BookmarksDialog::onDelete()
+void BookmarksDialog::onDelete(bool really)
 {
-    if (!list->selectedItems().isEmpty()) {
-        QListWidgetItem *item = list->selectedItems()[0];
-        int row = list->row(item);
-        book->deleteBookmark(row);
-        delete item;
+    if (list->selectedItems().isEmpty()) {
+        return;
     }
+    if (!really) {
+        if (QMessageBox::Yes !=
+            QMessageBox::question(this, tr("Delete bookmark"),
+                                  tr("Delete bookmark?"),
+                                  QMessageBox::Yes | QMessageBox::No)) {
+            return;
+        }
+    }
+    QListWidgetItem *item = list->selectedItems()[0];
+    int row = list->row(item);
+    book->deleteBookmark(row);
+    delete item;
 }
 
 void BookmarksDialog::closeEvent(QCloseEvent *event)
