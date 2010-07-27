@@ -32,6 +32,8 @@ public slots:
     void onChapterLoadEnd(int index);
     void onAddBookmark();
     void onGoToBookmark(int index);
+    void showChapters();
+    void onGoToChapter(int index);
 
 protected:
 #ifdef Q_WS_MAEMO5
@@ -59,6 +61,7 @@ private:
     QAction *backwardAction;
     QAction *previousAction;
     QAction *nextAction;
+    QAction *chaptersAction;
     QToolBar *toolBar;
     QDialog *settings;
     DevTools *devTools;

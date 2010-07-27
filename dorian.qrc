@@ -35,5 +35,7 @@
         <file>icons/settings-landscape.png</file>
         <file>icons/next-disabled.png</file>
         <file>icons/previous-disabled.png</file>
+        <file>icons/chapters.png</file>
+        <file>icons/mac/chapters.png</file>
     </qresource>
 </RCC>

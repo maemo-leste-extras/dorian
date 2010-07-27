@@ -18,6 +18,7 @@
 #include "settingswindow.h"
 #include "bookmarksdialog.h"
 #include "settings.h"
+#include "chaptersdialog.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -55,27 +56,34 @@ MainWindow::MainWindow(QWidget *parent):
 #if defined(Q_WS_X11) && !defined(Q_WS_MAEMO_5)
     toolBar->setIconSize(QSize(42, 42));
 #endif
+
     previousAction = addToolBarAction(view, SLOT(goPrevious()), "previous");
     nextAction = addToolBarAction(view, SLOT(goNext()), "next");
-    bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
-                                       "bookmarks");
+    chaptersAction = addToolBarAction(this, SLOT(showChapters()), "chapters");
+    bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()), "bookmarks");
+
 #ifdef Q_WS_MAEMO_5
-    infoAction = new QAction(this);
+    infoAction = menuBar()->addAction(tr("Book details"));
+    connect(infoAction, SIGNAL(triggered()), this, SLOT(showInfo()));
+    libraryAction = menuBar()->addAction(tr("Library"));
+    connect(libraryAction, SIGNAL(triggered()), this, SLOT(showLibrary()));
+    settingsAction = menuBar()->addAction(tr("Settings"));
+    connect(settingsAction, SIGNAL(triggered()), this, SLOT(showSettings()));
+    devToolsAction = menuBar()->addAction(tr("Developer"));
+    connect(devToolsAction, SIGNAL(triggered()), this, SLOT(showDevTools()));
 #else
     infoAction = addToolBarAction(this, SLOT(showInfo()), "document-properties");
-#endif
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
                                      "system-file-manager");
     settingsAction = addToolBarAction(this, SLOT(showSettings()),
                                       "preferences-system");
-#ifdef Q_WS_MAEMO_5
-    devToolsAction = new QAction(this);
-#else
     devToolsAction = addToolBarAction(this, SLOT(showDevTools()), "developer");
+#endif // Q_WS_MAEMO_5
+
     QFrame *frame = new QFrame(toolBar);
     frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     toolBar->addWidget(frame);
-#endif
+
     fullScreenAction = addToolBarAction(this, SLOT(showFullScreen()),
                                         "view-fullscreen");
 
@@ -299,3 +307,21 @@ void MainWindow::onGoToBookmark(int index)
     Book *book = Library::instance()->book(mCurrent);
     view->goToBookmark(book->bookmarks()[index]);
 }
+
+void MainWindow::showChapters()
+{
+    Book *book = Library::instance()->book(mCurrent);
+    if (book) {
+        ChaptersDialog *chapters = new ChaptersDialog(book, this);
+        chapters->setWindowModality(Qt::WindowModal);
+        connect(chapters, SIGNAL(goToChapter(int)),
+                this, SLOT(onGoToChapter(int)));
+        chapters->show();
+    }
+}
+
+void MainWindow::onGoToChapter(int index)
+{
+    view->goToBookmark(Book::Bookmark(index, 0));
+}
+
