@@ -19,7 +19,8 @@ SOURCES += \
     sortedlibrary.cpp \
     bookmarkinfodialog.cpp \
     dialog.cpp \
-    chaptersdialog.cpp
+    chaptersdialog.cpp \
+    fullscreenwindow.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS += \
     ncxhandler.h \
     bookmarkinfodialog.h \
     dialog.h \
-    chaptersdialog.h
+    chaptersdialog.h \
+    fullscreenwindow.h
 
 RESOURCES += \
     dorian.qrc

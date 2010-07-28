@@ -10,16 +10,17 @@ TranslucentButton::TranslucentButton(const QString &name_, QWidget *parent):
     QWidget(parent), name(name_), mOpacity(1.)
 {
     setGeometry(0, 0, 50, 50);
-    hide();
+    show();
 }
 
-void TranslucentButton::paintEvent(QPaintEvent *e)
+void TranslucentButton::paintEvent(QPaintEvent *)
 {
-    (void)e;
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.drawPixmap(0, 0, QPixmap(ICON_PREFIX + name + ".png").
-        scaled(QSize(95, 95), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    if (mOpacity < 1) {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.drawPixmap(0, 0, QPixmap(ICON_PREFIX + name + ".png").scaled(
+                QSize(95, 95), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    }
 }
 
 void TranslucentButton::flash()
@@ -29,18 +30,11 @@ void TranslucentButton::flash()
     ani->setStartValue(0.);
     ani->setEndValue(1.);
     ani->setEasingCurve(QEasingCurve::OutQuart);
-    show();
     ani->start(QPropertyAnimation::DeleteWhenStopped);
-    connect(ani, SIGNAL(destroyed()), this, SLOT(onAnimationEnd()));
 }
 
 void TranslucentButton::setOpacity(qreal opacity)
 {
     mOpacity = opacity;
     update();
-}
-
-void TranslucentButton::onAnimationEnd()
-{
-    hide();
 }

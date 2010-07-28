@@ -15,11 +15,6 @@ public:
     qreal opacity() const {return mOpacity;}
     void setOpacity(qreal opacity);
 
-signals:
-
-public slots:
-    void onAnimationEnd();
-
 protected:
     virtual void paintEvent(QPaintEvent *);
 

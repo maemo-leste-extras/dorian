@@ -14,11 +14,11 @@
 #include "librarydialog.h"
 #include "devtools.h"
 #include "mainwindow.h"
-#include "translucentbutton.h"
 #include "settingswindow.h"
 #include "bookmarksdialog.h"
 #include "settings.h"
 #include "chaptersdialog.h"
+#include "fullscreenwindow.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -35,7 +35,7 @@ const Qt::WindowFlags WIN_BIG_FLAGS =
 const int WIN_BIG_TIMER = 3000;
 
 MainWindow::MainWindow(QWidget *parent):
-        QMainWindow(parent), view(0), isFullscreen(false)
+        QMainWindow(parent), view(0), fullScreenWindow(0)
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -91,9 +91,6 @@ MainWindow::MainWindow(QWidget *parent):
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
 
-    normalFlags = windowFlags();
-    restoreButton = new TranslucentButton("view-fullscreen", this);
-
     // Load book on command line, or load last read book, or load default book
     Library *library = Library::instance();
     if (QCoreApplication::arguments().size() == 2) {
@@ -142,24 +139,19 @@ void MainWindow::onCurrentBookChanged()
 void MainWindow::showNormal()
 {
     qDebug() << "MainWindow::showNormal";
-    isFullscreen = false;
-    setWindowFlags(normalFlags);
-    hide();
-    setGeometry(normalGeometry);
-    toolBar->show();
-    restoreButton->hide();
+    view->setParent(this);
+    setCentralWidget(view);
     show();
+    delete fullScreenWindow;
+    fullScreenWindow = 0;
 }
 
 void MainWindow::showFullScreen()
 {
     qDebug() << "MainWindow::showFullscreen";
-    normalGeometry = geometry();
-    isFullscreen = true;
-    toolBar->hide();
-    setWindowFlags(normalFlags | WIN_BIG_FLAGS);
-    showMaximized();
-    restoreButton->flash();
+    fullScreenWindow = new FullScreenWindow(view, this);
+    fullScreenWindow->showFullScreen();
+    connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showNormal()));
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -216,28 +208,6 @@ void MainWindow::showBookmarks()
                 this, SLOT(onGoToBookmark(int)));
         bookmarks->show();
     }
-}
-
-void MainWindow::MOUSE_ACTIVATE_EVENT(QMouseEvent *event)
-{
-    qDebug() << "MainWindow::mousePress/ReleaseEvent at" << event->pos()
-            << "against" << fullScreenZone();
-    if (isFullscreen && fullScreenZone().contains(event->x(), event->y())) {
-        qDebug() << " In fullScreenZone";
-        showNormal();
-    }
-    QMainWindow::MOUSE_ACTIVATE_EVENT(event);
-}
-
-QRect MainWindow::fullScreenZone() const
-{
-    return QRect(width() / 2 - 45, height() - 104, 95, 95);
-}
-
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    (void)event;
-    restoreButton->setGeometry(fullScreenZone());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

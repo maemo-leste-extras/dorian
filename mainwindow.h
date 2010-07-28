@@ -8,7 +8,7 @@ class QModelIndex;
 class DevTools;
 class BookView;
 class Book;
-class TranslucentButton;
+class FullScreenWindow;
 
 class MainWindow: public QMainWindow
 {
@@ -36,20 +36,12 @@ public slots:
     void onGoToChapter(int index);
 
 protected:
-#ifdef Q_WS_MAEMO5
-#   define MOUSE_ACTIVATE_EVENT mouseReleaseEvent
-#else
-#   define MOUSE_ACTIVATE_EVENT mousePressEvent
-#endif
-    virtual void MOUSE_ACTIVATE_EVENT(QMouseEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
     virtual void closeEvent(QCloseEvent *event);
 
 private:
     void setCurrentBook(const QModelIndex &current);
     QAction *addToolBarAction(const QObject *receiver, const char *member,
                               const QString &name);
-    QRect fullScreenZone() const;
     BookView *view;
     QAction *settingsAction;
     QAction *libraryAction;
@@ -66,10 +58,7 @@ private:
     QDialog *settings;
     DevTools *devTools;
     QModelIndex mCurrent;
-    Qt::WindowFlags normalFlags;
-    TranslucentButton *restoreButton;
-    bool isFullscreen;
-    QRect normalGeometry;
+    FullScreenWindow *fullScreenWindow;
 };
 
 #endif // MAINWINDOW_H
