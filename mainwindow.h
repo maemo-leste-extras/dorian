@@ -25,8 +25,8 @@ public slots:
     void showDevTools();
     void showBookmarks();
     void onCurrentBookChanged();
-    void showNormal();
-    void showFullScreen();
+    void showRegular();
+    void showBig();
     void onSettingsChanged(const QString &key);
     void onChapterLoadStart();
     void onChapterLoadEnd(int index);

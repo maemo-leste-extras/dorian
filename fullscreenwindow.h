@@ -9,8 +9,10 @@ class FullScreenWindow: public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit FullScreenWindow(QWidget *child, QWidget *parent);
+    explicit FullScreenWindow(QWidget *parent);
     void showFullScreen();
+    void takeChild(QWidget *child);
+    void leaveChild();
 
 signals:
     void restore();
@@ -27,6 +29,7 @@ protected:
     virtual void resizeEvent(QResizeEvent *event);
     QRect fullScreenZone() const;
     TranslucentButton *restoreButton;
+    QWidget *child;
 };
 
 #endif // FULLSCREENWINDOW_H

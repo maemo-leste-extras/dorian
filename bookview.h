@@ -49,9 +49,9 @@ private:
     int contentIndex;
     Book *mBook;
     bool restore;
-    qreal restorePos;
+    qreal positionAfterLoad;
     QImage bookmarkImage;
-    bool loadFinished;
+    bool loaded;
 };
 
 #endif // BOOKVIEW_H

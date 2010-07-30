@@ -19,6 +19,7 @@
 #include "settings.h"
 #include "chaptersdialog.h"
 #include "fullscreenwindow.h"
+#include "trace.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -30,21 +31,24 @@
 #   define ICON_PREFIX ":/icons/"
 #endif
 
-const Qt::WindowFlags WIN_BIG_FLAGS =
-        Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint;
-const int WIN_BIG_TIMER = 3000;
-
-MainWindow::MainWindow(QWidget *parent):
-        QMainWindow(parent), view(0), fullScreenWindow(0)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), view(0)
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
     setWindowTitle("Dorian");
 
+    // Central widget. Must be an intermediate because of reparenting the book view
+    QFrame *central = new QFrame(this);
+    QVBoxLayout *layout = new QVBoxLayout(central);
+    layout->setMargin(0);
+    central->setLayout(layout);
+    setCentralWidget(central);
+
     // Book view
-    view = new BookView(this);
-    setCentralWidget(view);
+    view = new BookView(central);
+    view->show();
+    layout->addWidget(view);
 
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
@@ -84,8 +88,7 @@ MainWindow::MainWindow(QWidget *parent):
     frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     toolBar->addWidget(frame);
 
-    fullScreenAction = addToolBarAction(this, SLOT(showFullScreen()),
-                                        "view-fullscreen");
+    fullScreenAction = addToolBarAction(this, SLOT(showBig()), "view-fullscreen");
 
     // Handle model changes
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
@@ -126,6 +129,10 @@ MainWindow::MainWindow(QWidget *parent):
     connect(view, SIGNAL(chapterLoadEnd(int)),
             this, SLOT(onChapterLoadEnd(int)));
 
+    // Shadow window for full screen
+    fullScreenWindow = new FullScreenWindow(this);
+    connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
+
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
 #endif
@@ -136,22 +143,21 @@ void MainWindow::onCurrentBookChanged()
     setCurrentBook(Library::instance()->nowReading());
 }
 
-void MainWindow::showNormal()
+void MainWindow::showRegular()
 {
-    qDebug() << "MainWindow::showNormal";
-    view->setParent(this);
-    setCentralWidget(view);
-    show();
-    delete fullScreenWindow;
-    fullScreenWindow = 0;
+    Trace t("MainWindow::showRegular");
+    fullScreenWindow->hide();
+    fullScreenWindow->leaveChild();
+    view->setParent(centralWidget());
+    centralWidget()->layout()->addWidget(view);
 }
 
-void MainWindow::showFullScreen()
+void MainWindow::showBig()
 {
-    qDebug() << "MainWindow::showFullscreen";
-    fullScreenWindow = new FullScreenWindow(view, this);
+    Trace t("MainWindow::showBig");
+    centralWidget()->layout()->removeWidget(view);
+    fullScreenWindow->takeChild(view);
     fullScreenWindow->showFullScreen();
-    connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showNormal()));
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -212,13 +218,14 @@ void MainWindow::showBookmarks()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    qDebug() << "MainWindow::closeEvent";
+    Trace t("MainWindow::closeEvent");
     view->setLastBookmark();
     event->accept();
 }
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
+    Trace t("MainWindow::onSettingsChanged");
 #ifdef Q_WS_MAEMO_5
     if (key == "orientation") {
         QString value = Settings::instance()->value(key).toString();
@@ -238,6 +245,7 @@ void MainWindow::onSettingsChanged(const QString &key)
 
 void MainWindow::onChapterLoadStart()
 {
+    Trace t("MainWindow::onChapterLoadStart");
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
 #endif
@@ -245,6 +253,7 @@ void MainWindow::onChapterLoadStart()
 
 void MainWindow::onChapterLoadEnd(int index)
 {
+    Trace t("MainWindow::onChapterLoadEnd");
     bool enablePrevious = false;
     bool enableNext = false;
     Book *book = Library::instance()->book(mCurrent);
@@ -269,11 +278,13 @@ void MainWindow::onChapterLoadEnd(int index)
 
 void MainWindow::onAddBookmark()
 {
+    Trace t("MainWindow:onAddBookmark");
     view->addBookmark();
 }
 
 void MainWindow::onGoToBookmark(int index)
 {
+    Trace t("MainWindow::onGoToBookmark");
     Book *book = Library::instance()->book(mCurrent);
     view->goToBookmark(book->bookmarks()[index]);
 }
@@ -294,4 +305,3 @@ void MainWindow::onGoToChapter(int index)
 {
     view->goToBookmark(Book::Bookmark(index, 0));
 }
-

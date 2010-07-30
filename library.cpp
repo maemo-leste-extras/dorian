@@ -4,6 +4,7 @@
 
 #include "library.h"
 #include "book.h"
+#include "trace.h"
 
 Library *Library::mInstance = 0;
 
@@ -54,7 +55,7 @@ Book *Library::book(const QModelIndex &index)
         if ((index.row() >= 0) && (index.row() < mBooks.size())) {
             return mBooks[index.row()];
         } else {
-            qWarning() << "*** Library::book: Bad index" << index.row();
+            qCritical() << "*** Library::book: Bad index" << index.row();
         }
     }
     return 0;
@@ -97,12 +98,13 @@ void Library::save()
 
 bool Library::add(QString path)
 {
+    Trace t("Library::add " + path);
     if (path == "") {
-        qWarning() << "*** Library::add: Empty path";
+        qCritical() << "*** Library::add: Empty path";
         return false;
     }
     if (find(path).isValid()) {
-        qDebug() << "Library::add: Book already exists in library";
+        t.trace("Book already exists in library");
         return false;
     }
     int size = mBooks.size();
@@ -134,7 +136,6 @@ void Library::remove(const QModelIndex &index)
 
 QModelIndex Library::nowReading() const
 {
-    qDebug() << "Library::nowReading" << mNowReading.row();
     return mNowReading;
 }
 

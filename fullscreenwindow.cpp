@@ -3,24 +3,29 @@
 #include "fullscreenwindow.h"
 #include "translucentbutton.h"
 
-FullScreenWindow::FullScreenWindow(QWidget *child, QWidget *parent):
-        QMainWindow(parent)
+FullScreenWindow::FullScreenWindow(QWidget *parent): QMainWindow(parent), child(0)
 {
     Q_ASSERT(parent);
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
-    setAttribute(Qt::WA_Maemo5PortraitOrientation,
-                 parent->testAttribute(Qt::WA_Maemo5PortraitOrientation));
-    setAttribute(Qt::WA_Maemo5LandscapeOrientation,
-                 parent->testAttribute(Qt::WA_Maemo5LandscapeOrientation));
+    setAttribute(Qt::WA_Maemo5NonComposited, true);
 #endif // Q_WS_MAEMO_5
-    child->setParent(this);
-    setCentralWidget(child);
+    QFrame *frame = new QFrame(this);
+    QVBoxLayout *layout = new QVBoxLayout(frame);
+    layout->setMargin(0);
+    frame->setLayout(layout);
+    setCentralWidget(frame);
     restoreButton = new TranslucentButton("view-fullscreen", this);
 }
 
 void FullScreenWindow::showFullScreen()
 {
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5PortraitOrientation, parentWidget()->
+                 testAttribute(Qt::WA_Maemo5PortraitOrientation));
+    setAttribute(Qt::WA_Maemo5LandscapeOrientation, parentWidget()->
+                 testAttribute(Qt::WA_Maemo5LandscapeOrientation));
+#endif // Q_WS_MAEMO_5
     QWidget::showFullScreen();
     restoreButton->flash();
 }
@@ -42,4 +47,22 @@ void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
     restoreButton->setGeometry(fullScreenZone());
     QMainWindow::resizeEvent(e);
+}
+
+void FullScreenWindow::takeChild(QWidget *c)
+{
+    leaveChild();
+    if (c) {
+        child = c;
+        child->setParent(centralWidget());
+        centralWidget()->layout()->addWidget(child);
+    }
+}
+
+void FullScreenWindow::leaveChild()
+{
+    if (child) {
+        centralWidget()->layout()->removeWidget(child);
+        child = 0;
+    }
 }

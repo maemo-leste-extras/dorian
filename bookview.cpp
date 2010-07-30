@@ -3,12 +3,14 @@
 #include <QMouseEvent>
 #include <QFile>
 #include <QDir>
+#include <QTimer>
 
 #include "book.h"
 #include "bookview.h"
 #include "library.h"
 #include "selectionsuppressor.h"
 #include "settings.h"
+#include "trace.h"
 
 #ifdef Q_WS_MAC
 #   define ICON_PREFIX ":/icons/mac/"
@@ -17,9 +19,10 @@
 #endif
 
 BookView::BookView(QWidget *parent):
-    QWebView(parent), contentIndex(-1), mBook(0),
-    restore(true), restorePos(0), loadFinished(false)
+    QWebView(parent), contentIndex(-1), mBook(0), restore(true),
+    positionAfterLoad(0), loaded(false)
 {
+    Trace t("BookView::BookView");
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
     settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     settings()->setAttribute(QWebSettings::PluginsEnabled, false);
@@ -61,11 +64,13 @@ BookView::BookView(QWidget *parent):
 
 BookView::~BookView()
 {
+    Trace t("BookView::~BookView");
     removeIcons();
 }
 
 void BookView::loadContent(int index)
 {
+    Trace t("BookView::loadContent");
     if (!mBook) {
         return;
     }
@@ -78,7 +83,7 @@ void BookView::loadContent(int index)
         setHtml(contentFile);
     }
     else {
-        loadFinished = false;
+        loaded = false;
         emit chapterLoadStart(index);
         load(QUrl(contentFile));
     }
@@ -87,8 +92,7 @@ void BookView::loadContent(int index)
 
 void BookView::setBook(Book *book)
 {
-    qDebug() << "Book::setBook" << (book? book->path(): "");
-
+    Trace t("BookView::setBook");
     setLastBookmark();
     if (book != mBook) {
         mBook = book;
@@ -111,17 +115,19 @@ Book *BookView::book()
 
 void BookView::goPrevious()
 {
+    Trace t("BookView::goPrevious");
     loadContent(contentIndex - 1);
 }
 
 void BookView::goNext()
 {
+    Trace t("BookView::goNext");
     loadContent(contentIndex + 1);
 }
 
 void BookView::setLastBookmark()
 {
-    qDebug() << "BookView::setLastBookmark";
+    Trace t("BookView::saveLastBookmark");
     if (mBook) {
         int height = page()->mainFrame()->contentsSize().height();
         int pos = page()->mainFrame()->scrollPosition().y();
@@ -131,9 +137,10 @@ void BookView::setLastBookmark()
 
 void BookView::goToBookmark(const Book::Bookmark &bookmark)
 {
+    Trace t("BookView::goToBookmark");
     if (mBook) {
         restore = true;
-        restorePos = bookmark.pos;
+        positionAfterLoad = bookmark.pos;
         if (bookmark.chapter != contentIndex) {
             loadContent(bookmark.chapter);
         } else {
@@ -144,16 +151,18 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
 
 void BookView::onLoadFinished(bool ok)
 {
-    qDebug() << "BookView::onLoadFinished" << ok;
-    loadFinished = true;
-    addNavigationBar();
+    Trace t(QString("BookView::onLoadFinished: %1").arg(ok));
+    loaded = true;
+    if (ok) {
+        addNavigationBar();
+    }
     onSettingsChanged("scheme");
     emit chapterLoadEnd(contentIndex);
     if (restore) {
         restore = false;
         if (ok && mBook) {
             int height = page()->mainFrame()->contentsSize().height();
-            int scrollPos = (qreal)height * restorePos;
+            int scrollPos = (qreal)height * positionAfterLoad;
             page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));
         }
     }
@@ -161,7 +170,7 @@ void BookView::onLoadFinished(bool ok)
 
 void BookView::onSettingsChanged(const QString &key)
 {
-    qDebug() << "BookView::onSettingsChanged" << key;
+    Trace t("BookView::onSettingsChanged " + key);
     if (key == "zoom") {
         setZoomFactor(Settings::instance()->value(key).toFloat() / 100.);
     }
@@ -187,14 +196,11 @@ void BookView::onSettingsChanged(const QString &key)
 void BookView::paintEvent(QPaintEvent *e)
 {
     QWebView::paintEvent(e);
-    if (!mBook) {
+    if (!mBook || !loaded) {
         return;
     }
 
     // Paint bookmarks
-    if (!loadFinished) {
-        return;
-    }
     QPoint scrollPos = page()->mainFrame()->scrollPosition();
     QPixmap bookmarkPixmap = QPixmap::fromImage(bookmarkImage);
     QPainter painter(this);
@@ -217,21 +223,23 @@ void BookView::mousePressEvent(QMouseEvent *e)
         e->accept();
         return;
     }
-#endif
+#endif // Q_WS_MAEMO_5
     e->ignore();
 }
 
 void BookView::addBookmark()
 {
+    Trace t("BookView::addBookmark");
     int y = page()->mainFrame()->scrollPosition().y();
     int height = page()->mainFrame()->contentsSize().height();
-    qDebug() << "BookView::addBookMark" << ((qreal)y / (qreal)height);
+    t.trace(QString().setNum((qreal)y / (qreal)height));
     mBook->addBookmark(contentIndex, (qreal)y / (qreal)height);
     repaint();
 }
 
 void BookView::addNavigationBar()
 {
+    Trace t("BookView::addNavigationBar");
     if (!mBook) {
         return;
     }
@@ -275,8 +283,6 @@ QString BookView::tmpPath()
 
 void BookView::extractIcons()
 {
-    qDebug() << "BookView::extractIcons: Extracting to" << tmpPath();
-
     QFile next(ICON_PREFIX + QString("/next.png"));
     QFile prev(ICON_PREFIX + QString("/previous.png"));
 

@@ -20,7 +20,8 @@ SOURCES += \
     bookmarkinfodialog.cpp \
     dialog.cpp \
     chaptersdialog.cpp \
-    fullscreenwindow.cpp
+    fullscreenwindow.cpp \
+    trace.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -46,7 +47,8 @@ HEADERS += \
     bookmarkinfodialog.h \
     dialog.h \
     chaptersdialog.h \
-    fullscreenwindow.h
+    fullscreenwindow.h \
+    trace.h
 
 RESOURCES += \
     dorian.qrc
