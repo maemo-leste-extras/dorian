@@ -6,10 +6,13 @@
 #include <QHash>
 #include <QIcon>
 #include <QMetaType>
+#include <QObject>
 
 /** A book. */
-class Book
+class Book: public QObject
 {
+    Q_OBJECT
+
 public:
 
     /** Content item in the table of contents. */
@@ -36,7 +39,7 @@ public:
     };
 
     /** Construct a book from an EPUB file in path. */
-    Book(const QString &path);
+    Book(const QString &path, QObject *parent = 0);
 
     /** Default constructor. */
     Book();
@@ -92,7 +95,7 @@ public:
     QString title;                          //< Book title from EPUB.
     QStringList toc;                        //< Table of contents from EPUB.
     QHash<QString, ContentItem> content;    //< Content items from EPUB.
-    QIcon cover;                            //< Cover image.
+    QImage cover;                           //< Cover image.
     QStringList creators;                   //< Creators.
     QString date;                           //< Date of creation.
     QString publisher;                      //< Publisher.
@@ -102,7 +105,10 @@ public:
     QString rights;                         //< Rights.
     QString tocPath;                        //< Path to toc ncx.
     QString coverPath;                      //< Path to cover html.
-    QString coverImagePath;                 //< Path to cover image.
+
+signals:
+    /** Emitted if @see open() succeeds. */
+    void opened(const QString &bookPath);
 
 protected:
     /** Indicate failure by creating a single "error" content item. */
@@ -126,7 +132,5 @@ protected:
     QList<Bookmark> mBookmarks;             //< List of bookmarks.
     QString mRootPath;                      //< Path to root item in EPUB dir.
 };
-
-Q_DECLARE_METATYPE(Book)
 
 #endif // BOOK_H

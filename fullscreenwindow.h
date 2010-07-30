@@ -17,8 +17,6 @@ public:
 signals:
     void restore();
 
-public slots:
-
 protected:
 #ifdef Q_WS_MAEMO_5
 #   define MOUSE_ACTIVATE_EVENT mouseReleaseEvent

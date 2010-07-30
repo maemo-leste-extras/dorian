@@ -2,6 +2,7 @@ dorian (0.0.13-1) unstable; urgency=low
 
   * Fix multiple navigation arrows [#6041]
   * Make full screen switching more robust
+  * Show cover images in library
 
  -- Akos Polster <akos@pipacs.com>  Thu, 29 Jul 2010 20:00:00 +0200
 

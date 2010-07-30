@@ -32,6 +32,9 @@ public:
 signals:
     void nowReadingChanged();
 
+public slots:
+    void onBookOpened(const QString &path);
+
 private:
     explicit Library(QObject *parent = 0);
     ~Library();

@@ -24,13 +24,14 @@ LibraryDialog::LibraryDialog(QWidget *parent): QMainWindow(parent)
 
     QFrame *frame = new QFrame(this);
     setCentralWidget(frame);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
+    QHBoxLayout *horizontalLayout = new QHBoxLayout(frame);
     frame->setLayout(horizontalLayout);
 
     list = new QListView(this);
     sortedLibrary = new SortedLibrary(this);
     list->setModel(sortedLibrary);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
+    list->setSpacing(1);
     list->setUniformItemSizes(true);
 
     Library *library = Library::instance();
@@ -63,8 +64,6 @@ LibraryDialog::LibraryDialog(QWidget *parent): QMainWindow(parent)
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
 #ifndef Q_WS_MAEMO_5
-    connect(list, SIGNAL(itemSelectionChanged()),
-            this, SLOT(onItemSelectionChanged()));
     connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
     connect(detailsButton, SIGNAL(clicked()), this, SLOT(onDetails()));
     connect(readButton, SIGNAL(clicked()), this, SLOT(onRead()));

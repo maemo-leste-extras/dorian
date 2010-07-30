@@ -44,6 +44,8 @@ QVariant Library::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
         return mBooks[index.row()]->name();
+    case Qt::DecorationRole:
+        return QPixmap::fromImage(mBooks[index.row()]->cover);
     default:
         return QVariant();
     }
@@ -76,6 +78,8 @@ void Library::load()
         QString key = "lib/book" + QString::number(i);
         QString path = settings.value(key).toString();
         Book *book = new Book(path);
+        connect(book, SIGNAL(opened(const QString &)),
+                this, SLOT(onBookOpened(const QString &)));
         book->load();
         mBooks.append(book);
     }
@@ -178,4 +182,13 @@ QModelIndex Library::find(const Book *book) const
         }
     }
     return QModelIndex();
+}
+
+void Library::onBookOpened(const QString &path)
+{
+    Trace t("Library::onBookOpened " + path);
+    QModelIndex index = find(path);
+    if (index.isValid()) {
+        emit dataChanged(index, index);
+    }
 }

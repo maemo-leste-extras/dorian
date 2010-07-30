@@ -16,18 +16,18 @@
 #include "ncxhandler.h"
 #include "trace.h"
 
-Book::Book()
-{
-}
+const int COVER_WIDTH = 50;
+const int COVER_HEIGHT = 55;
 
-Book::Book(const QString &path_)
+Book::Book(const QString &p, QObject *parent): QObject(parent)
 {
     mPath = "";
-    if (path_ != "") {
-        QFileInfo info(path_);
+    if (p != "") {
+        QFileInfo info(p);
         mPath = info.absoluteFilePath();
         title = info.baseName();
-        cover = QIcon(":/icons/book.png");
+        cover = QImage(":/icons/book.png").scaled(COVER_WIDTH, COVER_HEIGHT,
+            Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 }
 
@@ -54,6 +54,7 @@ void Book::open()
     }
     else {
         save();
+        emit opened(path());
     }
 }
 
@@ -131,6 +132,7 @@ bool Book::parse()
 {
     Trace t("Book::parse");
 
+    // Parse OPS file
     bool ret = false;
     QString opsFileName = opsPath();
     t.trace("Parsing OPS file" + opsFileName);
@@ -145,6 +147,17 @@ bool Book::parse()
     delete errorHandler;
     delete opsHandler;
     delete source;
+
+    // Load cover image
+    if (content.contains("cover-image")) {
+        t.trace("Loading cover image from " + content["cover-image"].href);
+        cover = QImage(content["cover-image"].href).scaled(COVER_WIDTH,
+            COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    } else if (content.contains("img-cover-jpeg")) {
+        t.trace("Loading cover image from " + content["img-cover-jpeg"].href);
+        cover = QImage(content["img-cover-jpeg"].href).scaled(COVER_WIDTH,
+            COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
 
     // If there is an "ncx" item in content, parse it: That's the real table of
     // contents
@@ -229,6 +242,12 @@ void Book::load()
     rights = settings.value(key + "rights").toString();
     mLastBookmark.chapter = settings.value(key + "lastchapter").toInt();
     mLastBookmark.pos = settings.value(key + "lastpos").toReal();
+    cover = settings.value(key + "cover").value<QImage>().scaled(COVER_WIDTH,
+        COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if (cover.isNull()) {
+        cover = QImage(":/icons/book.png").scaled(COVER_WIDTH, COVER_HEIGHT,
+            Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
 
     // Load bookmarks
     int size = settings.value(key + "bookmarks").toInt();
@@ -262,6 +281,7 @@ void Book::save()
     settings.setValue(key + "rights", rights);
     settings.setValue(key + "lastchapter", mLastBookmark.chapter);
     settings.setValue(key + "lastpos", mLastBookmark.pos);
+    settings.setValue(key + "cover", cover);
 
     // Save bookmarks
     settings.setValue(key + "bookmarks", mBookmarks.size());
@@ -338,7 +358,14 @@ QString Book::rootPath() const
 QString Book::name() const
 {
     if (title != "") {
-        return title;
+        QString ret = title;
+        if (creators.length()) {
+            ret += "\nBy " + creators[0];
+            for (int i = 1; i < creators.length(); i++) {
+                ret += ", " + creators[i];
+            }
+        }
+        return ret;
     } else {
         return path();
     }
