@@ -298,7 +298,12 @@ void BookView::removeIcons()
     QDir().rmpath(tmpPath());
 }
 
-bool BookView::eventFilter(QObject *, QEvent *e) {
+bool BookView::eventFilter(QObject *, QEvent *e)
+{
+    if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
+        Trace::debug(QString("BookView::eventFilter %1").
+                     arg(Trace::event(e->type())));
+    }
     switch (e->type()) {
     case QEvent::MouseButtonPress:
         emit suppressedMouseButtonPress();
