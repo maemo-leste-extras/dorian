@@ -11,9 +11,11 @@ class TranslucentButton: public QWidget
 
 public:
     explicit TranslucentButton(const QString &name, QWidget *parent);
-    void flash();
     qreal opacity() const {return mOpacity;}
     void setOpacity(qreal opacity);
+
+public slots:
+    void flash();
 
 protected:
     virtual void paintEvent(QPaintEvent *);

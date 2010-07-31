@@ -28,6 +28,7 @@ public:
 signals:
     void chapterLoadStart(int index);
     void chapterLoadEnd(int index);
+    void suppressedMouseButtonPress();
 
 public slots:
     void goPrevious();
@@ -38,6 +39,7 @@ public slots:
 protected:
     virtual void paintEvent(QPaintEvent *e);
     virtual void mousePressEvent(QMouseEvent *e);
+    bool eventFilter(QObject *o, QEvent *e);
 
 private:
     void loadContent(int index);
@@ -52,6 +54,7 @@ private:
     qreal positionAfterLoad;
     QImage bookmarkImage;
     bool loaded;
+    bool mousePressed;
 };
 
 #endif // BOOKVIEW_H

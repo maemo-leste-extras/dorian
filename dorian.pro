@@ -26,7 +26,6 @@ SOURCES += \
 HEADERS += \
     mainwindow.h \
     bookview.h \
-    selectionsuppressor.h \
     opshandler.h \
     unzip/unzip.h \
     unzip/ioapi.h \

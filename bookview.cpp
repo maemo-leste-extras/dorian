@@ -8,7 +8,6 @@
 #include "book.h"
 #include "bookview.h"
 #include "library.h"
-#include "selectionsuppressor.h"
 #include "settings.h"
 #include "trace.h"
 
@@ -32,7 +31,8 @@ BookView::BookView(QWidget *parent):
     page()->setContentEditable(false);
 
 #if defined(Q_WS_MAEMO_5)
-    (void)new SelectionSuppressor(this);
+    // Suppress unwanted text selections on Maemo
+    installEventFilter(this);
 #endif
     QWebFrame *frame = page()->mainFrame();
 #if defined(Q_WS_MAEMO_5)
@@ -296,4 +296,26 @@ void BookView::removeIcons()
     QFile(ICON_PREFIX + QString("/next.png")).remove();
     QFile(ICON_PREFIX + QString("/previous.png")).remove();
     QDir().rmpath(tmpPath());
+}
+
+bool BookView::eventFilter(QObject *, QEvent *e) {
+    switch (e->type()) {
+    case QEvent::MouseButtonPress:
+        emit suppressedMouseButtonPress();
+        mousePressed = true;
+        break;
+    case QEvent::MouseButtonRelease:
+        mousePressed = false;
+        break;
+    case QEvent::MouseMove:
+        if (mousePressed) {
+            return true;
+        }
+        break;
+    case QEvent::MouseButtonDblClick:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }

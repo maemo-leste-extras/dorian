@@ -2,6 +2,7 @@
 
 #include "fullscreenwindow.h"
 #include "translucentbutton.h"
+#include "trace.h"
 
 FullScreenWindow::FullScreenWindow(QWidget *parent): QMainWindow(parent), child(0)
 {
@@ -32,8 +33,11 @@ void FullScreenWindow::showFullScreen()
 
 void FullScreenWindow::MOUSE_ACTIVATE_EVENT(QMouseEvent *event)
 {
+    Trace t("FullScreenWindow::MOUSE_ACTIVATE_EVENT");
     if (fullScreenZone().contains(event->x(), event->y())) {
         emit restore();
+    } else {
+        restoreButton->flash();
     }
     QMainWindow::MOUSE_ACTIVATE_EVENT(event);
 }
@@ -56,6 +60,8 @@ void FullScreenWindow::takeChild(QWidget *c)
         child = c;
         child->setParent(centralWidget());
         centralWidget()->layout()->addWidget(child);
+        connect(child, SIGNAL(suppressedMouseButtonPress()),
+                              restoreButton, SLOT(flash()));
     }
 }
 
