@@ -363,11 +363,10 @@ void BookView::addJavaScriptObjects()
 
 void BookView::onContentsSizeChanged(const QSize &size)
 {
-    Trace t("BookView::onContentsSizeChanged");
-    t.trace(QString("To %1").arg(size.height()));
     contentsHeight = size.height();
     if (decorated) {
         if (restorePositionAfterLoad) {
+            Trace::debug("BookView::onContentSizeChanged: Time to restore");
             restorePositionAfterLoad = false;
             goToPosition(positionAfterLoad);
         }
@@ -377,6 +376,7 @@ void BookView::onContentsSizeChanged(const QSize &size)
 void BookView::leaveEvent(QEvent *e)
 {
     Trace t("BookView::leaveEvent");
+    // Save current position, to be restored later
     setLastBookmark();
     QWebView::leaveEvent(e);
 }
@@ -384,6 +384,8 @@ void BookView::leaveEvent(QEvent *e)
 void BookView::enterEvent(QEvent *e)
 {
     Trace t("BookView::enterEvent");
+    // Restore position saved at Leave event. This seems to be required,
+    // after temporarily switching from portrait to landscape and back
     restoreLastBookmark();
     QWebView::enterEvent(e);
 }

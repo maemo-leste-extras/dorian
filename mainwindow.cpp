@@ -231,11 +231,16 @@ void MainWindow::onSettingsChanged(const QString &key)
         // view->setLastBookmark();
         QString value = Settings::instance()->value(key).toString();
         if (value == "portrait") {
+            setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
         }
         else {
+            setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
         }
+
+        // FIXME: Orientation change should re-activate the window but it doesn't.
+        // And I have no idea how to force it
 
         // view->restoreLastBookmark();
         // view->setFocus();
