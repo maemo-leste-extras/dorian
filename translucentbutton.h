@@ -15,7 +15,7 @@ public:
     void setOpacity(qreal opacity);
 
 public slots:
-    void flash();
+    void flash(int duration = 3000);
 
 protected:
     virtual void paintEvent(QPaintEvent *);

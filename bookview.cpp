@@ -18,7 +18,7 @@
 #endif
 
 BookView::BookView(QWidget *parent):
-    QWebView(parent), contentIndex(-1), mBook(0), restore(true),
+    QWebView(parent), contentIndex(-1), mBook(0), restorePositionAfterLoad(false),
     positionAfterLoad(0), loaded(false), contentsHeight(0), decorated(false)
 {
     Trace t("BookView::BookView");
@@ -106,13 +106,17 @@ void BookView::loadContent(int index)
 void BookView::setBook(Book *book)
 {
     Trace t("BookView::setBook");
+
+    // Save position in current book
     setLastBookmark();
+
+    // Open new book, restore last position
     if (book != mBook) {
         mBook = book;
         if (book) {
             contentIndex = -1;
             book->open();
-            goToBookmark(book->lastBookmark());
+            restoreLastBookmark();
         }
         else {
             contentIndex = 0;
@@ -140,9 +144,9 @@ void BookView::goNext()
 
 void BookView::setLastBookmark()
 {
-    Trace t("BookView::saveLastBookmark");
+    Trace t("BookView::setLastBookmark");
     if (mBook) {
-        int height = contentsHeight; // page()->mainFrame()->contentsSize().height();
+        int height = contentsHeight;
         int pos = page()->mainFrame()->scrollPosition().y();
         t.trace(QString("At %1 (%2%, height %3)").
                 arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height));
@@ -150,16 +154,25 @@ void BookView::setLastBookmark()
     }
 }
 
+void BookView::restoreLastBookmark()
+{
+    Trace t("BookView::restoreLastBookmark");
+    if (mBook) {
+        goToBookmark(mBook->lastBookmark());
+    }
+}
+
 void BookView::goToBookmark(const Book::Bookmark &bookmark)
 {
     Trace t("BookView::goToBookmark");
     if (mBook) {
-        restore = true;
-        positionAfterLoad = bookmark.pos;
         if (bookmark.chapter != contentIndex) {
+            t.trace(QString("Loading new chapter %1").arg(bookmark.chapter));
+            restorePositionAfterLoad = true;
+            positionAfterLoad = bookmark.pos;
             loadContent(bookmark.chapter);
         } else {
-            onLoadFinished(true);
+            goToPosition(bookmark.pos);
         }
     }
 }
@@ -217,7 +230,7 @@ void BookView::paintEvent(QPaintEvent *e)
         if (b.chapter != contentIndex) {
             continue;
         }
-        int height = contentsHeight; // page()->mainFrame()->contentsSize().height();
+        int height = contentsHeight;
         int bookmarkPos = (qreal)height * (qreal)b.pos;
         painter.drawPixmap(2, bookmarkPos - scrollPos.y(), bookmarkPixmap);
     }
@@ -307,12 +320,20 @@ void BookView::removeIcons()
     QDir().rmpath(tmpPath());
 }
 
-bool BookView::eventFilter(QObject *, QEvent *e)
+bool BookView::eventFilter(QObject *o, QEvent *e)
 {
+#if 0
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
-        Trace::debug(QString("BookView::eventFilter %1").
-                     arg(Trace::event(e->type())));
+        if (e->type() == QEvent::Resize) {
+            Trace::debug(QString("BookView::eventFilter QEvent::Resize to %1").
+                         arg(page()->mainFrame()->contentsSize().height()));
+        } else {
+            Trace::debug(QString("BookView::eventFilter %1").
+                         arg(Trace::event(e->type())));
+        }
     }
+#endif
+
     switch (e->type()) {
     case QEvent::MouseButtonPress:
         emit suppressedMouseButtonPress();
@@ -331,7 +352,8 @@ bool BookView::eventFilter(QObject *, QEvent *e)
     default:
         break;
     }
-    return false;
+
+    return QObject::eventFilter(o, e);
 }
 
 void BookView::addJavaScriptObjects()
@@ -345,22 +367,32 @@ void BookView::onContentsSizeChanged(const QSize &size)
     t.trace(QString("To %1").arg(size.height()));
     contentsHeight = size.height();
     if (decorated) {
-        decorated = false;
-        if (restore) {
-            restore = false;
-            if (mBook) {
-                QWebPage *webPage = page();
-                QWebFrame *mainFrame = webPage->mainFrame();
-                int height = contentsHeight;
-                int scrollPos = (qreal)height * positionAfterLoad;
-                mainFrame->setScrollPosition(QPoint(0, scrollPos));
-                t.trace(QString("Restoring positon to %1 (%2%, height %3)").
-                        arg(scrollPos).arg(positionAfterLoad * 100).arg(height));
-                foreach (QString key, mainFrame->metaData().keys()) {
-                    QString value = mainFrame->metaData().value(key);
-                    t.trace(key + ": " + value);
-                }
-            }
+        if (restorePositionAfterLoad) {
+            restorePositionAfterLoad = false;
+            goToPosition(positionAfterLoad);
         }
     }
+}
+
+void BookView::leaveEvent(QEvent *e)
+{
+    Trace t("BookView::leaveEvent");
+    setLastBookmark();
+    QWebView::leaveEvent(e);
+}
+
+void BookView::enterEvent(QEvent *e)
+{
+    Trace t("BookView::enterEvent");
+    restoreLastBookmark();
+    QWebView::enterEvent(e);
+}
+
+void BookView::goToPosition(qreal position)
+{
+    int scrollPos = (qreal)contentsHeight * position;
+    page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));
+    // FIXME: update();
+    Trace::debug(QString("BookView::goToPosition: To %1 (%2%, height %3)").
+            arg(scrollPos).arg(position * 100).arg(contentsHeight));
 }

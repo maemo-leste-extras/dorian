@@ -37,7 +37,7 @@ void FullScreenWindow::MOUSE_ACTIVATE_EVENT(QMouseEvent *event)
     if (fullScreenZone().contains(event->x(), event->y())) {
         emit restore();
     } else {
-        restoreButton->flash();
+        restoreButton->flash(700);
     }
     QMainWindow::MOUSE_ACTIVATE_EVENT(event);
 }

@@ -23,10 +23,10 @@ void TranslucentButton::paintEvent(QPaintEvent *)
     }
 }
 
-void TranslucentButton::flash()
+void TranslucentButton::flash(int duration)
 {
     QPropertyAnimation *ani = new QPropertyAnimation(this, "opacity", 0);
-    ani->setDuration(3000);
+    ani->setDuration(duration);
     ani->setStartValue(0.);
     ani->setEndValue(1.);
     ani->setEasingCurve(QEasingCurve::OutQuart);

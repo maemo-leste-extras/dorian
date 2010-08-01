@@ -119,7 +119,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     QHBoxLayout *orientationLayout = new QHBoxLayout(orientationBox);
     orientationLayout->setMargin(0);
     orientationBox->setLayout(orientationLayout);
-    QButtonGroup *orientationGroup = new QButtonGroup(this);
+    orientationGroup = new QButtonGroup(this);
 
     QToolButton *portraitButton = new QToolButton(box);
     portraitButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -202,20 +202,32 @@ void SettingsWindow::onSchemeButtonClicked(int id)
 
 void SettingsWindow::onOrientationButtonClicked(int id)
 {
+#ifdef Q_WS_MAEMO_5
+    Q_UNUSED(id);
+#else
     QString orientation;
     switch (id) {
-    case OrientationLandscape: orientation = "landscape"; break;
-    default: orientation = "portrait"; break;
+    case OrientationLandscape:
+        orientation = "landscape";
+        break;
+    default:
+        orientation = "portrait";
+        break;
     }
     Settings::instance()->setValue("orientation", orientation);
+#endif // Q_WS_MAEMO_5
 }
 
 #ifdef Q_WS_MAEMO_5
 
 void SettingsWindow::closeEvent(QCloseEvent *e)
 {
-    Settings::instance()->setValue("zoom", zoomSlider->value());
-    Settings::instance()->setValue("font", fontButton->currentFont().family());
+    Settings *settings = Settings::instance();
+    settings->setValue("zoom", zoomSlider->value());
+    settings->setValue("font", fontButton->currentFont().family());
+    settings->setValue("orientation",
+        (orientationGroup->checkedId() == OrientationLandscape)?
+        "landscape": "portrait");
     e->accept();
 }
 

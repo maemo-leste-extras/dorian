@@ -1,7 +1,7 @@
 #include <QtGui>
 #include <QtDebug>
 #include <QDir>
-#include <QCoreApplication>
+#include <QApplication>
 #include <QFileInfo>
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>
@@ -228,15 +228,30 @@ void MainWindow::onSettingsChanged(const QString &key)
     Trace t("MainWindow::onSettingsChanged");
 #ifdef Q_WS_MAEMO_5
     if (key == "orientation") {
+        // view->setLastBookmark();
         QString value = Settings::instance()->value(key).toString();
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-            setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
         }
         else {
-            setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
         }
+
+        // view->restoreLastBookmark();
+        // view->setFocus();
+        // raise();
+
+        // QApplication::setActiveWindow(this);
+        // activateWindow();
+        // QEvent *enter = new QEvent(QEvent::Enter);
+        // QApplication::postEvent(view, enter);
+
+        // view->grabKeyboard();
+        // showNormal();
+
+        // QTestEventList events;
+        // events.addMouseClick(Qt::LeftButton);
+        // events.simulate(view);
     }
 #else
     Q_UNUSED(key);

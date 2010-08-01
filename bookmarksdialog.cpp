@@ -14,7 +14,7 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
 
     QFrame *frame = new QFrame(this);
     setCentralWidget(frame);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
+    QHBoxLayout *horizontalLayout = new QHBoxLayout(frame);
     frame->setLayout(horizontalLayout);
 
     list = new QListWidget(this);

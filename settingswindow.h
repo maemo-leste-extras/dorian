@@ -8,6 +8,7 @@ class QFontComboBox;
 class QFont;
 class QSlider;
 class QFontComboBox;
+class QButtonGroup;
 
 class SettingsWindow: public QMainWindow
 {
@@ -34,6 +35,7 @@ protected:
 private:
     QSlider *zoomSlider;
     QFontComboBox *fontButton;
+    QButtonGroup *orientationGroup;
 };
 
 #endif // SETTINGSWINDOW_H

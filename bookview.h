@@ -24,6 +24,7 @@ public:
     void goToBookmark(const Book::Bookmark &bookmark);
     void addBookmark();
     void setLastBookmark();
+    void restoreLastBookmark();
 
 signals:
     void chapterLoadStart(int index);
@@ -48,6 +49,8 @@ protected:
     virtual void paintEvent(QPaintEvent *e);
     virtual void mousePressEvent(QMouseEvent *e);
     bool eventFilter(QObject *o, QEvent *e);
+    virtual void leaveEvent(QEvent *);
+    virtual void enterEvent(QEvent *);
 
 private:
     /** Save navigation icons from resource to the file system. */
@@ -65,9 +68,13 @@ private:
     /** Get temporary directory for extracting book contents. */
     QString tmpPath();
 
+    /** Go to a given (relative) position in current chapter. */
+    void goToPosition(qreal position);
+
     int contentIndex;   /**< Current chapter in book. */
     Book *mBook;        /**< Book to show. */
-    bool restore;       /**< Restoring position after load is needed. */
+    bool restorePositionAfterLoad;
+                        /**< If true, restoring position after load is needed. */
     qreal positionAfterLoad;
                         /**< Position to be restored after load. */
     QImage bookmarkImage;
