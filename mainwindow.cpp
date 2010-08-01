@@ -228,7 +228,6 @@ void MainWindow::onSettingsChanged(const QString &key)
     Trace t("MainWindow::onSettingsChanged");
 #ifdef Q_WS_MAEMO_5
     if (key == "orientation") {
-        // view->setLastBookmark();
         QString value = Settings::instance()->value(key).toString();
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);

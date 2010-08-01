@@ -5,6 +5,8 @@
 #include <QtGui/QApplication>
 
 #include "mainwindow.h"
+#include "trace.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +15,10 @@ int main(int argc, char *argv[])
     a.setApplicationVersion("0.0.1");
     a.setOrganizationDomain("pipacs.com");
     a.setOrganizationName("Pipacs");
+
+    Trace::level = (QtMsgType)Settings::instance()->
+        value("tracelevel", (int)QtWarningMsg).toInt();
+    qInstallMsgHandler(Trace::messageHandler);
 
     MainWindow w;
 #ifdef Q_WS_S60

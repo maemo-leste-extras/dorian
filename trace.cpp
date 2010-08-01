@@ -1,8 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <QEvent>
 
 #include "trace.h"
 
 int Trace::indent;
+QtMsgType Trace::level = QtDebugMsg;
 
 Trace::EventName Trace::eventTab[] = {
     {QEvent::None, "QEvent::None"},
@@ -224,3 +228,23 @@ Trace::EventName Trace::eventTab[] = {
 
     {0, 0}
 };
+
+void Trace::messageHandler(QtMsgType type, const char *msg)
+{
+    if (type >= Trace::level) {
+        switch (type) {
+        case QtDebugMsg:
+            fprintf(stderr, "%s\n", msg);
+            break;
+        case QtWarningMsg:
+            fprintf(stderr, "Warning: %s\n", msg);
+            break;
+        case QtCriticalMsg:
+            fprintf(stderr, "Critical: %s\n", msg);
+            break;
+        case QtFatalMsg:
+            fprintf(stderr, "Fatal: %s\n", msg);
+            abort();
+        }
+    }
+}

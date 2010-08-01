@@ -12,6 +12,7 @@ public:
 
 public slots:
     void onClear();
+    void onLevelButtonClicked(int level);
 };
 
 #endif // DEVTOOLS_H

@@ -40,6 +40,10 @@ public:
         }
     }
 
+    static void messageHandler(QtMsgType type, const char *msg);
+
+    static QtMsgType level;
+
 protected:
     static QString prefix() {
         return QTime::currentTime().toString("hh:mm:ss.zzz ") +

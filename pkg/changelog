@@ -4,6 +4,7 @@ dorian (0.0.14-1) unstable; urgency=low
   * Add more restrictions to JavaScript handling
   * Restore bookmarks to the correct position
   * Save and restore positon when application changes orientation temporarily
+  * Increase default trace level. Set level from Developer dialog
 
  -- Akos Polster <akos@pipacs.com>  Sat, 31 Jul 2010 20:00:00 +0200
 
