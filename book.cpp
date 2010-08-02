@@ -16,8 +16,8 @@
 #include "ncxhandler.h"
 #include "trace.h"
 
-const int COVER_WIDTH = 50;
-const int COVER_HEIGHT = 55;
+const int COVER_WIDTH = 53;
+const int COVER_HEIGHT = 59;
 
 Book::Book(const QString &p, QObject *parent): QObject(parent)
 {

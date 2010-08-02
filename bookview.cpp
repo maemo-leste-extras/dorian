@@ -18,8 +18,9 @@
 #endif
 
 BookView::BookView(QWidget *parent):
-    QWebView(parent), contentIndex(-1), mBook(0), restorePositionAfterLoad(false),
-    positionAfterLoad(0), loaded(false), contentsHeight(0), decorated(false)
+    QWebView(parent), contentIndex(-1), mBook(0),
+    restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
+    contentsHeight(0), decorated(false)
 {
     Trace t("BookView::BookView");
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
@@ -30,7 +31,8 @@ BookView::BookView(QWidget *parent):
     settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, false);
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
     settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, false);
-    settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, false);
+    settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled,
+                             false);
     settings()->setAttribute(QWebSettings::LocalStorageEnabled, false);
     settings()->setAttribute(QWebSettings::ZoomTextOnly, true);
     settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls,
@@ -168,6 +170,7 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
     if (mBook) {
         if (bookmark.chapter != contentIndex) {
             t.trace(QString("Loading new chapter %1").arg(bookmark.chapter));
+            mBook->setLastBookmark(bookmark.chapter, bookmark.pos);
             restorePositionAfterLoad = true;
             positionAfterLoad = bookmark.pos;
             loadContent(bookmark.chapter);
