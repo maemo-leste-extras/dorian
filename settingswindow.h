@@ -8,7 +8,7 @@ class QFontComboBox;
 class QFont;
 class QSlider;
 class QFontComboBox;
-class QButtonGroup;
+class ToolButtonBox;
 
 class SettingsWindow: public QMainWindow
 {
@@ -26,6 +26,7 @@ public slots:
     void onCurrentFontChanged(const QFont &);
     void onSchemeButtonClicked(int id);
     void onOrientationButtonClicked(int id);
+    void onLightsToggled(bool enable);
 
 protected:
 #ifdef Q_WS_MAEMO_5
@@ -35,7 +36,7 @@ protected:
 private:
     QSlider *zoomSlider;
     QFontComboBox *fontButton;
-    QButtonGroup *orientationGroup;
+    ToolButtonBox *orientationBox;
 };
 
 #endif // SETTINGSWINDOW_H

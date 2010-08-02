@@ -4,6 +4,7 @@
 #include "devtools.h"
 #include "trace.h"
 #include "settings.h"
+#include "toolbuttonbox.h"
 
 DevTools::DevTools(QWidget *parent):
         QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
@@ -31,55 +32,15 @@ DevTools::DevTools(QWidget *parent):
     QLabel *level = new QLabel(tr("Trace level:"), contents);
     layout->addWidget(level);
 
-    QFrame *box = new QFrame(this);
+    ToolButtonBox *box = new ToolButtonBox(this);
     layout->addWidget(box);
-    QHBoxLayout *boxLayout = new QHBoxLayout(box);
-    boxLayout->setMargin(0);
-    box->setLayout(boxLayout);
-    QButtonGroup *group = new QButtonGroup(this);
-    group->setExclusive(true);
-
-    QToolButton *levelDebug = new QToolButton(box);
-    levelDebug->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    levelDebug->setText(tr("Debug"));
-    levelDebug->setCheckable(true);
-    boxLayout->addWidget(levelDebug);
-    group->addButton(levelDebug, QtDebugMsg);
-
-    QToolButton *levelWarning = new QToolButton(box);
-    levelWarning->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    levelWarning->setText(tr("Warning"));
-    levelWarning->setCheckable(true);
-    boxLayout->addWidget(levelWarning);
-    group->addButton(levelWarning, QtWarningMsg);
-
-    QToolButton *levelCritical = new QToolButton(box);
-    levelCritical->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    levelCritical->setText(tr("Critical"));
-    levelCritical->setCheckable(true);
-    boxLayout->addWidget(levelCritical);
-    group->addButton(levelCritical, QtCriticalMsg);
-
-    QToolButton *levelFatal = new QToolButton(box);
-    levelFatal->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    levelFatal->setText(tr("Fatal"));
-    levelFatal->setCheckable(true);
-    boxLayout->addWidget(levelFatal);
-    group->addButton(levelFatal, QtFatalMsg);
-
-    if (Trace::level == QtFatalMsg) {
-        levelFatal->toggle();
-    } else if (Trace::level == QtCriticalMsg) {
-        levelCritical->toggle();
-    } else if (Trace::level == QtWarningMsg) {
-        levelWarning->toggle();
-    } else {
-        levelDebug->toggle();
-    }
-
-    connect(group, SIGNAL(buttonClicked(int)),
+    box->addButton(QtDebugMsg, tr("Debug"));
+    box->addButton(QtWarningMsg, tr("Warning"));
+    box->addButton(QtCriticalMsg, tr("Critical"));
+    box->addButton(QtFatalMsg, tr("Fatal"));
+    box->toggle(Trace::level);
+    connect(box, SIGNAL(buttonClicked(int)),
             this, SLOT(onLevelButtonClicked(int)));
-    layout->addWidget(box);
 
     contents->setLayout(layout);
     scroller->setWidget(contents);

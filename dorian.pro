@@ -21,7 +21,8 @@ SOURCES += \
     dialog.cpp \
     chaptersdialog.cpp \
     fullscreenwindow.cpp \
-    trace.cpp
+    trace.cpp \
+    toolbuttonbox.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -47,7 +48,8 @@ HEADERS += \
     dialog.h \
     chaptersdialog.h \
     fullscreenwindow.h \
-    trace.h
+    trace.h \
+    toolbuttonbox.h
 
 RESOURCES += \
     dorian.qrc
@@ -85,7 +87,7 @@ windows {
     # FIXME: Build zlib, too
 }
 maemo5 {
-    QT += maemo5
+    QT += maemo5 dbus
     isEmpty(PREFIX) {
         PREFIX = /usr
     }

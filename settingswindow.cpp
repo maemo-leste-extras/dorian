@@ -2,6 +2,7 @@
 
 #include "settingswindow.h"
 #include "settings.h"
+#include "toolbuttonbox.h"
 
 #ifdef Q_OS_SYMBIAN
 #define DEFAULT_ORIENTATION "portrait"
@@ -17,6 +18,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 #endif
     setWindowTitle("Settings");
 
+    Settings *settings = Settings::instance();
     QScrollArea *scroller = new QScrollArea(this);
 #ifdef Q_WS_MAEMO_5
     scroller->setProperty("FingerScrollable", true);
@@ -30,6 +32,10 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     QWidget *contents = new QWidget(scroller);
     QVBoxLayout *layout = new QVBoxLayout(contents);
     contents->setLayout(layout);
+
+    QCheckBox *backlight = new QCheckBox(tr("Keep backlight on"), contents);
+    layout->addWidget(backlight);
+    backlight->setChecked(settings->value("lightson", false).toBool());
 
     QLabel *zoomLabel = new QLabel(tr("Zoom level:"), contents);
     layout->addWidget(zoomLabel);
@@ -50,109 +56,41 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
     QLabel *colorLabel = new QLabel(tr("Color scheme:"), contents);
     layout->addWidget(colorLabel);
-    QFrame *box = new QFrame(this);
+    ToolButtonBox *box = new ToolButtonBox(this);
     layout->addWidget(box);
-    QHBoxLayout *boxLayout = new QHBoxLayout(box);
-    boxLayout->setMargin(0);
-    box->setLayout(boxLayout);
-    QButtonGroup *group = new QButtonGroup(this);
-
-    QToolButton *defaultSchemeButton = new QToolButton(box);
-    defaultSchemeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    defaultSchemeButton->setText(tr("Default"));
-    defaultSchemeButton->setIconSize(QSize(81, 81));
-    defaultSchemeButton->setIcon(QIcon(":/icons/style-default.png"));
-    defaultSchemeButton->setCheckable(true);
-    boxLayout->addWidget(defaultSchemeButton);
-    group->addButton(defaultSchemeButton);
-    group->setId(defaultSchemeButton, SchemeDefault);
-
-    QToolButton *nightSchemeButton = new QToolButton(box);
-    nightSchemeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    nightSchemeButton->setText(tr("Night"));
-    nightSchemeButton->setCheckable(true);
-    nightSchemeButton->setIconSize(QSize(81, 81));
-    nightSchemeButton->setIcon(QIcon(":/icons/style-night.png"));
-    boxLayout->addWidget(nightSchemeButton);
-    group->addButton(nightSchemeButton);
-    group->setId(nightSchemeButton, SchemeNight);
-
-    QToolButton *daySchemeButton = new QToolButton(box);
-    daySchemeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    daySchemeButton->setText(tr("Day"));
-    daySchemeButton->setCheckable(true);
-    daySchemeButton->setIconSize(QSize(81, 81));
-    daySchemeButton->setIcon(QIcon(":/icons/style-day.png"));
-    boxLayout->addWidget(daySchemeButton);
-    group->addButton(daySchemeButton);
-    group->setId(daySchemeButton, SchemeDay);
-
-    QToolButton *sandSchemeButton = new QToolButton(box);
-    sandSchemeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    sandSchemeButton->setText(tr("Sand"));
-    sandSchemeButton->setCheckable(true);
-    sandSchemeButton->setIconSize(QSize(81, 81));
-    sandSchemeButton->setIcon(QIcon(":/icons/style-sand.png"));
-    boxLayout->addWidget(sandSchemeButton);
-    group->addButton(sandSchemeButton);
-    group->setId(sandSchemeButton, SchemeSand);
-
-    QString scheme = Settings::instance()->value("scheme", "default").toString();
+    box->addButton(SchemeDefault, tr("Default"), ":/icons/style-default.png");
+    box->addButton(SchemeNight, tr("Night"), ":/icons/style-night.png");
+    box->addButton(SchemeDay, tr("Day"), ":/icons/style-day.png");
+    box->addButton(SchemeSand, tr("Sand"), ":/icons/style-sand.png");
+    box->addStretch();
+    QString scheme = settings->value("scheme", "default").toString();
     if (scheme == "night") {
-        nightSchemeButton->toggle();
-    }
-    else if (scheme == "day") {
-        daySchemeButton->toggle();
-    }
-    else if (scheme == "sand") {
-        sandSchemeButton->toggle();
-    }
-    else {
-        defaultSchemeButton->toggle();
+        box->toggle(SchemeNight);
+    } else if (scheme == "day") {
+        box->toggle(SchemeDay);
+    } else if (scheme == "sand") {
+        box->toggle(SchemeSand);
+    } else {
+        box->toggle(SchemeDefault);
     }
 
     QLabel *orientationLabel = new QLabel(tr("Orientation:"), contents);
     layout->addWidget(orientationLabel);
-
-    QFrame *orientationBox = new QFrame(this);
+    orientationBox = new ToolButtonBox(this);
     layout->addWidget(orientationBox);
-    QHBoxLayout *orientationLayout = new QHBoxLayout(orientationBox);
-    orientationLayout->setMargin(0);
-    orientationBox->setLayout(orientationLayout);
-    orientationGroup = new QButtonGroup(this);
-
-    QToolButton *portraitButton = new QToolButton(box);
-    portraitButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    portraitButton->setText(tr("Portrait"));
-    portraitButton->setIconSize(QSize(81, 81));
-    portraitButton->setIcon(QIcon(":/icons/settings-portrait.png"));
-    portraitButton->setCheckable(true);
-    orientationLayout->addWidget(portraitButton);
-    orientationGroup->addButton(portraitButton);
-    orientationGroup->setId(portraitButton, OrientationPortrait);
-
-    QToolButton *landscapeButton = new QToolButton(box);
-    landscapeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    landscapeButton->setText(tr("Landscape"));
-    landscapeButton->setIconSize(QSize(81, 81));
-    landscapeButton->setIcon(QIcon(":/icons/settings-landscape.png"));
-    landscapeButton->setCheckable(true);
-    orientationLayout->addWidget(landscapeButton);
-    orientationGroup->addButton(landscapeButton);
-    orientationGroup->setId(landscapeButton, OrientationLandscape);
-
-    orientationLayout->addStretch();
-
+    orientationBox->addButton(OrientationPortrait, tr("Portrait"),
+                              ":/icons/settings-portrait.png");
+    orientationBox->addButton(OrientationLandscape, tr("Landscape"),
+                              ":/icons/settings-landscape.png");
+    orientationBox->addStretch();
     QString orientation =
-        Settings::instance()->value("orientation", DEFAULT_ORIENTATION).toString();
+        settings->value("orientation", DEFAULT_ORIENTATION).toString();
     if (orientation == "portrait") {
-        portraitButton->toggle();
-    }
-    else {
-        landscapeButton->toggle();
+        orientationBox->toggle(OrientationPortrait);
+    } else {
+        orientationBox->toggle(OrientationLandscape);
     }
 
-    boxLayout->addStretch();
     layout->addStretch();
     scroller->setWidget(contents);
     contents->show();
@@ -160,13 +98,14 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
     setCentralWidget(scroller);
 
+    connect(backlight, SIGNAL(toggled(bool)), this, SLOT(onLightsToggled(bool)));
     connect(zoomSlider, SIGNAL(valueChanged(int)),
             this, SLOT(onSliderValueChanged(int)));
     connect(fontButton, SIGNAL(currentFontChanged(const QFont &)),
             this, SLOT(onCurrentFontChanged(const QFont &)));
-    connect(group, SIGNAL(buttonClicked(int)),
+    connect(box, SIGNAL(buttonClicked(int)),
             this, SLOT(onSchemeButtonClicked(int)));
-    connect(orientationGroup, SIGNAL(buttonClicked(int)),
+    connect(orientationBox, SIGNAL(buttonClicked(int)),
             this, SLOT(onOrientationButtonClicked(int)));
 }
 
@@ -226,9 +165,14 @@ void SettingsWindow::closeEvent(QCloseEvent *e)
     settings->setValue("zoom", zoomSlider->value());
     settings->setValue("font", fontButton->currentFont().family());
     settings->setValue("orientation",
-        (orientationGroup->checkedId() == OrientationLandscape)?
+        (orientationBox->checkedId() == OrientationLandscape)?
         "landscape": "portrait");
     e->accept();
 }
 
 #endif // Q_WS_MAEMO_5
+
+void SettingsWindow::onLightsToggled(bool value)
+{
+    Settings::instance()->setValue("lightson", value);
+}

@@ -37,6 +37,7 @@ public slots:
 
 protected:
     virtual void closeEvent(QCloseEvent *event);
+    virtual void timerEvent(QTimerEvent *event);
 
 private:
     void setCurrentBook(const QModelIndex &current);
@@ -59,6 +60,7 @@ private:
     DevTools *devTools;
     QModelIndex mCurrent;
     FullScreenWindow *fullScreenWindow;
+    int preventBlankingTimer;
 };
 
 #endif // MAINWINDOW_H

@@ -328,10 +328,10 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
 #if 0
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
         if (e->type() == QEvent::Resize) {
-            Trace::debug(QString("BookView::eventFilter QEvent::Resize to %1").
+            Trace::trace(QString("BookView::eventFilter QEvent::Resize to %1").
                          arg(page()->mainFrame()->contentsSize().height()));
         } else {
-            Trace::debug(QString("BookView::eventFilter %1").
+            Trace::trace(QString("BookView::eventFilter %1").
                          arg(Trace::event(e->type())));
         }
     }
@@ -369,7 +369,7 @@ void BookView::onContentsSizeChanged(const QSize &size)
     contentsHeight = size.height();
     if (decorated) {
         if (restorePositionAfterLoad) {
-            Trace::debug("BookView::onContentSizeChanged: Time to restore");
+            Trace::trace("BookView::onContentSizeChanged: Time to restore");
             restorePositionAfterLoad = false;
             goToPosition(positionAfterLoad);
         }
@@ -398,6 +398,6 @@ void BookView::goToPosition(qreal position)
     int scrollPos = (qreal)contentsHeight * position;
     page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));
     // FIXME: update();
-    Trace::debug(QString("BookView::goToPosition: To %1 (%2%, height %3)").
+    Trace::trace(QString("BookView::goToPosition: To %1 (%2%, height %3)").
             arg(scrollPos).arg(position * 100).arg(contentsHeight));
 }

@@ -3,9 +3,13 @@
 #include <QDir>
 #include <QApplication>
 #include <QFileInfo>
+
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>
-#endif
+#   include <QtDBus>
+#   include <mce/mode-names.h>
+#   include <mce/dbus-names.h>
+#endif // Q_WS_MAEMO_5
 
 #include "bookview.h"
 #include "book.h"
@@ -31,7 +35,8 @@
 #   define ICON_PREFIX ":/icons/"
 #endif
 
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), view(0)
+MainWindow::MainWindow(QWidget *parent):
+    QMainWindow(parent), view(0), preventBlankingTimer(-1)
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -118,10 +123,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), view(0)
     }
 
     // Handle settings changes
-    connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
+    Settings *settings = Settings::instance();
+    connect(settings, SIGNAL(valueChanged(const QString &)),
             this, SLOT(onSettingsChanged(const QString &)));
-    Settings::instance()->setValue("orientation",
-                                   Settings::instance()->value("orientation"));
+    settings->setValue("orientation", settings->value("orientation"));
+    settings->setValue("lightson", settings->value("lightson"));
 
     // Handle loading chapters
     connect(view, SIGNAL(chapterLoadStart(int)),
@@ -225,10 +231,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
-    Trace t("MainWindow::onSettingsChanged");
 #ifdef Q_WS_MAEMO_5
     if (key == "orientation") {
         QString value = Settings::instance()->value(key).toString();
+        Trace::trace(QString("MainWindow::onSettingsChanged: orientation %1").
+                     arg(value));
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
@@ -237,25 +244,14 @@ void MainWindow::onSettingsChanged(const QString &key)
             setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
         }
-
-        // FIXME: Orientation change should re-activate the window but it doesn't.
-        // And I have no idea how to force it
-
-        // view->restoreLastBookmark();
-        // view->setFocus();
-        // raise();
-
-        // QApplication::setActiveWindow(this);
-        // activateWindow();
-        // QEvent *enter = new QEvent(QEvent::Enter);
-        // QApplication::postEvent(view, enter);
-
-        // view->grabKeyboard();
-        // showNormal();
-
-        // QTestEventList events;
-        // events.addMouseClick(Qt::LeftButton);
-        // events.simulate(view);
+    } else if (key == "lightson") {
+        bool enable = Settings::instance()->value(key, false).toBool();
+        Trace::trace(QString("MainWindow::onSettingsChanged: lightson: %1").
+                     arg(enable));
+        killTimer(preventBlankingTimer);
+        if (enable) {
+            preventBlankingTimer = startTimer(29 * 1000);
+        }
     }
 #else
     Q_UNUSED(key);
@@ -323,4 +319,16 @@ void MainWindow::showChapters()
 void MainWindow::onGoToChapter(int index)
 {
     view->goToBookmark(Book::Bookmark(index, 0));
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == preventBlankingTimer) {
+#ifdef Q_WS_MAEMO_5
+        QDBusInterface mce(MCE_SERVICE, MCE_REQUEST_PATH,
+                           MCE_REQUEST_IF, QDBusConnection::systemBus());
+        mce.call(MCE_PREVENT_BLANK_REQ);
+#endif // Q_WS_MAEMO_5
+        Trace::trace("MainWindow::timerEvent: Prevent display blanking");
+    }
 }

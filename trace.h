@@ -13,18 +13,16 @@ public:
         qDebug() << prefix() + ">" + name;
         indent++;
     }
+
     ~Trace() {
         if (--indent < 0) {
             indent = 0;
         }
         qDebug() << prefix() + "<" + name;
     }
-    void trace(const QString &s) const {
-        qDebug() << prefix()  + name + ": " + s;
-    }
 
-    static void debug(const QString &s) {
-        qDebug() << prefix()  + s;
+    static void trace(const QString &s) {
+        qDebug() << prefix() + s;
     }
 
     static QString event(QEvent::Type t) {
