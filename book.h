@@ -51,7 +51,7 @@ public:
     void save();
 
     /** Extract and parse EPUB contents, fill in all members except mPath. */
-    void open();
+    bool open();
 
     /** Clear toc and content members, remove extracted content files. */
     void close();
@@ -88,9 +88,12 @@ public:
 
     /**
      * Get friendly name.
-     * @return @see title or path name if title is not available yet.
+     * @return @see title or path name combined with author(s) name.
      */
     QString name() const;
+
+    /** Get short friendly name: title or file name. */
+    QString shortName() const;
 
     QString title;                          //< Book title from EPUB.
     QStringList toc;                        //< Table of contents from EPUB.
@@ -111,10 +114,6 @@ signals:
     void opened(const QString &bookPath);
 
 protected:
-    /** Indicate failure by creating a single "error" content item. */
-    void fail(const QString &details,
-              const QString &error = QString("Could not open book"));
-
     /** Extract EPUB as ZIP. */
     bool extract();
 

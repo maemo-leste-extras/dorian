@@ -146,19 +146,20 @@ MainWindow::MainWindow(QWidget *parent):
     // Create thread for finding books in directories
     bookFinder = new BookFinder();
     connect(bookFinder, SIGNAL(add(const QString &)),
-            this, SLOT(onAddBook(const QString &)));
+            library, SLOT(add(const QString &)));
     connect(bookFinder, SIGNAL(remove(const QString &)),
-            this, SLOT(onRemoveBook(const QString &)));
+            library, SLOT(remove(const QString &)));
     bookFinder->moveToThread(&bookFinderThread);
     bookFinderThread.start();
-    qRegisterMetaType<QStringList>("QStringList");
 
+#if 0
     bool ret = QMetaObject::invokeMethod(
         bookFinder,
         "find",
-        Q_ARG(QStringList, QStringList(QString("/home/polster/Books"))),
+        Q_ARG(QStringList, QStringList(QString("/Users/polster/Books"))),
         Q_ARG(QStringList, library->bookPaths()));
     t.trace(QString("Invoking BookFinder::find ") + (ret?"succeeded":"failed"));
+#endif
 
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
@@ -199,7 +200,7 @@ void MainWindow::setCurrentBook(const QModelIndex &current)
     mCurrent = current;
     Book *book = Library::instance()->book(current);
     view->setBook(book);
-    setWindowTitle(book? book->name(): tr("Dorian"));
+    setWindowTitle(book? book->shortName(): tr("Dorian"));
 }
 
 QAction *MainWindow::addToolBarAction(const QObject *receiver,

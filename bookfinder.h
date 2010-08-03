@@ -13,6 +13,8 @@ class BookFinder: public QObject
 
 public:
     explicit BookFinder(QObject *parent = 0);
+
+public slots:
     void find(const QStringList &directories, const QStringList &books);
 
 signals:

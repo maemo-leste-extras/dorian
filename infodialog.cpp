@@ -59,10 +59,9 @@ void InfoDialog::onReadBook()
 void InfoDialog::onRemoveBook()
 {
     if (QMessageBox::Yes ==
-        QMessageBox::question(this,
-                              tr("Delete book"),
-                              "Delete book \"" + book->name() + "\"?",
-                              QMessageBox::Yes | QMessageBox::No)) {
+        QMessageBox::question(this, tr("Delete book"),
+            tr("Delete book \"%1\" from library?").arg(book->shortName()),
+            QMessageBox::Yes | QMessageBox::No)) {
         Library::instance()->remove(Library::instance()->find(book));
         close();
     }

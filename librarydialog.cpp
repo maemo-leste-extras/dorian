@@ -131,9 +131,10 @@ void LibraryDialog::onRemove()
         Book *currentBook = Library::instance()->book(current);
         QString title = currentBook->name();
         if (QMessageBox::Yes ==
-            QMessageBox::question(this, "Delete book",
-                                  "Delete book \"" + title + "\"?",
-                                  QMessageBox::Yes | QMessageBox::No)) {
+            QMessageBox::question(this, tr("Delete book"),
+                tr("Delete book \"%1\" from library?").
+                    arg(currentBook->shortName()),
+                QMessageBox::Yes | QMessageBox::No)) {
             Library::instance()->remove(current);
         }
     }

@@ -31,9 +31,12 @@ void BookFinder::find(const QStringList &directories, const QStringList &books)
     }
 
     foreach (QString book, books) {
-        QString bookPath = QFileInfo(book).absoluteFilePath();
-        foreach (QString dirPath, directories) {
-            if (bookPath == QDir(dirPath).absolutePath()) {
+        QFileInfo bookInfo = QFileInfo(book);
+        QString bookDir = bookInfo.absolutePath();
+        QString bookPath = bookInfo.absoluteFilePath();
+        foreach (QString dirName, directories) {
+            t.trace(bookDir + " vs. " + QDir(dirName).absolutePath());
+            if (bookDir == QDir(dirName).absolutePath()) {
                 if (!booksFound.contains(bookPath)) {
                     t.trace(QString("Deleted book ") + bookPath);
                     emit remove(bookPath);

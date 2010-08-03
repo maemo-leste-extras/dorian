@@ -57,7 +57,7 @@ Book *Library::book(const QModelIndex &index)
         if ((index.row() >= 0) && (index.row() < mBooks.size())) {
             return mBooks[index.row()];
         } else {
-            qCritical() << "*** Library::book: Bad index" << index.row();
+            qCritical() << "Library::book: Bad index" << index.row();
         }
     }
     return 0;
@@ -102,11 +102,11 @@ void Library::save()
     settings.setValue("lib/directories", mDirectories);
 }
 
-bool Library::add(QString path)
+bool Library::add(const QString &path)
 {
     Trace t("Library::add " + path);
     if (path == "") {
-        qCritical() << "*** Library::add: Empty path";
+        qCritical() << "Library::add: Empty path";
         return false;
     }
     if (find(path).isValid()) {
@@ -138,6 +138,11 @@ void Library::remove(const QModelIndex &index)
         emit nowReadingChanged();
     }
     delete toRemove;
+}
+
+void Library::remove(const QString &path)
+{
+    remove(find(path));
 }
 
 QModelIndex Library::nowReading() const

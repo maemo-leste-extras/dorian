@@ -1,6 +1,7 @@
 dorian (0.1.0-1) unstable; urgency=low
 
-  * Add setting to have prevent display blanking
+  * Add setting to prevent display blanking
+  * Be more tolerant to removed books
 
  -- Akos Polster <akos@pipacs.com>  Tue,  2 Aug 2010 20:00:00 +0200
 

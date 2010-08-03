@@ -117,8 +117,13 @@ void BookView::setBook(Book *book)
         mBook = book;
         if (book) {
             contentIndex = -1;
-            book->open();
-            restoreLastBookmark();
+            if (book->open()) {
+                restoreLastBookmark();
+            } else {
+                mBook = 0;
+                contentIndex = 0;
+                setHtml(tr("Failed to open book"));
+            }
         }
         else {
             contentIndex = 0;
@@ -255,6 +260,9 @@ void BookView::mousePressEvent(QMouseEvent *e)
 void BookView::addBookmark()
 {
     Trace t("BookView::addBookmark");
+    if (!mBook) {
+        return;
+    }
     int y = page()->mainFrame()->scrollPosition().y();
     int height = page()->mainFrame()->contentsSize().height();
     t.trace(QString().setNum((qreal)y / (qreal)height));

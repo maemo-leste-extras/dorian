@@ -4,6 +4,12 @@
 #include <QObject>
 #include <QVariant>
 
+class QString;
+
+/**
+ * Shallow wrapper for QSettings.
+ * Emits valueChanged signals when a setting value has changed.
+ */
 class Settings: public QObject
 {
     Q_OBJECT

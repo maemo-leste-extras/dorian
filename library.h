@@ -24,8 +24,6 @@ public:
     void save();
     QModelIndex find(QString path) const;
     QModelIndex find(const Book *book) const;
-    bool add(QString path);
-    void remove(const QModelIndex &index);
     void setNowReading(const QModelIndex &index);
     QModelIndex nowReading() const;
     Book *book(const QModelIndex &index);
@@ -35,6 +33,9 @@ signals:
     void nowReadingChanged();
 
 public slots:
+    bool add(const QString &path);
+    void remove(const QString &path);
+    void remove(const QModelIndex &index);
     void onBookOpened(const QString &path);
 
 private:

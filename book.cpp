@@ -36,7 +36,7 @@ QString Book::path() const
     return mPath;
 }
 
-void Book::open()
+bool Book::open()
 {
     Trace t("Book::open");
     t.trace(path());
@@ -44,18 +44,17 @@ void Book::open()
     clear();
     if (path() == "") {
         title = "No book";
-        fail("", "No book");
+        return false;
     }
-    else if (!extract()) {
-        fail("Could not extract content of " + path() + ".");
+    if (!extract()) {
+        return false;
     }
-    else if (!parse()) {
-        fail("Could not parse content of " + path() + ".");
+    if (!parse()) {
+        return false;
     }
-    else {
-        save();
-        emit opened(path());
-    }
+    save();
+    emit opened(path());
+    return true;
 }
 
 void Book::close()
@@ -72,18 +71,6 @@ QString Book::tmpDir() const
     return QDir::tempPath() + "/dorian/book";
 }
 
-void Book::fail(const QString &details, const QString &error)
-{
-    close();
-
-    toc.append("error");
-    QString errorPage = "<html><head><title>" + Qt::escape(error) +
-        "</title></head><body><h1>" + Qt::escape(error) + "</h1><p>" +
-        Qt::escape(details) + "</p></body></html>";
-    content["error"].href = errorPage;
-    content["error"].name = "Error";
-}
-
 bool Book::extract()
 {
     Trace t("Book::extract");
@@ -93,12 +80,12 @@ bool Book::extract()
 
     QDir::setCurrent(QDir::rootPath());
     if (!clearDir(tmp)) {
-        qCritical() << "*** Book::extract: Failed to remove" << tmp;
+        qCritical() << "Book::extract: Failed to remove" << tmp;
         return false;
     }
     QDir d;
     if (!d.mkpath(tmp)) {
-        qCritical() << "*** Book::extract: Could not create" << tmp;
+        qCritical() << "Book::extract: Could not create" << tmp;
         return false;
     }
 
@@ -108,7 +95,7 @@ bool Book::extract()
         QFile src(bookPath);
         QString dst(tmp + "/book.epub");
         if (!src.copy(dst)) {
-            qCritical() << "*** Book::extract: Failed to copy built-in book to"
+            qCritical() << "Book::extract: Failed to copy built-in book to"
                     << dst;
             return false;
         }
@@ -117,12 +104,12 @@ bool Book::extract()
 
     QString oldDir = QDir::currentPath();
     if (!QDir::setCurrent(tmp)) {
-        qCritical() << "*** Book::extract: Could not change to" << tmp;
+        qCritical() << "Book::extract: Could not change to" << tmp;
         return false;
     }
     ret = extractZip(bookPath);
     if (!ret) {
-        qCritical() << "*** Book::extract: Extracting ZIP failed";
+        qCritical() << "Book::extract: Extracting ZIP failed";
     }
     QDir::setCurrent(oldDir);
     return ret;
@@ -199,7 +186,7 @@ bool Book::clearDir(const QString &dir)
         }
         else {
             if (!QFile::remove(entry)) {
-                qCritical() << "*** Book::clearDir: Could not remove" << entry;
+                qCritical() << "Book::clearDir: Could not remove" << entry;
                 // FIXME: To be investigated: This is happening too often
                 // return false;
             }
@@ -368,5 +355,14 @@ QString Book::name() const
         return ret;
     } else {
         return path();
+    }
+}
+
+QString Book::shortName() const
+{
+    if (title == "") {
+        return QFileInfo(path()).baseName();
+    } else {
+        return title;
     }
 }

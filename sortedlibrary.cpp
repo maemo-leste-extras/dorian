@@ -22,8 +22,8 @@ bool SortedLibrary::lessThan(const QModelIndex &left,
 
     switch (mSortBy) {
     case SortByTitle:
-        leftString = leftBook->name();
-        rightString = rightBook->name();
+        leftString = leftBook->shortName();
+        rightString = rightBook->shortName();
         break;
     default:
         leftString = leftBook->creators[0];
