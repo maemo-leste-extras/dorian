@@ -5,9 +5,11 @@
 
 class TranslucentButton;
 
+/** A full screen window that can adopt a child widget from another window. */
 class FullScreenWindow: public QMainWindow
 {
     Q_OBJECT
+
 public:
     explicit FullScreenWindow(QWidget *parent);
     void showFullScreen();

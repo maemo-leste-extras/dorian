@@ -1,57 +1,61 @@
 QT += webkit xml
 
+INCLUDEPATH += $$PWD \
+    $$PWD/model \
+    $$PWD/widgets
+
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
     bookview.cpp \
-    unzip/unzip.c \
-    unzip/ioapi.c \
-    extractzip.cpp \
-    library.cpp \
-    book.cpp \
+    model/unzip/unzip.c \
+    model/unzip/ioapi.c \
+    model/extractzip.cpp \
+    model/library.cpp \
+    model/book.cpp \
     librarydialog.cpp \
     devtools.cpp \
     infodialog.cpp \
-    translucentbutton.cpp \
+    widgets/translucentbutton.cpp \
     settingswindow.cpp \
-    settings.cpp \
+    model/settings.cpp \
     bookmarksdialog.cpp \
-    sortedlibrary.cpp \
+    model/sortedlibrary.cpp \
     bookmarkinfodialog.cpp \
-    dialog.cpp \
+    widgets/dialog.cpp \
     chaptersdialog.cpp \
-    fullscreenwindow.cpp \
+    widgets/fullscreenwindow.cpp \
     trace.cpp \
-    toolbuttonbox.cpp \
-    bookfinder.cpp
+    widgets/toolbuttonbox.cpp \
+    model/bookfinder.cpp
 
 HEADERS += \
     mainwindow.h \
     bookview.h \
-    opshandler.h \
-    unzip/unzip.h \
-    unzip/ioapi.h \
-    extractzip.h \
-    library.h \
-    book.h \
+    model/opshandler.h \
+    model/unzip/unzip.h \
+    model/unzip/ioapi.h \
+    model/extractzip.h \
+    model/library.h \
+    model/book.h \
     librarydialog.h \
     devtools.h \
     infodialog.h \
-    translucentbutton.h \
+    widgets/translucentbutton.h \
     settingswindow.h \
-    settings.h \
+    model/settings.h \
     bookmarksdialog.h \
-    xmlerrorhandler.h \
-    containerhandler.h \
-    sortedlibrary.h \
-    ncxhandler.h \
+    model/xmlerrorhandler.h \
+    model/containerhandler.h \
+    model/sortedlibrary.h \
+    model/ncxhandler.h \
     bookmarkinfodialog.h \
-    dialog.h \
+    widgets/dialog.h \
     chaptersdialog.h \
-    fullscreenwindow.h \
+    widgets/fullscreenwindow.h \
     trace.h \
-    toolbuttonbox.h \
-    bookfinder.h
+    widgets/toolbuttonbox.h \
+    model/bookfinder.h
 
 RESOURCES += \
     dorian.qrc
@@ -80,12 +84,12 @@ DEFINES += \
     USE_FILE32API \
     DORIAN_TEST_MODEL
 
-include(modeltest/modeltest.pri)
+include(model/modeltest/modeltest.pri)
 
 unix {
     LIBS += -lz
 }
-windows {
+windows, symbian {
     # FIXME: Build zlib, too
 }
 maemo5 {
