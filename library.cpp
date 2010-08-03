@@ -85,6 +85,7 @@ void Library::load()
     }
     QString currentPath = settings.value("lib/nowreading").toString();
     mNowReading = find(currentPath);
+    mDirectories = settings.value("lib/directories").toStringList();
 }
 
 void Library::save()
@@ -98,6 +99,7 @@ void Library::save()
     Book *currentBook = book(mNowReading);
     settings.setValue("lib/nowreading",
                       currentBook? currentBook->path(): QString());
+    settings.setValue("lib/directories", mDirectories);
 }
 
 bool Library::add(QString path)
@@ -191,4 +193,13 @@ void Library::onBookOpened(const QString &path)
     if (index.isValid()) {
         emit dataChanged(index, index);
     }
+}
+
+QStringList Library::bookPaths()
+{
+    QStringList ret;
+    foreach (Book *book, mBooks) {
+        ret.append(book->path());
+    }
+    return ret;
 }

@@ -22,7 +22,8 @@ SOURCES += \
     chaptersdialog.cpp \
     fullscreenwindow.cpp \
     trace.cpp \
-    toolbuttonbox.cpp
+    toolbuttonbox.cpp \
+    bookfinder.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS += \
     chaptersdialog.h \
     fullscreenwindow.h \
     trace.h \
-    toolbuttonbox.h
+    toolbuttonbox.h \
+    bookfinder.h
 
 RESOURCES += \
     dorian.qrc

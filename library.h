@@ -5,6 +5,7 @@
 #include <QVariant>
 #include <QString>
 #include <QList>
+#include <QStringList>
 
 class QObject;
 class QModelIndex;
@@ -28,6 +29,7 @@ public:
     void setNowReading(const QModelIndex &index);
     QModelIndex nowReading() const;
     Book *book(const QModelIndex &index);
+    QStringList bookPaths();
 
 signals:
     void nowReadingChanged();
@@ -43,6 +45,7 @@ private:
     static Library *mInstance;
     QList<Book *> mBooks;
     QModelIndex mNowReading;
+    QStringList mDirectories;
 };
 
 #endif // LIBRARY_H

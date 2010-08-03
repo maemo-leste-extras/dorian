@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QtGui>
+#include "bookfinder.h"
 
 class QString;
 class QModelIndex;
@@ -16,7 +17,7 @@ class MainWindow: public QMainWindow
 
 public:
     MainWindow(QWidget *parent = 0);
-    virtual ~MainWindow() {}
+    ~MainWindow();
 
 public slots:
     void showLibrary();
@@ -61,6 +62,8 @@ private:
     QModelIndex mCurrent;
     FullScreenWindow *fullScreenWindow;
     int preventBlankingTimer;
+    BookFinder *bookFinder;
+    BookFinderThread bookFinderThread;
 };
 
 #endif // MAINWINDOW_H

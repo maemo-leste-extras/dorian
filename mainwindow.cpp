@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QFileInfo>
+#include <QStringList>
 
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>
@@ -24,6 +25,7 @@
 #include "chaptersdialog.h"
 #include "fullscreenwindow.h"
 #include "trace.h"
+#include "bookfinder.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -38,12 +40,14 @@
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent), view(0), preventBlankingTimer(-1)
 {
+    Trace t("MainWindow::MainWindow");
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
     setWindowTitle("Dorian");
 
-    // Central widget. Must be an intermediate because of reparenting the book view
+    // Central widget. Must be an intermediate, because the book view widget
+    // can be re-parented later
     QFrame *central = new QFrame(this);
     QVBoxLayout *layout = new QVBoxLayout(central);
     layout->setMargin(0);
@@ -139,9 +143,33 @@ MainWindow::MainWindow(QWidget *parent):
     fullScreenWindow = new FullScreenWindow(this);
     connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
 
+    // Create thread for finding books in directories
+    bookFinder = new BookFinder();
+    connect(bookFinder, SIGNAL(add(const QString &)),
+            this, SLOT(onAddBook(const QString &)));
+    connect(bookFinder, SIGNAL(remove(const QString &)),
+            this, SLOT(onRemoveBook(const QString &)));
+    bookFinder->moveToThread(&bookFinderThread);
+    bookFinderThread.start();
+    qRegisterMetaType<QStringList>("QStringList");
+
+    bool ret = QMetaObject::invokeMethod(
+        bookFinder,
+        "find",
+        Q_ARG(QStringList, QStringList(QString("/home/polster/Books"))),
+        Q_ARG(QStringList, library->bookPaths()));
+    t.trace(QString("Invoking BookFinder::find ") + (ret?"succeeded":"failed"));
+
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
 #endif
+}
+
+MainWindow::~MainWindow()
+{
+    bookFinderThread.quit();
+    bookFinderThread.wait();
+    delete bookFinder;
 }
 
 void MainWindow::onCurrentBookChanged()
