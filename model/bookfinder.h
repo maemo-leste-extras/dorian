@@ -20,6 +20,7 @@ public slots:
 signals:
     void add(const QString &book);
     void remove(const QString &book);
+    void done(int added, int removed);
 
 public slots:
 };

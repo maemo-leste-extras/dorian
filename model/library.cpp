@@ -85,7 +85,7 @@ void Library::load()
     }
     QString currentPath = settings.value("lib/nowreading").toString();
     mNowReading = find(currentPath);
-    mDirectories = settings.value("lib/directories").toStringList();
+    mFolders = settings.value("lib/folders").toStringList();
 }
 
 void Library::save()
@@ -99,7 +99,7 @@ void Library::save()
     Book *currentBook = book(mNowReading);
     settings.setValue("lib/nowreading",
                       currentBook? currentBook->path(): QString());
-    settings.setValue("lib/directories", mDirectories);
+    settings.setValue("lib/folders", mFolders);
 }
 
 bool Library::add(const QString &path)
@@ -207,4 +207,35 @@ QStringList Library::bookPaths()
         ret.append(book->path());
     }
     return ret;
+}
+
+QStringList Library::folders() const
+{
+    return mFolders;
+}
+
+bool Library::addFolder(const QString &folder)
+{
+    if (!mFolders.contains(folder)) {
+        mFolders.append(folder);
+        save();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Library::removeFolder(const QString &folder)
+{
+    if (mFolders.contains(folder)) {
+        mFolders.removeOne(folder);
+        save();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void Library::scanFolders()
+{
 }

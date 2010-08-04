@@ -15,6 +15,7 @@
 #include "infodialog.h"
 #include "settings.h"
 #include "listwindow.h"
+#include "foldersdialog.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
@@ -41,8 +42,8 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     addAction(tr("Delete"), this, SLOT(onRemove()));
 #endif // ! Q_WS_MAEMO_5
 
-    addAction(tr("Add"), this, SLOT(onAdd()));
-    addAction(tr("Folders"), this, SLOT(onShowFolders()));
+    addAction(tr("Add book"), this, SLOT(onAdd()));
+    addAction(tr("Manage folders"), this, SLOT(onShowFolders()));
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
@@ -200,4 +201,6 @@ QModelIndex LibraryDialog::selected() const
 
 void LibraryDialog::onShowFolders()
 {
+    FoldersDialog *folders = new FoldersDialog(this);
+    folders->show();
 }

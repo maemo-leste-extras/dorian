@@ -8,7 +8,6 @@
 #include <QStringList>
 
 class QObject;
-class QModelIndex;
 class Book;
 
 /** Library of books. */
@@ -28,6 +27,10 @@ public:
     QModelIndex nowReading() const;
     Book *book(const QModelIndex &index);
     QStringList bookPaths();
+    QStringList folders() const;
+    bool addFolder(const QString &folder);
+    bool removeFolder(const QString &folder);
+    void scanFolders();
 
 signals:
     void nowReadingChanged();
@@ -46,7 +49,7 @@ private:
     static Library *mInstance;
     QList<Book *> mBooks;
     QModelIndex mNowReading;
-    QStringList mDirectories;
+    QStringList mFolders;
 };
 
 #endif // LIBRARY_H

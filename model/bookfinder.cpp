@@ -13,6 +13,8 @@ void BookFinder::find(const QStringList &directories, const QStringList &books)
 {
     Trace t("BookFinder::find");
     QStringList booksFound;
+    int added = 0;
+    int removed = 0;
 
     foreach (QString path, directories) {
         QStringList filters(QString("*.epub"));
@@ -27,6 +29,7 @@ void BookFinder::find(const QStringList &directories, const QStringList &books)
         if (!books.contains(found)) {
             t.trace(QString("New book ") + found);
             emit add(found);
+            added++;
         }
     }
 
@@ -39,10 +42,13 @@ void BookFinder::find(const QStringList &directories, const QStringList &books)
             if (bookDir == QDir(dirName).absolutePath()) {
                 if (!booksFound.contains(bookPath)) {
                     t.trace(QString("Deleted book ") + bookPath);
+                    removed++;
                     emit remove(bookPath);
                 }
                 break;
             }
         }
     }
+
+    emit done(added, removed);
 }
