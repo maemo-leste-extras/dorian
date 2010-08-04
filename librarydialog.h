@@ -4,7 +4,8 @@
 #include <QDialog>
 #include <QString>
 #include <QModelIndexList>
-#include <QMainWindow>
+
+#include "listwindow.h"
 
 class QListView;
 class QPushButton;
@@ -14,7 +15,7 @@ class Book;
 class InfoWindow;
 class SortedLibrary;
 
-class LibraryDialog: public QMainWindow
+class LibraryDialog: public ListWindow
 {
     Q_OBJECT
 
@@ -23,6 +24,7 @@ public:
 
 public slots:
     void onAdd();
+    void onShowFolders();
 #ifndef Q_WS_MAEMO_5
     void onRemove();
     void onDetails();
@@ -33,21 +35,12 @@ public slots:
     void onItemActivated(const QModelIndex &index);
     void onCurrentBookChanged();
 
-protected:
-    void closeEvent(QCloseEvent *event);
-
 private:
     QString createItemText(const Book *book);
     void setSelected(const QModelIndex &index);
     QModelIndex selected() const;
     QListView *list;
     SortedLibrary *sortedLibrary;
-#ifndef Q_WS_MAEMO_5
-    QPushButton *detailsButton;
-    QPushButton *removeButton;
-    QPushButton *readButton;
-#endif // Q_WS_MAEMO_5
-    QPushButton *addButton;
 };
 
 #endif // LIBRARYDIALOG_H

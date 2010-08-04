@@ -27,7 +27,8 @@ SOURCES += \
     widgets/fullscreenwindow.cpp \
     trace.cpp \
     widgets/toolbuttonbox.cpp \
-    model/bookfinder.cpp
+    model/bookfinder.cpp \
+    widgets/listwindow.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -55,7 +56,8 @@ HEADERS += \
     widgets/fullscreenwindow.h \
     trace.h \
     widgets/toolbuttonbox.h \
-    model/bookfinder.h
+    model/bookfinder.h \
+    widgets/listwindow.h
 
 RESOURCES += \
     dorian.qrc

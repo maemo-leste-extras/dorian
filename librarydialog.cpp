@@ -14,18 +14,13 @@
 #include "book.h"
 #include "infodialog.h"
 #include "settings.h"
+#include "listwindow.h"
 
-LibraryDialog::LibraryDialog(QWidget *parent): QMainWindow(parent)
+LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
-#endif
     setWindowTitle(tr("Library"));
 
-    QFrame *frame = new QFrame(this);
-    setCentralWidget(frame);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(frame);
-    frame->setLayout(horizontalLayout);
+    // Create and add list view
 
     list = new QListView(this);
     sortedLibrary = new SortedLibrary(this);
@@ -33,27 +28,21 @@ LibraryDialog::LibraryDialog(QWidget *parent): QMainWindow(parent)
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     list->setSpacing(1);
     list->setUniformItemSizes(true);
-
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
     setSelected(current);
-    horizontalLayout->addWidget(list);
+    addList(list);
+
+    // Add actions
 
 #ifndef Q_WS_MAEMO_5
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
-    detailsButton = new QPushButton(tr("Details"), this);
-    readButton = new QPushButton(tr("Read"), this);
-    removeButton = new QPushButton(tr("Delete"), this);
-    addButton = new QPushButton(tr("Add"), this);
+    addAction(tr("Details"), this, SLOT(onDetails()));
+    addAction(tr("Read"), this, SLOT(onRead()));
+    addAction(tr("Delete"), this, SLOT(onRemove()));
+#endif // ! Q_WS_MAEMO_5
 
-    buttonBox->addButton(detailsButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(readButton, QDialogButtonBox::AcceptRole);
-    buttonBox->addButton(removeButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(addButton, QDialogButtonBox::ActionRole);
-    horizontalLayout->addWidget(buttonBox);
-#else
-    QAction *addBookAction = menuBar()->addAction(tr("Add book"));
-#endif // Q_WS_MAEMO_5
+    addAction(tr("Add"), this, SLOT(onAdd()));
+    addAction(tr("Folders"), this, SLOT(onShowFolders()));
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
@@ -64,17 +53,11 @@ LibraryDialog::LibraryDialog(QWidget *parent): QMainWindow(parent)
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
 #ifndef Q_WS_MAEMO_5
-    connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
-    connect(detailsButton, SIGNAL(clicked()), this, SLOT(onDetails()));
-    connect(readButton, SIGNAL(clicked()), this, SLOT(onRead()));
-    connect(removeButton, SIGNAL(clicked()), this, SLOT(onRemove()));
     connect(list->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection &,
                                     const QItemSelection &)),
             this, SLOT(onItemSelectionChanged()));
     onItemSelectionChanged();
-#else
-    connect(addBookAction, SIGNAL(triggered()), this, SLOT(onAdd()));
 #endif // !Q_WS_MAEMO_5
 }
 
@@ -180,10 +163,12 @@ QString LibraryDialog::createItemText(const Book *book)
 
 void LibraryDialog::onItemSelectionChanged()
 {
+#if 0 // FIXME: API missing from ListWindow
     bool enable = selected().isValid();
     readButton->setEnabled(enable);
     detailsButton->setEnabled(enable);
     removeButton->setEnabled(enable);
+#endif
 }
 
 #endif // Q_WS_MAEMO_5
@@ -213,10 +198,6 @@ QModelIndex LibraryDialog::selected() const
     return QModelIndex();
 }
 
-void LibraryDialog::closeEvent(QCloseEvent *event)
+void LibraryDialog::onShowFolders()
 {
-#ifdef Q_WS_MAEMO_5
-    menuBar()->clear();
-#endif
-    event->accept();
 }

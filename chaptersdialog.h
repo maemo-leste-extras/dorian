@@ -1,7 +1,7 @@
 #ifndef CHAPTERSDIALOG_H
 #define CHAPTERSDIALOG_H
 
-#include <QMainWindow>
+#include "listwindow.h"
 
 class QWidget;
 class QListWidget;
@@ -9,7 +9,7 @@ class QListWidgetItem;
 class Book;
 
 /** Display book chapters. */
-class ChaptersDialog: public QMainWindow
+class ChaptersDialog: public ListWindow
 {
     Q_OBJECT
 
@@ -21,10 +21,8 @@ signals:
 
 public slots:
     void onItemActivated(QListWidgetItem *);
-    void onClose();
 
 protected:
-    Book *book;
     QListWidget *list;
 };
 

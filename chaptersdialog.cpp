@@ -3,44 +3,29 @@
 #include "chaptersdialog.h"
 #include "book.h"
 
-ChaptersDialog::ChaptersDialog(Book *b, QWidget *parent):
-    QMainWindow(parent), book(b)
+ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
 {
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
-#endif
-    setWindowTitle(tr("Bookmarks"));
-
-    QFrame *frame = new QFrame(this);
-    setCentralWidget(frame);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(frame);
-    frame->setLayout(horizontalLayout);
+    setWindowTitle(tr("Chapters"));
 
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
-    foreach (QString id, book->toc) {
-        QString contentTitle = book->content[id].name;
-        (void)new QListWidgetItem(contentTitle, list);
+    if (book) {
+        foreach (QString id, book->toc) {
+            QString contentTitle = book->content[id].name;
+            (void)new QListWidgetItem(contentTitle, list);
+        }
     }
-    horizontalLayout->addWidget(list);
+    addList(list);
     connect(list, SIGNAL(itemActivated(QListWidgetItem*)),
             this, SLOT(onItemActivated(QListWidgetItem*)));
 
 #ifndef Q_WS_MAEMO_5
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
-    QPushButton *closeButton = buttonBox->addButton(QDialogButtonBox::Close);
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(onClose()));
-    horizontalLayout->addWidget(buttonBox);
+    addAction(tr("Close"), this, SLOT(close()), QDialogButtonBox::RejectRole);
 #endif // Q_WS_MAEMO_5
 }
 
 void ChaptersDialog::onItemActivated(QListWidgetItem *item)
 {
     emit goToChapter(list->row(item));
-    close();
-}
-
-void ChaptersDialog::onClose()
-{
     close();
 }
