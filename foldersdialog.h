@@ -20,6 +20,7 @@ public slots:
     void onAdd();
     void onRemove();
     void onRefresh();
+    void onRefreshAll();
     void onRefreshDone(int added, int removed);
 
 protected:

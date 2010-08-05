@@ -11,6 +11,7 @@ class QHBoxLayout;
 class QPushButton;
 class QModelIndex;
 class QItemSelection;
+class QEvent;
 
 /** A window with a list and menu actions (Maemo) or buttons (non-Maemo). */
 class ListWindow: public QMainWindow
@@ -49,7 +50,9 @@ protected slots:
 
 protected:
 #ifdef Q_WS_MAEMO_5
+    bool eventFilter(QObject *obj, QEvent *event);
     void closeEvent(QCloseEvent *event);
+    QMenu *popup;
 #else
     QDialogButtonBox *buttonBox;
     QList<QPushButton *> itemButtons;

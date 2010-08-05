@@ -11,10 +11,12 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
 
     QFrame *frame = new QFrame(this);
     setCentralWidget(frame);
-    frameLayout = new QHBoxLayout(frame);
+    frameLayout = new QHBoxLayout();
     frame->setLayout(frameLayout);
 
-#ifndef Q_WS_MAEMO_5
+#ifdef Q_WS_MAEMO_5
+    popup = new QMenu(this);
+#else
     buttonBox = new QDialogButtonBox(Qt::Vertical, this);
     frameLayout->addWidget(buttonBox);
 #endif
@@ -23,11 +25,14 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
 void ListWindow::addList(QListView *listView)
 {
     list = listView;
+#ifdef Q_WS_MAEMO_5
+    list->installEventFilter(this);
+#endif
     frameLayout->insertWidget(0, list);
     connect(list->selectionModel(),
       SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
       this,
-      SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection&)));
+      SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 void ListWindow::addAction(const QString &title, QObject *receiver,
@@ -53,7 +58,7 @@ void ListWindow::addItemAction(const QString &title, QObject *receiver,
     itemButtons.append(button);
     activateItemButtons();
 #else
-    // FIXME
+    popup->addAction(title, receiver, slot);
 #endif // ! Q_WS_MAEMO_5
 }
 
@@ -92,3 +97,27 @@ void ListWindow::activateItemButtons()
 }
 
 #endif // ! Q_WS_MAEMO_5
+
+#ifdef Q_WS_MAEMO_5
+
+bool ListWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::ContextMenu) {
+        Trace::trace("ListWindow::eventFiler: Received QEvent::ContextMenu");
+        if (popup->actions().size()) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
+            QPoint pos = mouseEvent->globalPos();
+            pos.setX(pos.x() - 150);
+            if (pos.x() < 0) {
+                pos.setX(0);
+            }
+            popup->exec(pos);
+        }
+        return true;
+    } else {
+        Trace::trace("ListWindow::eventFilter");
+        return QObject::eventFilter(obj, event);
+    }
+}
+
+#endif // Q_WS_MAEMO_5

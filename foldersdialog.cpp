@@ -22,8 +22,9 @@ FoldersDialog::FoldersDialog(QWidget *parent): ListWindow(parent)
     list->setUniformItemSizes(true);
     addList(list);
     addAction(tr("Add folder"), this, SLOT(onAdd()));
-    addItemAction(tr("Delete folder"), this, SLOT(onRemove()));
-    addAction(tr("Re-scan folders"), this, SLOT(onRefresh()));
+    addItemAction(tr("Re-scan"), this, SLOT(onRefresh()));
+    addItemAction(tr("Remove"), this, SLOT(onRemove()));
+    addAction(tr("Re-scan all folders"), this, SLOT(onRefreshAll()));
 }
 
 void FoldersDialog::onAdd()
@@ -51,8 +52,7 @@ void FoldersDialog::onAdd()
     } else {
 #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this,
-            tr("This folder is already in the library"),
-            QMaemo5InformationBox::DefaultTimeout);
+            tr("This folder is already in the library"));
 #else
         (void)QMessageBox::information(this, tr("Dorian"),
             tr("This folder is already in the library"), QMessageBox::Ok);
@@ -68,16 +68,51 @@ void FoldersDialog::onRemove()
     if (selection.size() != 1) {
         return;
     }
+
     QModelIndex selected = selection[0];
     QString path = list->model()->data(selected).toString();
     t.trace(path);
-    if (Library::instance()->removeFolder(path)) {
-        model->removeRow(selected.row());
-        onRefresh();
+
+    if (QMessageBox::Yes ==
+        QMessageBox::question(this, tr("Remove folder"),
+            tr("Remove folder \"%1\" from library?").arg(path),
+            QMessageBox::Yes | QMessageBox::No)) {
+        if (Library::instance()->removeFolder(path)) {
+            model->removeRow(selected.row());
+        }
     }
 }
 
 void FoldersDialog::onRefresh()
+{
+    Trace t("FoldersDialog::onRefresh");
+
+    QModelIndexList selection = list->selectionModel()->selectedIndexes();
+    if (selection.size() != 1) {
+        return;
+    }
+
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
+#endif
+    QModelIndex selected = selection[0];
+    QString path = list->model()->data(selected).toString();
+    t.trace(path);
+    BookFinder *bookFinder = new BookFinder(this);
+    Library *library = Library::instance();
+    connect(bookFinder, SIGNAL(add(const QString &)),
+            library, SLOT(add(const QString &)));
+    connect(bookFinder, SIGNAL(remove(const QString &)),
+            library, SLOT(remove(const QString &)));
+    connect(bookFinder, SIGNAL(done(int,int)),
+            this, SLOT(onRefreshDone(int, int)));
+    bookFinder->find(QStringList(path), library->bookPaths());
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
+#endif
+}
+
+void FoldersDialog::onRefreshAll()
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
@@ -91,14 +126,7 @@ void FoldersDialog::onRefresh()
             library, SLOT(remove(const QString &)));
     connect(bookFinder, SIGNAL(done(int,int)),
             this, SLOT(onRefreshDone(int, int)));
-    // bookFinder->moveToThread(&bookFinderThread);
-    // bookFinderThread.start();
-
-    (void)QMetaObject::invokeMethod(
-        bookFinder,
-        "find",
-        Q_ARG(QStringList, model->stringList()),
-        Q_ARG(QStringList, library->bookPaths()));
+    bookFinder->find(model->stringList(), library->bookPaths());
 
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
@@ -122,12 +150,11 @@ void FoldersDialog::onRefreshDone(int added, int removed)
     default: removedMsg = tr("%1 books removed").arg(removed);
     }
 
-    QString msg(tr("Scanning folders complete\n\n%1, %2.").
+    QString msg(tr("Scanning complete\n\n%1, %2.").
                 arg(addedMsg).arg(removedMsg));
     Trace::trace(QString("FoldersDialog::onRefreshDone: " + msg));
 #ifdef Q_WS_MAEMO_5
-    QMaemo5InformationBox::
-            information(this, msg, QMaemo5InformationBox::NoTimeout);
+    QMaemo5InformationBox::information(this, msg);
 #else
     // FIXME
 #endif
