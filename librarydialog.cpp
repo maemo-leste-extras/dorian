@@ -37,9 +37,9 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     // Add actions
 
 #ifndef Q_WS_MAEMO_5
-    addAction(tr("Details"), this, SLOT(onDetails()));
-    addAction(tr("Read"), this, SLOT(onRead()));
-    addAction(tr("Delete"), this, SLOT(onRemove()));
+    addItemAction(tr("Details"), this, SLOT(onDetails()));
+    addItemAction(tr("Read"), this, SLOT(onRead()));
+    addItemAction(tr("Delete"), this, SLOT(onRemove()));
 #endif // ! Q_WS_MAEMO_5
 
     addAction(tr("Add book"), this, SLOT(onAdd()));
@@ -53,13 +53,6 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
             SLOT(onBookAdded()));
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
-#ifndef Q_WS_MAEMO_5
-    connect(list->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection &,
-                                    const QItemSelection &)),
-            this, SLOT(onItemSelectionChanged()));
-    onItemSelectionChanged();
-#endif // !Q_WS_MAEMO_5
 }
 
 void LibraryDialog::onAdd()
@@ -159,20 +152,6 @@ QString LibraryDialog::createItemText(const Book *book)
     }
     return text;
 }
-
-#ifndef Q_WS_MAEMO_5
-
-void LibraryDialog::onItemSelectionChanged()
-{
-#if 0 // FIXME: API missing from ListWindow
-    bool enable = selected().isValid();
-    readButton->setEnabled(enable);
-    detailsButton->setEnabled(enable);
-    removeButton->setEnabled(enable);
-#endif
-}
-
-#endif // Q_WS_MAEMO_5
 
 void LibraryDialog::onCurrentBookChanged()
 {

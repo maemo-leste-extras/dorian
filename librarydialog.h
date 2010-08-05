@@ -29,7 +29,6 @@ public slots:
     void onRemove();
     void onDetails();
     void onRead();
-    void onItemSelectionChanged();
 #endif // Q_WS_MAEMO_5
     void onBookAdded();
     void onItemActivated(const QModelIndex &index);

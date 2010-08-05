@@ -22,9 +22,7 @@ FoldersDialog::FoldersDialog(QWidget *parent): ListWindow(parent)
     list->setUniformItemSizes(true);
     addList(list);
     addAction(tr("Add folder"), this, SLOT(onAdd()));
-#ifndef Q_WS_MAEMO_5
-    addAction(tr("Delete folder"), this, SLOT(onDelete()));
-#endif
+    addItemAction(tr("Delete folder"), this, SLOT(onRemove()));
     addAction(tr("Re-scan folders"), this, SLOT(onRefresh()));
 }
 
@@ -34,8 +32,10 @@ void FoldersDialog::onAdd()
 
     // Get folder name
     Settings *settings = Settings::instance();
-    QString last = settings->value("lastfolderadded", QDir::homePath()).toString();
-    QString path = QFileDialog::getExistingDirectory(this, tr("Add Folder"), last);
+    QString last =
+            settings->value("lastfolderadded", QDir::homePath()).toString();
+    QString path =
+            QFileDialog::getExistingDirectory(this, tr("Add Folder"), last);
     if (path == "") {
         return;
     }
@@ -62,6 +62,19 @@ void FoldersDialog::onAdd()
 
 void FoldersDialog::onRemove()
 {
+    Trace t("FoldersDialog::onRemove");
+
+    QModelIndexList selection = list->selectionModel()->selectedIndexes();
+    if (selection.size() != 1) {
+        return;
+    }
+    QModelIndex selected = selection[0];
+    QString path = list->model()->data(selected).toString();
+    t.trace(path);
+    if (Library::instance()->removeFolder(path)) {
+        model->removeRow(selected.row());
+        onRefresh();
+    }
 }
 
 void FoldersDialog::onRefresh()

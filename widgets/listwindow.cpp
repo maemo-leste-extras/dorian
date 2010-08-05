@@ -3,7 +3,7 @@
 #include "listwindow.h"
 #include "trace.h"
 
-ListWindow::ListWindow(QWidget *parent): QMainWindow(parent)
+ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -11,34 +11,50 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent)
 
     QFrame *frame = new QFrame(this);
     setCentralWidget(frame);
-    layout = new QHBoxLayout(frame);
-    frame->setLayout(layout);
+    frameLayout = new QHBoxLayout(frame);
+    frame->setLayout(frameLayout);
 
 #ifndef Q_WS_MAEMO_5
     buttonBox = new QDialogButtonBox(Qt::Vertical, this);
-    layout->addWidget(buttonBox);
+    frameLayout->addWidget(buttonBox);
 #endif
 }
 
-void ListWindow::addList(QListView *list)
+void ListWindow::addList(QListView *listView)
 {
-    layout->insertWidget(0, list);
+    list = listView;
+    frameLayout->insertWidget(0, list);
+    connect(list->selectionModel(),
+      SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+      this,
+      SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection&)));
 }
 
 void ListWindow::addAction(const QString &title, QObject *receiver,
                            const char *slot, QDialogButtonBox::ButtonRole role)
 {
 #ifndef Q_WS_MAEMO_5
-    QPushButton *button = new QPushButton(title, this);
-    QList<QAction *> actions = button->actions();
-    Trace::trace(QString("ListWindow::addAction: Button has %1 default action(s)").arg(actions.length()));
-    buttonBox->addButton(button, role);
+    QPushButton *button = buttonBox->addButton(title, role);
     connect(button, SIGNAL(clicked()), receiver, slot);
 #else
     Q_UNUSED(role);
     QAction *action = menuBar()->addAction(title);
     connect(action, SIGNAL(triggered()), receiver, slot);
-#endif // Q_WS_MAEMO_5
+#endif // ! Q_WS_MAEMO_5
+}
+
+void ListWindow::addItemAction(const QString &title, QObject *receiver,
+                               const char *slot)
+{
+#ifndef Q_WS_MAEMO_5
+    QPushButton *button =
+            buttonBox->addButton(title, QDialogButtonBox::ActionRole);
+    connect(button, SIGNAL(clicked()), receiver, slot);
+    itemButtons.append(button);
+    activateItemButtons();
+#else
+    // FIXME
+#endif // ! Q_WS_MAEMO_5
 }
 
 #ifdef Q_WS_MAEMO_5
@@ -51,3 +67,28 @@ void ListWindow::closeEvent(QCloseEvent *event)
 }
 
 #endif // Q_WS_MAEMO_5
+
+void ListWindow::onSelectionChanged(const QItemSelection &selected,
+                                    const QItemSelection &deselected)
+{
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
+#ifndef Q_WS_MAEMO_5
+    activateItemButtons();
+#endif
+}
+
+#ifndef Q_WS_MAEMO_5
+
+void ListWindow::activateItemButtons()
+{
+    bool enable = false;
+    if (list) {
+        enable = list->selectionModel()->hasSelection();
+    }
+    foreach (QPushButton *button, itemButtons) {
+        button->setEnabled(enable);
+    }
+}
+
+#endif // ! Q_WS_MAEMO_5
