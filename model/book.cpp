@@ -136,14 +136,15 @@ bool Book::parse()
     delete source;
 
     // Load cover image
-    if (content.contains("cover-image")) {
-        t.trace("Loading cover image from " + content["cover-image"].href);
-        cover = QImage(content["cover-image"].href).scaled(COVER_WIDTH,
-            COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    } else if (content.contains("img-cover-jpeg")) {
-        t.trace("Loading cover image from " + content["img-cover-jpeg"].href);
-        cover = QImage(content["img-cover-jpeg"].href).scaled(COVER_WIDTH,
-            COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    QStringList coverKeys;
+    coverKeys << "cover-image" << "img-cover-jpeg" << "cover";
+    foreach (QString key, coverKeys) {
+        if (content.contains(key)) {
+            t.trace("Loading cover image from " + content[key].href);
+            cover = QImage(content[key].href).scaled(COVER_WIDTH,
+                COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            break;
+        }
     }
 
     // If there is an "ncx" item in content, parse it: That's the real table of
