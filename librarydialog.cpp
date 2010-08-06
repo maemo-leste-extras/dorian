@@ -28,7 +28,6 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     list->setModel(sortedLibrary);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     list->setSpacing(1);
-    list->setUniformItemSizes(true);
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
     setSelected(current);
