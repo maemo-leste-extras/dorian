@@ -213,29 +213,24 @@ QAction *MainWindow::addToolBarAction(const QObject *receiver,
 
 void MainWindow::showLibrary()
 {
-    LibraryDialog *dialog = new LibraryDialog(this);
-    dialog->show();
+    (new LibraryDialog(this))->show();
 }
 
 void MainWindow::showSettings()
 {
-    SettingsWindow *settings = new SettingsWindow(this);
-    settings->show();
+    (new SettingsWindow(this))->show();
 }
 
 void MainWindow::showInfo()
 {
     if (mCurrent.isValid()) {
-        InfoDialog *info =
-            new InfoDialog(Library::instance()->book(mCurrent), this);
-        info->exec();
+        (new InfoDialog(Library::instance()->book(mCurrent), this))->exec();
     }
 }
 
 void MainWindow::showDevTools()
 {
-    DevTools *devTools = new DevTools();
-    devTools->exec();
+    (new DevTools())->exec();
 }
 
 void MainWindow::showBookmarks()
@@ -347,7 +342,48 @@ void MainWindow::showChapters()
 
 void MainWindow::onGoToChapter(int index)
 {
-    view->goToBookmark(Book::Bookmark(index, 0));
+    Trace t("MainWindow::onGoToChapter");
+
+    Book *book = Library::instance()->book(mCurrent);
+    if (!book) {
+        t.trace("No current book?");
+        return;
+    }
+
+    QString id = book->chapters[index];
+    QString href = book->content[id].href;
+    QString baseRef(href);
+    QUrl url(QString("file://") + href);
+    if (url.hasFragment()) {
+        QString fragment = url.fragment();
+        baseRef.chop(fragment.length() + 1);
+    }
+
+    // Swipe through all content items to find the one matching the chapter href
+    // FIXME: Do we need to index content items by href, too?
+    QString contentKey;
+    bool found = false;
+    foreach (contentKey, book->content.keys()) {
+        if (contentKey == id) {
+            continue;
+        }
+        if (book->content[contentKey].href == baseRef) {
+            found = true;
+            t.trace(QString("Key for %1 is %2").arg(baseRef).arg(contentKey));
+            break;
+        }
+    }
+    if (!found) {
+        t.trace("Could not find key for " + baseRef);
+        return;
+    }
+
+    int tocIndex = book->toc.indexOf(contentKey);
+    if (tocIndex != -1) {
+        view->goToBookmark(Book::Bookmark(tocIndex, 0));
+    } else {
+        qCritical() << "Could not find toc index of chapter" << id;
+    }
 }
 
 void MainWindow::timerEvent(QTimerEvent *event)

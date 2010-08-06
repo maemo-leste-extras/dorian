@@ -4,6 +4,7 @@
 #include <QXmlContentHandler>
 
 #include "book.h"
+#include "trace.h"
 
 /** XML content handler for NCX format. */
 class NcxHandler: public QXmlContentHandler
@@ -19,37 +20,38 @@ public:
     bool startDocument() {return true;}
     bool startPrefixMapping(const QString &, const QString &) {return true;}
 
-    NcxHandler(Book &b): book(b)
-    {
-        book.toc.clear();
+    NcxHandler(Book &b): book(b) {
+        book.chapters.clear();
     }
 
-    bool characters(const QString &ch)
-    {
+    bool characters(const QString &ch) {
         currentText += ch;
         return true;
     }
 
     bool endElement(const QString &namespaceUri, const QString &name,
-                    const QString &qName)
-    {
+                    const QString &qName) {
+        Trace t("NcxHandler::endElement" + name);
         (void)namespaceUri;
         (void)qName;
         if (name == "text") {
+            t.trace(currentText);
             contentTitle = currentText;
         } else if (name == "navPoint") {
+            t.trace(QString("url: ") + contentUrl);
+            t.trace(QString("title: ") + contentTitle);
+            t.trace(QString("id:") + contentId);
             Book::ContentItem item;
             item.href = book.rootPath() + "/" + contentUrl;
             item.name = contentTitle;
             book.content[contentId] = item;
-            book.toc.append(contentId);
+            book.chapters.append(contentId);
         }
         return true;
     }
 
     bool startElement(const QString &namespaceUri, const QString &name,
-                      const QString &qName, const QXmlAttributes &attrs)
-    {
+                      const QString &qName, const QXmlAttributes &attrs) {
         (void)namespaceUri;
         (void)qName;
         currentText = "";

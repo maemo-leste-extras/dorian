@@ -4,6 +4,7 @@
 #include <QXmlContentHandler>
 
 #include "book.h"
+#include "trace.h"
 
 /** XML content handler for OPS format. */
 class OpsHandler: public QXmlContentHandler
@@ -22,34 +23,27 @@ public:
     bool startDocument() {return true;}
     bool startPrefixMapping(const QString &, const QString &) {return true;}
 
-    bool characters(const QString &ch)
-    {
+    bool characters(const QString &ch) {
         currentText += ch;
         return true;
     }
 
     bool endElement(const QString &namespaceUri, const QString &name,
-                    const QString &qName)
-    {
+                    const QString &qName) {
         (void)namespaceUri;
         (void)qName;
         if (currentText != "") {
             if (name == "title") {
                 book.title = currentText;
-            }
-            else if (name == "creator") {
+            } else if (name == "creator") {
                 book.creators.append(currentText);
-            }
-            else if (name == "publisher") {
+            } else if (name == "publisher") {
                 book.publisher = currentText;
-            }
-            else if (name == "subject") {
+            } else if (name == "subject") {
                 book.subject = currentText;
-            }
-            else if (name == "source") {
+            } else if (name == "source") {
                 book.source = currentText;
-            }
-            else if (name == "rights") {
+            } else if (name == "rights") {
                 book.rights = currentText;
             }
         }
@@ -57,8 +51,8 @@ public:
     }
 
     bool startElement(const QString &namespaceUri, const QString &name,
-                      const QString &qName, const QXmlAttributes &attrs)
-    {
+                      const QString &qName, const QXmlAttributes &attrs) {
+        Trace t("OpsHandler::startElement" + name);
         (void)namespaceUri;
         (void)qName;
         currentText = "";
@@ -70,8 +64,12 @@ public:
             QString key = attrs.value("id");
             book.content[key] = item;
             partCount++;
+            t.trace(QString("name: ") + item.name);
+            t.trace(QString("href: ") + attrs.value("href"));
+            t.trace(QString("id: ") + key);
         }
         else if (name == "itemref") {
+            t.trace(QString("id: ") + attrs.value("idref"));
             book.toc.append(attrs.value("idref"));
         }
         return true;

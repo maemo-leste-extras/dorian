@@ -10,7 +10,7 @@ ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     if (book) {
-        foreach (QString id, book->toc) {
+        foreach (QString id, book->chapters) {
             QString contentTitle = book->content[id].name;
             (void)new QListWidgetItem(contentTitle, list);
         }

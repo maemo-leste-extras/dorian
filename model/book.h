@@ -108,6 +108,7 @@ public:
     QString rights;                         //< Rights.
     QString tocPath;                        //< Path to toc ncx.
     QString coverPath;                      //< Path to cover html.
+    QStringList chapters;                   //< Main navigation items from EPUB.
 
 signals:
     /** Emitted if @see open() succeeds. */

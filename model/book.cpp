@@ -135,6 +135,10 @@ bool Book::parse()
     delete opsHandler;
     delete source;
 
+    // Initially, put all content items in the chapter list.
+    // This can be refined by parsing the NCX file later
+    chapters = toc;
+
     // Load cover image
     QStringList coverKeys;
     coverKeys << "cover-image" << "img-cover-jpeg" << "cover";

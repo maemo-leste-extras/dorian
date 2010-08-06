@@ -1,6 +1,8 @@
 dorian (0.1.1-1) unstable; urgency=low
 
   * Improve chances to find cover image
+  * Don't lose pages
+  * Handle fragments in chapter URLs
 
  -- Akos Polster <akos@pipacs.com>  Fri,  6 Aug 2010 20:00:00 +0200
 
