@@ -25,16 +25,12 @@ public:
     /** Bookmark: a volume index and a relative position in volume. */
     struct Bookmark
     {
-        Bookmark(int chapter_, qreal pos_): chapter(chapter_), pos(pos_) {}
-        Bookmark() {chapter = pos = 0;}
-        int chapter;
+        Bookmark(int part_, qreal pos_): part(part_), pos(pos_) {}
+        Bookmark() {part = pos = 0;}
+        int part;
         qreal pos;
         bool operator<(const Bookmark&other) const {
-            if (chapter != other.chapter) {
-                return chapter < other.chapter;
-            } else {
-                return pos < other.pos;
-            }
+            return (part == other.part)? (pos < other.pos): (part < other.part);
         }
     };
 
@@ -72,13 +68,13 @@ public:
     bool clearDir(const QString &directory);
 
     /** Set last bookmark. */
-    void setLastBookmark(int chapter, qreal position);
+    void setLastBookmark(int part, qreal position);
 
     /** Get last bookmark. */
     Bookmark lastBookmark() const;
 
     /** Add bookmark. */
-    void addBookmark(int chapter, qreal position);
+    void addBookmark(int part, qreal position);
 
     /** Delete bookmark. */
     void deleteBookmark(int index);
@@ -94,6 +90,12 @@ public:
 
     /** Get short friendly name: title or file name. */
     QString shortName() const;
+
+    /** Get chapter index from toc index. */
+    int chapterFromToc(int index);
+
+    /** Get toc index from chapter index. */
+    int tocFromChapter(int index);
 
     QString title;                          //< Book title from EPUB.
     QStringList toc;                        //< Table of contents from EPUB.

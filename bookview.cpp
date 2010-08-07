@@ -99,7 +99,7 @@ void BookView::loadContent(int index)
     else {
         loaded = false;
         decorated = false;
-        emit chapterLoadStart(index);
+        emit partLoadStart(index);
         load(QUrl(contentFile));
     }
     contentIndex = index;
@@ -173,12 +173,12 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
 {
     Trace t("BookView::goToBookmark");
     if (mBook) {
-        if (bookmark.chapter != contentIndex) {
-            t.trace(QString("Loading new chapter %1").arg(bookmark.chapter));
-            mBook->setLastBookmark(bookmark.chapter, bookmark.pos);
+        if (bookmark.part != contentIndex) {
+            t.trace(QString("Loading new part %1").arg(bookmark.part));
+            mBook->setLastBookmark(bookmark.part, bookmark.pos);
             restorePositionAfterLoad = true;
             positionAfterLoad = bookmark.pos;
-            loadContent(bookmark.chapter);
+            loadContent(bookmark.part);
         } else {
             goToPosition(bookmark.pos);
         }
@@ -195,7 +195,7 @@ void BookView::onLoadFinished(bool ok)
     loaded = true;
     addNavigationBar();
     onSettingsChanged("scheme");
-    emit chapterLoadEnd(contentIndex);
+    emit partLoadEnd(contentIndex);
 }
 
 void BookView::onSettingsChanged(const QString &key)
@@ -235,7 +235,7 @@ void BookView::paintEvent(QPaintEvent *e)
     QPixmap bookmarkPixmap = QPixmap::fromImage(bookmarkImage);
     QPainter painter(this);
     foreach (Book::Bookmark b, mBook->bookmarks()) {
-        if (b.chapter != contentIndex) {
+        if (b.part != contentIndex) {
             continue;
         }
         int height = contentsHeight;

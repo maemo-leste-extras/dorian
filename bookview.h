@@ -27,8 +27,8 @@ public:
     void restoreLastBookmark();
 
 signals:
-    void chapterLoadStart(int index);
-    void chapterLoadEnd(int index);
+    void partLoadStart(int index);
+    void partLoadEnd(int index);
 
     /** Signal button press when the real event has been suppressed. */
     void suppressedMouseButtonPress();
@@ -59,7 +59,7 @@ private:
     /** Remove extracted icons. */
     void removeIcons();
 
-    /** Load given chapter. */
+    /** Load given part. */
     void loadContent(int index);
 
     /** Decorate web page frame with navigation icons. */
@@ -68,10 +68,10 @@ private:
     /** Get temporary directory for extracting book contents. */
     QString tmpPath();
 
-    /** Go to a given (relative) position in current chapter. */
+    /** Go to a given (relative) position in current part. */
     void goToPosition(qreal position);
 
-    int contentIndex;   /**< Current chapter in book. */
+    int contentIndex;   /**< Current part in book. */
     Book *mBook;        /**< Book to show. */
     bool restorePositionAfterLoad;
                         /**< If true, restoring position after load is needed. */

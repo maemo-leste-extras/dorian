@@ -137,7 +137,7 @@ bool Book::parse()
     delete source;
 
     // Initially, put all content items in the chapter list.
-    // This can be refined by parsing the NCX file later
+    // This will be refined by parsing the NCX file later
     chapters = toc;
 
     // Load cover image
@@ -234,7 +234,7 @@ void Book::load()
     subject = settings.value(key + "subject").toString();
     source = settings.value(key + "source").toString();
     rights = settings.value(key + "rights").toString();
-    mLastBookmark.chapter = settings.value(key + "lastchapter").toInt();
+    mLastBookmark.part = settings.value(key + "lastpart").toInt();
     mLastBookmark.pos = settings.value(key + "lastpos").toReal();
     cover = settings.value(key + "cover").value<QImage>().scaled(COVER_WIDTH,
         COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -247,13 +247,13 @@ void Book::load()
     // Load bookmarks
     int size = settings.value(key + "bookmarks").toInt();
     for (int i = 0; i < size; i++) {
-        int chapter = settings.value(key + "bookmark" + QString::number(i) +
-                                     "/chapter").toInt();
+        int part = settings.value(key + "bookmark" + QString::number(i) +
+                                     "/part").toInt();
         qreal pos = settings.value(key + "bookmark" + QString::number(i) +
                                    "/pos").toReal();
-        t.trace(QString("Bookmark %1 at chapter %2, %3").
-                arg(i).arg(chapter).arg(pos));
-        mBookmarks.append(Bookmark(chapter, pos));
+        t.trace(QString("Bookmark %1 at part %2, %3").
+                arg(i).arg(part).arg(pos));
+        mBookmarks.append(Bookmark(part, pos));
     }
 }
 
@@ -274,7 +274,7 @@ void Book::save()
     settings.setValue(key + "subject", subject);
     settings.setValue(key + "source", source);
     settings.setValue(key + "rights", rights);
-    settings.setValue(key + "lastchapter", mLastBookmark.chapter);
+    settings.setValue(key + "lastpart", mLastBookmark.part);
     settings.setValue(key + "lastpos", mLastBookmark.pos);
     settings.setValue(key + "cover", cover);
 
@@ -282,17 +282,17 @@ void Book::save()
     settings.setValue(key + "bookmarks", mBookmarks.size());
     for (int i = 0; i < mBookmarks.size(); i++) {
         t.trace(QString("Bookmark %1 at %2, %3").
-                arg(i).arg(mBookmarks[i].chapter).arg(mBookmarks[i].pos));
-        settings.setValue(key + "bookmark" + QString::number(i) + "/chapter",
-                          mBookmarks[i].chapter);
+                arg(i).arg(mBookmarks[i].part).arg(mBookmarks[i].pos));
+        settings.setValue(key + "bookmark" + QString::number(i) + "/part",
+                          mBookmarks[i].part);
         settings.setValue(key + "bookmark" + QString::number(i) + "/pos",
                           mBookmarks[i].pos);
     }
 }
 
-void Book::setLastBookmark(int chapter, qreal position)
+void Book::setLastBookmark(int part, qreal position)
 {
-    mLastBookmark.chapter = chapter;
+    mLastBookmark.part = part;
     mLastBookmark.pos = position;
     save();
 }
@@ -302,9 +302,9 @@ Book::Bookmark Book::lastBookmark() const
     return Book::Bookmark(mLastBookmark);
 }
 
-void Book::addBookmark(int chapter, qreal position)
+void Book::addBookmark(int part, qreal position)
 {
-    mBookmarks.append(Bookmark(chapter, position));
+    mBookmarks.append(Bookmark(part, position));
     qSort(mBookmarks.begin(), mBookmarks.end());
     save();
 }
@@ -373,4 +373,48 @@ QString Book::shortName() const
     } else {
         return title;
     }
+}
+
+int Book::chapterFromToc(int index)
+{
+    int ret = -1;
+    return ret;
+}
+
+int Book::tocFromChapter(int index)
+{
+    Trace t("Book::tocFromChapter");
+    QString id = chapters[index];
+    QString href = content[id].href;
+    QString baseRef(href);
+    QUrl url(QString("file://") + href);
+    if (url.hasFragment()) {
+        QString fragment = url.fragment();
+        baseRef.chop(fragment.length() + 1);
+    }
+
+    // Swipe through all content items to find the one matching the chapter href
+    // FIXME: Do we need to index content items by href, too?
+    QString contentKey;
+    bool found = false;
+    foreach (contentKey, content.keys()) {
+        if (contentKey == id) {
+            continue;
+        }
+        if (content[contentKey].href == baseRef) {
+            found = true;
+            t.trace(QString("Key for %1 is %2").arg(baseRef).arg(contentKey));
+            break;
+        }
+    }
+    if (!found) {
+        t.trace("Could not find key for " + baseRef);
+        return -1;
+    }
+    int tocIndex = toc.indexOf(contentKey);
+    if (tocIndex == -1) {
+        qCritical() << "Book::tocFromChapter: Could not find toc index of chapter"
+                << id;
+    }
+    return tocIndex;
 }

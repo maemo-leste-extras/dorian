@@ -29,8 +29,8 @@ public slots:
     void showRegular();
     void showBig();
     void onSettingsChanged(const QString &key);
-    void onChapterLoadStart();
-    void onChapterLoadEnd(int index);
+    void onPartLoadStart();
+    void onPartLoadEnd(int index);
     void onAddBookmark();
     void onGoToBookmark(int index);
     void showChapters();

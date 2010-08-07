@@ -282,17 +282,17 @@ void MainWindow::onSettingsChanged(const QString &key)
 #endif // Q_WS_MAEMO_5
 }
 
-void MainWindow::onChapterLoadStart()
+void MainWindow::onPartLoadStart()
 {
-    Trace t("MainWindow::onChapterLoadStart");
+    Trace t("MainWindow::onPartLoadStart");
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
 #endif
 }
 
-void MainWindow::onChapterLoadEnd(int index)
+void MainWindow::onPartLoadEnd(int index)
 {
-    Trace t("MainWindow::onChapterLoadEnd");
+    Trace t("MainWindow::onPartLoadEnd");
     bool enablePrevious = false;
     bool enableNext = false;
     Book *book = Library::instance()->book(mCurrent);
@@ -345,44 +345,11 @@ void MainWindow::onGoToChapter(int index)
     Trace t("MainWindow::onGoToChapter");
 
     Book *book = Library::instance()->book(mCurrent);
-    if (!book) {
-        t.trace("No current book?");
-        return;
-    }
-
-    QString id = book->chapters[index];
-    QString href = book->content[id].href;
-    QString baseRef(href);
-    QUrl url(QString("file://") + href);
-    if (url.hasFragment()) {
-        QString fragment = url.fragment();
-        baseRef.chop(fragment.length() + 1);
-    }
-
-    // Swipe through all content items to find the one matching the chapter href
-    // FIXME: Do we need to index content items by href, too?
-    QString contentKey;
-    bool found = false;
-    foreach (contentKey, book->content.keys()) {
-        if (contentKey == id) {
-            continue;
+    if (book) {
+        int partIndex = book->tocFromChapter(index);
+        if (partIndex != -1) {
+            view->goToBookmark(Book::Bookmark(partIndex, 0));
         }
-        if (book->content[contentKey].href == baseRef) {
-            found = true;
-            t.trace(QString("Key for %1 is %2").arg(baseRef).arg(contentKey));
-            break;
-        }
-    }
-    if (!found) {
-        t.trace("Could not find key for " + baseRef);
-        return;
-    }
-
-    int tocIndex = book->toc.indexOf(contentKey);
-    if (tocIndex != -1) {
-        view->goToBookmark(Book::Bookmark(tocIndex, 0));
-    } else {
-        qCritical() << "Could not find toc index of chapter" << id;
     }
 }
 
