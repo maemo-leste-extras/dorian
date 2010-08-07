@@ -22,7 +22,7 @@ const int COVER_HEIGHT = 59;
 Book::Book(const QString &p, QObject *parent): QObject(parent)
 {
     mPath = "";
-    if (p != "") {
+    if (p.size()) {
         QFileInfo info(p);
         mPath = info.absoluteFilePath();
         title = info.baseName();
@@ -43,7 +43,7 @@ bool Book::open()
     t.trace(path());
     close();
     clear();
-    if (path() == "") {
+    if (path().isEmpty()) {
         title = "No book";
         return false;
     }
@@ -62,7 +62,7 @@ void Book::close()
 {
     Trace t("Book::close");
     content.clear();
-    toc.clear();
+    parts.clear();
     QDir::setCurrent(QDir::rootPath());
     clearDir(tmpDir());
 }
@@ -138,7 +138,7 @@ bool Book::parse()
 
     // Initially, put all content items in the chapter list.
     // This will be refined by parsing the NCX file later
-    chapters = toc;
+    chapters = parts;
 
     // Load cover image
     QStringList coverKeys;
@@ -168,6 +168,13 @@ bool Book::parse()
         delete ncxHandler;
         delete errorHandler;
         delete source;
+    }
+
+    // Calculate book part sizes
+    foreach (QString part, parts) {
+        QFileInfo info(content[part].href);
+        content[part].size = info.size();
+        t.trace(QString("Size of part %1: %2").arg(part).arg(content[part].size));
     }
 
     return ret;
@@ -352,7 +359,7 @@ QString Book::rootPath() const
 
 QString Book::name() const
 {
-    if (title != "") {
+    if (title.size()) {
         QString ret = title;
         if (creators.length()) {
             ret += "\nBy " + creators[0];
@@ -368,22 +375,20 @@ QString Book::name() const
 
 QString Book::shortName() const
 {
-    if (title == "") {
-        return QFileInfo(path()).baseName();
-    } else {
-        return title;
-    }
+    return (title.isEmpty())? QFileInfo(path()).baseName(): title;
 }
 
-int Book::chapterFromToc(int index)
+int Book::chapterFromPart(int index)
 {
+    // FIXME
+    Q_UNUSED(index);
     int ret = -1;
     return ret;
 }
 
-int Book::tocFromChapter(int index)
+int Book::partFromChapter(int index)
 {
-    Trace t("Book::tocFromChapter");
+    Trace t("Book::partFromChapter");
     QString id = chapters[index];
     QString href = content[id].href;
     QString baseRef(href);
@@ -411,10 +416,11 @@ int Book::tocFromChapter(int index)
         t.trace("Could not find key for " + baseRef);
         return -1;
     }
-    int tocIndex = toc.indexOf(contentKey);
-    if (tocIndex == -1) {
-        qCritical() << "Book::tocFromChapter: Could not find toc index of chapter"
-                << id;
+    int partIndex = parts.indexOf(contentKey);
+    if (partIndex == -1) {
+        qCritical()
+            << "Book::partFromChapter: Could not find part index of chapter"
+            << id;
     }
-    return tocIndex;
+    return partIndex;
 }

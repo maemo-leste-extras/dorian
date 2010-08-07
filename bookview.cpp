@@ -88,12 +88,12 @@ void BookView::loadContent(int index)
     if (!mBook) {
         return;
     }
-    if ((index < 0) || (index >= mBook->toc.size())) {
+    if ((index < 0) || (index >= mBook->parts.size())) {
         return;
     }
 
-    QString contentFile(mBook->content[mBook->toc[index]].href);
-    if (mBook->toc[index] == "error") {
+    QString contentFile(mBook->content[mBook->parts[index]].href);
+    if (mBook->parts[index] == "error") {
         setHtml(contentFile);
     }
     else {
@@ -294,7 +294,7 @@ void BookView::addNavigationBar()
     if (contentIndex == 0) {
         naviPrev = "";
     }
-    if (contentIndex >= mBook->toc.size() - 1) {
+    if (contentIndex >= mBook->parts.size() - 1) {
         naviNext = "";
     }
 

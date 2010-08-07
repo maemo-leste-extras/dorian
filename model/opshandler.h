@@ -13,7 +13,7 @@ public:
     OpsHandler(Book &b): book(b), partCount(0) {}
     bool endDocument() {return true;}
     bool endPrefixMapping(const QString &) {return true;}
-    QString errorString() const {return "";}
+    QString errorString() const {return QString();}
     bool ignorableWhitespace(const QString &) {return true;}
     bool processingInstruction(const QString &, const QString &) {
         return true;
@@ -32,7 +32,7 @@ public:
                     const QString &qName) {
         (void)namespaceUri;
         (void)qName;
-        if (currentText != "") {
+        if (currentText.size()) {
             if (name == "title") {
                 book.title = currentText;
             } else if (name == "creator") {
@@ -52,7 +52,7 @@ public:
 
     bool startElement(const QString &namespaceUri, const QString &name,
                       const QString &qName, const QXmlAttributes &attrs) {
-        Trace t("OpsHandler::startElement" + name);
+        Trace t("OpsHandler::startElement " + name);
         (void)namespaceUri;
         (void)qName;
         currentText = "";
@@ -61,16 +61,16 @@ public:
             Book::ContentItem item;
             item.href = book.rootPath() + "/" + attrs.value("href");
             item.name = QString("Part %1").arg(partCount + 1);
+            item.size = 0;
             QString key = attrs.value("id");
             book.content[key] = item;
             partCount++;
             t.trace(QString("name: ") + item.name);
             t.trace(QString("href: ") + attrs.value("href"));
             t.trace(QString("id: ") + key);
-        }
-        else if (name == "itemref") {
+        } else if (name == "itemref") {
             t.trace(QString("id: ") + attrs.value("idref"));
-            book.toc.append(attrs.value("idref"));
+            book.parts.append(attrs.value("idref"));
         }
         return true;
     }

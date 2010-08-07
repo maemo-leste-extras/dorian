@@ -20,6 +20,7 @@ public:
     {
         QString href;
         QString name;
+        qint64 size;
     };
 
     /** Bookmark: a volume index and a relative position in volume. */
@@ -91,14 +92,14 @@ public:
     /** Get short friendly name: title or file name. */
     QString shortName() const;
 
-    /** Get chapter index from toc index. */
-    int chapterFromToc(int index);
+    /** Get chapter index from part index. */
+    int chapterFromPart(int index);
 
-    /** Get toc index from chapter index. */
-    int tocFromChapter(int index);
+    /** Get part index from chapter index. */
+    int partFromChapter(int index);
 
     QString title;                          //< Book title from EPUB.
-    QStringList toc;                        //< Table of contents from EPUB.
+    QStringList parts;                      //< EPUB part list.
     QHash<QString, ContentItem> content;    //< Content items from EPUB.
     QImage cover;                           //< Cover image.
     QStringList creators;                   //< Creators.
@@ -120,7 +121,7 @@ protected:
     /** Extract EPUB as ZIP. */
     bool extract();
 
-    /** Parse exteacted EPUB. */
+    /** Parse extracted EPUB. */
     bool parse();
 
     /** Clear all book fields except path. */

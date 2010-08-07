@@ -300,7 +300,7 @@ void MainWindow::onPartLoadEnd(int index)
         if (index > 0) {
             enablePrevious = true;
         }
-        if (index < (book->toc.size() - 1)) {
+        if (index < (book->parts.size() - 1)) {
             enableNext = true;
         }
     }
@@ -346,7 +346,7 @@ void MainWindow::onGoToChapter(int index)
 
     Book *book = Library::instance()->book(mCurrent);
     if (book) {
-        int partIndex = book->tocFromChapter(index);
+        int partIndex = book->partFromChapter(index);
         if (partIndex != -1) {
             view->goToBookmark(Book::Bookmark(partIndex, 0));
         }
