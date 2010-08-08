@@ -8,6 +8,9 @@
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>
 #   include <QtDBus>
+#   include <QtGui/QX11Info>
+#   include <X11/Xlib.h>
+#   include <X11/Xatom.h>
 #   include <mce/mode-names.h>
 #   include <mce/dbus-names.h>
 #endif // Q_WS_MAEMO_5
@@ -46,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent):
     Trace t("MainWindow::MainWindow");
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
+    grabZoomKeys();
 #endif
     setWindowTitle("Dorian");
 
@@ -376,4 +380,28 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
     QMainWindow::resizeEvent(e);
+}
+
+void MainWindow::grabZoomKeys()
+{
+#ifdef Q_WS_MAEMO_5
+    if (!winId()) {
+        qCritical() << "Can't grab keys unless we have a window id";
+        return;
+    }
+    unsigned long val = 1;
+    Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
+    if (!atom) {
+        qCritical() << "Unable to obtain _HILDON_ZOOM_KEY_ATOM";
+        return;
+    }
+    XChangeProperty(QX11Info::display(),
+        winId(),
+        atom,
+        XA_INTEGER,
+        32,
+        PropModeReplace,
+        reinterpret_cast<unsigned char *>(&val),
+        1);
+#endif // Q_WS_MAEMO_5
 }

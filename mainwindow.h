@@ -46,6 +46,7 @@ private:
     void setCurrentBook(const QModelIndex &current);
     QAction *addToolBarAction(const QObject *receiver, const char *member,
                               const QString &name);
+    void grabZoomKeys();
     BookView *view;
     QAction *settingsAction;
     QAction *libraryAction;

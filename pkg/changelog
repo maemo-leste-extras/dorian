@@ -3,8 +3,9 @@ dorian (0.1.2-1) unstable; urgency=low
   * Improve cover image display
   * Fix naming: book parts vs. chapters
   * Show reading progress
+  * Navigate with volume keys
 
- -- Akos Polster <akos@pipacs.com>  Sat,  7 Aug 2010 20:00:00 +0200
+ -- Akos Polster <akos@pipacs.com>  Sat,  8 Aug 2010 20:00:00 +0200
 
 dorian (0.1.1-1) unstable; urgency=low
 

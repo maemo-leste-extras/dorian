@@ -58,6 +58,7 @@ protected:
     void leaveEvent(QEvent *e);
     void enterEvent(QEvent *e);
     void timerEvent(QTimerEvent *e);
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     /** Save navigation icons from resource to the file system. */
@@ -80,6 +81,12 @@ private:
 
     /** Show progress. */
     void showProgress();
+
+    /** Go to previous page. */
+    void goPreviousPage();
+
+    /** Go to next page. */
+    void goNextPage();
 
     int contentIndex;   /**< Current part in book. */
     Book *mBook;        /**< Book to show. */

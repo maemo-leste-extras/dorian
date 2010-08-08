@@ -79,12 +79,8 @@ BookView::BookView(QWidget *parent):
     setBook(0);
 
     extractIcons();
-
 #ifdef Q_WS_MAEMO_5
     scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
-    if (scroller) {
-        t.trace("Got scroller");
-    }
 #endif
 }
 
@@ -356,7 +352,6 @@ void BookView::removeIcons()
 
 bool BookView::eventFilter(QObject *o, QEvent *e)
 {
-#if 0
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
         if (e->type() == QEvent::Resize) {
             Trace::trace(QString("BookView::eventFilter QEvent::Resize to %1").
@@ -366,7 +361,6 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
                          arg(Trace::event(e->type())));
         }
     }
-#endif
 
     switch (e->type()) {
     case QEvent::MouseButtonPress:
@@ -454,6 +448,50 @@ void BookView::timerEvent(QTimerEvent *e)
         } else {
             killTimer(scrollerMonitor);
         }
-    }
 #endif // Q_WS_MAEMO_5
+    }
+}
+
+void BookView::keyPressEvent(QKeyEvent* event)
+{
+    switch (event->key()) {
+    case Qt::Key_F7:
+        goNextPage();
+        event->accept();
+        break;
+    case Qt::Key_F8:
+        goPreviousPage();
+        event->accept();
+        break;
+    default:
+        ;
+    }
+    QWebView::keyPressEvent(event);
+}
+
+void BookView::goPreviousPage()
+{
+    QWebFrame *frame = page()->mainFrame();
+    int pos = frame->scrollPosition().y();
+    frame->scroll(0, -height());
+    if (pos == frame->scrollPosition().y()) {
+        if (contentIndex > 0) {
+            goToBookmark(Book::Bookmark(contentIndex - 1, 1.0));
+        }
+    } else {
+        showProgress();
+    }
+}
+
+void BookView::goNextPage()
+{
+    Trace t("BookView::goNextPage");
+    QWebFrame *frame = page()->mainFrame();
+    int pos = frame->scrollPosition().y();
+    frame->scroll(0, height());
+    if (pos == frame->scrollPosition().y()) {
+        goNext();
+    } else {
+        showProgress();
+    }
 }
