@@ -5,6 +5,10 @@
 #include <QDir>
 #include <QTimer>
 
+#ifdef Q_WS_MAEMO_5
+#   include <QAbstractKineticScroller>
+#endif
+
 #include "book.h"
 #include "bookview.h"
 #include "library.h"
@@ -21,7 +25,7 @@
 BookView::BookView(QWidget *parent):
     QWebView(parent), contentIndex(-1), mBook(0),
     restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
-    contentsHeight(0), decorated(false)
+    contentsHeight(0), decorated(false), scrollerMonitor(-1)
 {
     Trace t("BookView::BookView");
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
@@ -75,6 +79,13 @@ BookView::BookView(QWidget *parent):
     setBook(0);
 
     extractIcons();
+
+#ifdef Q_WS_MAEMO_5
+    scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
+    if (scroller) {
+        t.trace("Got scroller");
+    }
+#endif
 }
 
 BookView::~BookView()
@@ -249,7 +260,11 @@ void BookView::paintEvent(QPaintEvent *e)
 void BookView::mousePressEvent(QMouseEvent *e)
 {
     QWebView::mousePressEvent(e);
-#ifndef Q_WS_MAEMO_5
+#ifdef Q_WS_MAEMO_5
+    if (scroller) {
+        scrollerMonitor = startTimer(250);
+    }
+#else
     QWebFrame *frame = page()->mainFrame();
     if (frame->scrollBarGeometry(Qt::Vertical).contains(e->pos())) {
         e->accept();
@@ -257,12 +272,6 @@ void BookView::mousePressEvent(QMouseEvent *e)
     }
 #endif // Q_WS_MAEMO_5
     e->ignore();
-}
-
-void BookView::mouseReleaseEvent(QMouseEvent *e)
-{
-    QWebView::mouseReleaseEvent(e);
-    showProgress();
 }
 
 void BookView::wheelEvent(QWheelEvent *e)
@@ -432,4 +441,19 @@ void BookView::showProgress()
                     (qreal)contentsHeight;
         emit progress(mBook->getProgress(contentIndex, pos));
     }
+}
+
+void BookView::timerEvent(QTimerEvent *e)
+{
+    if (e->timerId() == scrollerMonitor) {
+#ifdef Q_WS_MAEMO_5
+        if (scroller &&
+            ((scroller->state() == QAbstractKineticScroller::AutoScrolling) ||
+             (scroller->state() == QAbstractKineticScroller::Pushing))) {
+            showProgress();
+        } else {
+            killTimer(scrollerMonitor);
+        }
+    }
+#endif // Q_WS_MAEMO_5
 }

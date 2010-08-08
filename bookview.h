@@ -11,6 +11,7 @@
 
 class QModelIndex;
 class Progress;
+class QAbstractKineticScroller;
 
 /** Visual representation of a book. */
 class BookView: public QWebView
@@ -52,11 +53,11 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
     void wheelEvent(QWheelEvent *);
     bool eventFilter(QObject *o, QEvent *e);
     void leaveEvent(QEvent *e);
     void enterEvent(QEvent *e);
+    void timerEvent(QTimerEvent *e);
 
 private:
     /** Save navigation icons from resource to the file system. */
@@ -92,6 +93,11 @@ private:
     bool mousePressed;
     int contentsHeight; /**< Last know height of the frame. */
     bool decorated;     /**< True after adding the arrows to the frame contents. */
+
+    int scrollerMonitor;
+#ifdef Q_WS_MAEMO_5
+    QAbstractKineticScroller *scroller;
+#endif
 };
 
 #endif // BOOKVIEW_H
