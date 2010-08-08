@@ -352,6 +352,7 @@ void BookView::removeIcons()
 
 bool BookView::eventFilter(QObject *o, QEvent *e)
 {
+#if 0
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
         if (e->type() == QEvent::Resize) {
             Trace::trace(QString("BookView::eventFilter QEvent::Resize to %1").
@@ -361,7 +362,7 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
                          arg(Trace::event(e->type())));
         }
     }
-
+#endif
     switch (e->type()) {
     case QEvent::MouseButtonPress:
         emit suppressedMouseButtonPress();

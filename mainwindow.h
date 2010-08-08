@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QtGui>
+
+#include "bookwindow.h"
 #include "bookfinder.h"
 
 class QString;
@@ -12,7 +14,7 @@ class Book;
 class FullScreenWindow;
 class Progress;
 
-class MainWindow: public QMainWindow
+class MainWindow: public BookWindow
 {
     Q_OBJECT
 
@@ -46,7 +48,6 @@ private:
     void setCurrentBook(const QModelIndex &current);
     QAction *addToolBarAction(const QObject *receiver, const char *member,
                               const QString &name);
-    void grabZoomKeys();
     BookView *view;
     QAction *settingsAction;
     QAction *libraryAction;

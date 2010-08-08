@@ -1,20 +1,24 @@
 #ifndef FULLSCREENWINDOW_H
 #define FULLSCREENWINDOW_H
 
-#include <QMainWindow>
+#include <QRect>
+#include <QObject>
 
+#include "bookwindow.h"
+
+class QWidget;
+class QMouseEvent;
+class QResizeEvent;
 class TranslucentButton;
 
 /** A full screen window that can adopt a child widget from another window. */
-class FullScreenWindow: public QMainWindow
+class FullScreenWindow: public BookWindow
 {
     Q_OBJECT
 
 public:
     explicit FullScreenWindow(QWidget *parent);
     void showFullScreen();
-    void takeChild(QWidget *child);
-    void leaveChild();
 
 signals:
     void restore();
@@ -29,7 +33,6 @@ protected:
     virtual void resizeEvent(QResizeEvent *event);
     QRect fullScreenZone() const;
     TranslucentButton *restoreButton;
-    QWidget *child;
 };
 
 #endif // FULLSCREENWINDOW_H

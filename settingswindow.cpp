@@ -37,6 +37,11 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     layout->addWidget(backlight);
     backlight->setChecked(settings->value("lightson", false).toBool());
 
+    QCheckBox *grabVolume =
+            new QCheckBox(tr("Navigate with volume keys"), contents);
+    layout->addWidget(grabVolume);
+    grabVolume->setChecked(settings->value("usevolumekeys", false).toBool());
+
     QLabel *zoomLabel = new QLabel(tr("Zoom level:"), contents);
     layout->addWidget(zoomLabel);
     zoomSlider = new QSlider(Qt::Horizontal, contents);
@@ -99,6 +104,8 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     setCentralWidget(scroller);
 
     connect(backlight, SIGNAL(toggled(bool)), this, SLOT(onLightsToggled(bool)));
+    connect(grabVolume, SIGNAL(toggled(bool)),
+            this, SLOT(onGrabVolumeToggled(bool)));
     connect(zoomSlider, SIGNAL(valueChanged(int)),
             this, SLOT(onSliderValueChanged(int)));
     connect(fontButton, SIGNAL(currentFontChanged(const QFont &)),
@@ -175,4 +182,9 @@ void SettingsWindow::closeEvent(QCloseEvent *e)
 void SettingsWindow::onLightsToggled(bool value)
 {
     Settings::instance()->setValue("lightson", value);
+}
+
+void SettingsWindow::onGrabVolumeToggled(bool enable)
+{
+    Settings::instance()->setValue("usevolumekeys", enable);
 }

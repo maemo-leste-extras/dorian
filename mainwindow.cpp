@@ -44,12 +44,11 @@
 const int PROGRESS_HEIGHT = 17;
 
 MainWindow::MainWindow(QWidget *parent):
-    QMainWindow(parent), view(0), preventBlankingTimer(-1)
+    BookWindow(parent), view(0), preventBlankingTimer(-1)
 {
     Trace t("MainWindow::MainWindow");
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
-    grabZoomKeys();
 #endif
     setWindowTitle("Dorian");
 
@@ -136,18 +135,9 @@ MainWindow::MainWindow(QWidget *parent):
         }
     }
 
-    // Handle settings changes
-    Settings *settings = Settings::instance();
-    connect(settings, SIGNAL(valueChanged(const QString &)),
-            this, SLOT(onSettingsChanged(const QString &)));
-    settings->setValue("orientation", settings->value("orientation"));
-    settings->setValue("lightson", settings->value("lightson"));
-
-    // Handle loading chapters
-    connect(view, SIGNAL(chapterLoadStart(int)),
-            this, SLOT(onChapterLoadStart()));
-    connect(view, SIGNAL(chapterLoadEnd(int)),
-            this, SLOT(onChapterLoadEnd(int)));
+    // Handle loading book parts
+    connect(view, SIGNAL(partLoadStart(int)), this, SLOT(onPartLoadStart()));
+    connect(view, SIGNAL(partLoadEnd(int)), this, SLOT(onPartLoadEnd(int)));
 
     // Handle progress
     connect(view, SIGNAL(progress(qreal)), progress, SLOT(setProgress(qreal)));
@@ -164,6 +154,14 @@ MainWindow::MainWindow(QWidget *parent):
             library, SLOT(remove(const QString &)));
     bookFinder->moveToThread(&bookFinderThread);
     bookFinderThread.start();
+
+    // Handle settings changes
+    Settings *settings = Settings::instance();
+    connect(settings, SIGNAL(valueChanged(const QString &)),
+            this, SLOT(onSettingsChanged(const QString &)));
+    settings->setValue("orientation", settings->value("orientation"));
+    settings->setValue("lightson", settings->value("lightson"));
+    settings->setValue("usevolumekeys", settings->value("usevolumekeys"));
 
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
@@ -186,22 +184,23 @@ void MainWindow::showRegular()
 {
     Trace t("MainWindow::showRegular");
     fullScreenWindow->hide();
-    fullScreenWindow->leaveChild();
-    view->setParent(centralWidget());
-    progress->setParent(centralWidget());
+    fullScreenWindow->leaveChildren();
     progress->setGeometry(0, 0, geometry().width(), PROGRESS_HEIGHT);
-    centralWidget()->layout()->addWidget(view);
+    QList<QWidget *> otherChildren;
+    otherChildren.append(progress);
+    takeChildren(view, otherChildren);
     progress->flash();
 }
 
 void MainWindow::showBig()
 {
     Trace t("MainWindow::showBig");
-    centralWidget()->layout()->removeWidget(view);
-    progress->setParent(fullScreenWindow);
+    leaveChildren();
+    QList<QWidget *> otherChildren;
+    otherChildren.append(progress);
     progress->setGeometry(0, 0, QApplication::desktop()->screenGeometry().width(),
                           PROGRESS_HEIGHT);
-    fullScreenWindow->takeChild(view);
+    fullScreenWindow->takeChildren(view, otherChildren);
     fullScreenWindow->showFullScreen();
     progress->flash();
 }
@@ -287,6 +286,12 @@ void MainWindow::onSettingsChanged(const QString &key)
         if (enable) {
             preventBlankingTimer = startTimer(29 * 1000);
         }
+    } else if (key == "usevolumekeys") {
+        bool value = Settings::instance()->value(key).toBool();
+        Trace::trace(QString("MainWindow::onSettingsChanged: usevolumekeys %1").
+                     arg(value));
+        grabZoomKeys(value);
+        fullScreenWindow->grabZoomKeys(value);
     }
 #else
     Q_UNUSED(key);
@@ -380,28 +385,4 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
     QMainWindow::resizeEvent(e);
-}
-
-void MainWindow::grabZoomKeys()
-{
-#ifdef Q_WS_MAEMO_5
-    if (!winId()) {
-        qCritical() << "Can't grab keys unless we have a window id";
-        return;
-    }
-    unsigned long val = 1;
-    Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
-    if (!atom) {
-        qCritical() << "Unable to obtain _HILDON_ZOOM_KEY_ATOM";
-        return;
-    }
-    XChangeProperty(QX11Info::display(),
-        winId(),
-        atom,
-        XA_INTEGER,
-        32,
-        PropModeReplace,
-        reinterpret_cast<unsigned char *>(&val),
-        1);
-#endif // Q_WS_MAEMO_5
 }

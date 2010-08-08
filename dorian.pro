@@ -30,7 +30,8 @@ SOURCES += \
     model/bookfinder.cpp \
     widgets/listwindow.cpp \
     foldersdialog.cpp \
-    widgets/progress.cpp
+    widgets/progress.cpp \
+    widgets/bookwindow.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -61,7 +62,8 @@ HEADERS += \
     model/bookfinder.h \
     widgets/listwindow.h \
     foldersdialog.h \
-    widgets/progress.h
+    widgets/progress.h \
+    widgets/bookwindow.h
 
 RESOURCES += \
     dorian.qrc

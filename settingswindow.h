@@ -27,6 +27,7 @@ public slots:
     void onSchemeButtonClicked(int id);
     void onOrientationButtonClicked(int id);
     void onLightsToggled(bool enable);
+    void onGrabVolumeToggled(bool enable);
 
 protected:
 #ifdef Q_WS_MAEMO_5

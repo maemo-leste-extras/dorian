@@ -4,7 +4,7 @@
 #include "translucentbutton.h"
 #include "trace.h"
 
-FullScreenWindow::FullScreenWindow(QWidget *parent): QMainWindow(parent), child(0)
+FullScreenWindow::FullScreenWindow(QWidget *parent): BookWindow(parent)
 {
     Q_ASSERT(parent);
 #ifdef Q_WS_MAEMO_5
@@ -51,24 +51,4 @@ void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
     restoreButton->setGeometry(fullScreenZone());
     QMainWindow::resizeEvent(e);
-}
-
-void FullScreenWindow::takeChild(QWidget *c)
-{
-    leaveChild();
-    if (c) {
-        child = c;
-        child->setParent(centralWidget());
-        centralWidget()->layout()->addWidget(child);
-        connect(child, SIGNAL(suppressedMouseButtonPress()),
-                              restoreButton, SLOT(flash()));
-    }
-}
-
-void FullScreenWindow::leaveChild()
-{
-    if (child) {
-        centralWidget()->layout()->removeWidget(child);
-        child = 0;
-    }
 }
