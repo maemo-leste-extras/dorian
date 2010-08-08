@@ -10,6 +10,7 @@
 #include "library.h"
 #include "settings.h"
 #include "trace.h"
+#include "progress.h"
 
 #ifdef Q_WS_MAC
 #   define ICON_PREFIX ":/icons/mac/"
@@ -196,6 +197,7 @@ void BookView::onLoadFinished(bool ok)
     addNavigationBar();
     onSettingsChanged("scheme");
     emit partLoadEnd(contentIndex);
+    showProgress();
 }
 
 void BookView::onSettingsChanged(const QString &key)
@@ -255,6 +257,18 @@ void BookView::mousePressEvent(QMouseEvent *e)
     }
 #endif // Q_WS_MAEMO_5
     e->ignore();
+}
+
+void BookView::mouseReleaseEvent(QMouseEvent *e)
+{
+    QWebView::mouseReleaseEvent(e);
+    showProgress();
+}
+
+void BookView::wheelEvent(QWheelEvent *e)
+{
+    QWebView::wheelEvent(e);
+    showProgress();
 }
 
 void BookView::addBookmark()
@@ -351,6 +365,7 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
         mousePressed = true;
         break;
     case QEvent::MouseButtonRelease:
+        showProgress();
         mousePressed = false;
         break;
     case QEvent::MouseMove:
@@ -408,4 +423,13 @@ void BookView::goToPosition(qreal position)
     // FIXME: update();
     Trace::trace(QString("BookView::goToPosition: To %1 (%2%, height %3)").
             arg(scrollPos).arg(position * 100).arg(contentsHeight));
+}
+
+void BookView::showProgress()
+{
+    if (mBook) {
+        qreal pos = (qreal)(page()->mainFrame()->scrollPosition().y()) /
+                    (qreal)contentsHeight;
+        emit progress(mBook->getProgress(contentIndex, pos));
+    }
 }

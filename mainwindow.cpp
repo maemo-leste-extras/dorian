@@ -26,6 +26,7 @@
 #include "fullscreenwindow.h"
 #include "trace.h"
 #include "bookfinder.h"
+#include "progress.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -36,6 +37,8 @@
 #else
 #   define ICON_PREFIX ":/icons/"
 #endif
+
+const int PROGRESS_HEIGHT = 17;
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent), view(0), preventBlankingTimer(-1)
@@ -58,6 +61,9 @@ MainWindow::MainWindow(QWidget *parent):
     view = new BookView(central);
     view->show();
     layout->addWidget(view);
+
+    // Progress
+    progress = new Progress(central);
 
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
@@ -139,6 +145,9 @@ MainWindow::MainWindow(QWidget *parent):
     connect(view, SIGNAL(chapterLoadEnd(int)),
             this, SLOT(onChapterLoadEnd(int)));
 
+    // Handle progress
+    connect(view, SIGNAL(progress(qreal)), progress, SLOT(setProgress(qreal)));
+
     // Shadow window for full screen
     fullScreenWindow = new FullScreenWindow(this);
     connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
@@ -151,15 +160,6 @@ MainWindow::MainWindow(QWidget *parent):
             library, SLOT(remove(const QString &)));
     bookFinder->moveToThread(&bookFinderThread);
     bookFinderThread.start();
-
-#if 0
-    bool ret = QMetaObject::invokeMethod(
-        bookFinder,
-        "find",
-        Q_ARG(QStringList, QStringList(QString("/Users/polster/Books"))),
-        Q_ARG(QStringList, library->bookPaths()));
-    t.trace(QString("Invoking BookFinder::find ") + (ret?"succeeded":"failed"));
-#endif
 
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
@@ -184,15 +184,22 @@ void MainWindow::showRegular()
     fullScreenWindow->hide();
     fullScreenWindow->leaveChild();
     view->setParent(centralWidget());
+    progress->setParent(centralWidget());
+    progress->setGeometry(0, 0, geometry().width(), PROGRESS_HEIGHT);
     centralWidget()->layout()->addWidget(view);
+    progress->flash();
 }
 
 void MainWindow::showBig()
 {
     Trace t("MainWindow::showBig");
     centralWidget()->layout()->removeWidget(view);
+    progress->setParent(fullScreenWindow);
+    progress->setGeometry(0, 0, QApplication::desktop()->screenGeometry().width(),
+                          PROGRESS_HEIGHT);
     fullScreenWindow->takeChild(view);
     fullScreenWindow->showFullScreen();
+    progress->flash();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -363,4 +370,10 @@ void MainWindow::timerEvent(QTimerEvent *event)
 #endif // Q_WS_MAEMO_5
         Trace::trace("MainWindow::timerEvent: Prevent display blanking");
     }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *e)
+{
+    progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
+    QMainWindow::resizeEvent(e);
 }

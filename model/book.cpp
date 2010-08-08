@@ -171,9 +171,11 @@ bool Book::parse()
     }
 
     // Calculate book part sizes
+    size = 0;
     foreach (QString part, parts) {
         QFileInfo info(content[part].href);
         content[part].size = info.size();
+        size += content[part].size;
         t.trace(QString("Size of part %1: %2").arg(part).arg(content[part].size));
     }
 
@@ -423,4 +425,18 @@ int Book::partFromChapter(int index)
             << id;
     }
     return partIndex;
+}
+
+qreal Book::getProgress(int part, qreal position)
+{
+    Q_ASSERT(part < parts.size());
+    QString key;
+    qreal partSize = 0;
+    for (int i = 0; i < part; i++) {
+        key = parts[i];
+        partSize += content[key].size;
+    }
+    key = parts[part];
+    partSize += content[key].size * position;
+    return partSize / (qreal)size;
 }

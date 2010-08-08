@@ -10,6 +10,7 @@
 #include "book.h"
 
 class QModelIndex;
+class Progress;
 
 /** Visual representation of a book. */
 class BookView: public QWebView
@@ -33,6 +34,9 @@ signals:
     /** Signal button press when the real event has been suppressed. */
     void suppressedMouseButtonPress();
 
+    /** Signal progress in reading the book. */
+    void progress(qreal p);
+
 public slots:
     void goPrevious();
     void goNext();
@@ -46,11 +50,13 @@ public slots:
     void onContentsSizeChanged(const QSize &size);
 
 protected:
-    virtual void paintEvent(QPaintEvent *e);
-    virtual void mousePressEvent(QMouseEvent *e);
+    void paintEvent(QPaintEvent *e);
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+    void wheelEvent(QWheelEvent *);
     bool eventFilter(QObject *o, QEvent *e);
-    virtual void leaveEvent(QEvent *);
-    virtual void enterEvent(QEvent *);
+    void leaveEvent(QEvent *e);
+    void enterEvent(QEvent *e);
 
 private:
     /** Save navigation icons from resource to the file system. */
@@ -70,6 +76,9 @@ private:
 
     /** Go to a given (relative) position in current part. */
     void goToPosition(qreal position);
+
+    /** Show progress. */
+    void showProgress();
 
     int contentIndex;   /**< Current part in book. */
     Book *mBook;        /**< Book to show. */

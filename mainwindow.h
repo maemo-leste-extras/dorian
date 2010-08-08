@@ -10,6 +10,7 @@ class DevTools;
 class BookView;
 class Book;
 class FullScreenWindow;
+class Progress;
 
 class MainWindow: public QMainWindow
 {
@@ -37,8 +38,9 @@ public slots:
     void onGoToChapter(int index);
 
 protected:
-    virtual void closeEvent(QCloseEvent *event);
-    virtual void timerEvent(QTimerEvent *event);
+    void closeEvent(QCloseEvent *event);
+    void timerEvent(QTimerEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     void setCurrentBook(const QModelIndex &current);
@@ -64,6 +66,7 @@ private:
     int preventBlankingTimer;
     BookFinder *bookFinder;
     BookFinderThread bookFinderThread;
+    Progress *progress;
 };
 
 #endif // MAINWINDOW_H

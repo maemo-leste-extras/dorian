@@ -29,7 +29,8 @@ SOURCES += \
     widgets/toolbuttonbox.cpp \
     model/bookfinder.cpp \
     widgets/listwindow.cpp \
-    foldersdialog.cpp
+    foldersdialog.cpp \
+    widgets/progress.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -59,7 +60,8 @@ HEADERS += \
     widgets/toolbuttonbox.h \
     model/bookfinder.h \
     widgets/listwindow.h \
-    foldersdialog.h
+    foldersdialog.h \
+    widgets/progress.h
 
 RESOURCES += \
     dorian.qrc

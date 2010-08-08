@@ -11,7 +11,7 @@ BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
     setWindowTitle(tr("Bookmark Details"));
 
     Book::Bookmark bookmark = book->bookmarks()[index];
-    QString contentId = book->toc[bookmark.part];
+    QString contentId = book->parts[bookmark.part];
     QString contentTitle = book->content[contentId].name;
     QLabel *info = new QLabel(contentTitle + "\nAt " +
         QString::number((int)(bookmark.pos*100)) + "%", this);

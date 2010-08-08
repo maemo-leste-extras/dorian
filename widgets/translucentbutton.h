@@ -19,8 +19,6 @@ public slots:
 
 protected:
     virtual void paintEvent(QPaintEvent *);
-
-private:
     QString name;
     qreal mOpacity;
 };

@@ -98,6 +98,9 @@ public:
     /** Get part index from chapter index. */
     int partFromChapter(int index);
 
+    /** Get progress (0..1) corresponding to part index and part position. */
+    qreal getProgress(int part, qreal position);
+
     QString title;                          //< Book title from EPUB.
     QStringList parts;                      //< EPUB part list.
     QHash<QString, ContentItem> content;    //< Content items from EPUB.
@@ -112,6 +115,7 @@ public:
     QString tocPath;                        //< Path to toc ncx.
     QString coverPath;                      //< Path to cover html.
     QStringList chapters;                   //< Main navigation items from EPUB.
+    qint64 size;                            //< Size of all parts.
 
 signals:
     /** Emitted if @see open() succeeds. */
