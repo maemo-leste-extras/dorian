@@ -19,6 +19,13 @@
 const int COVER_WIDTH = 53;
 const int COVER_HEIGHT = 59;
 
+static QImage makeCover(const QString &path)
+{
+    return QImage(path).scaled(COVER_WIDTH, COVER_HEIGHT,
+        Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).
+        scaled(COVER_WIDTH, COVER_HEIGHT, Qt::KeepAspectRatio);
+}
+
 Book::Book(const QString &p, QObject *parent): QObject(parent)
 {
     mPath = "";
@@ -26,9 +33,7 @@ Book::Book(const QString &p, QObject *parent): QObject(parent)
         QFileInfo info(p);
         mPath = info.absoluteFilePath();
         title = info.baseName();
-        cover = QImage(":/icons/book.png").scaled(COVER_WIDTH, COVER_HEIGHT,
-            Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).
-            scaled(COVER_WIDTH, COVER_HEIGHT, Qt::KeepAspectRatio);
+        cover = makeCover(":/icons/book.png");
     }
 }
 
@@ -146,9 +151,7 @@ bool Book::parse()
     foreach (QString key, coverKeys) {
         if (content.contains(key)) {
             t.trace("Loading cover image from " + content[key].href);
-            cover = QImage(content[key].href).scaled(COVER_WIDTH, COVER_HEIGHT,
-                Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).
-                scaled(COVER_WIDTH, COVER_HEIGHT, Qt::KeepAspectRatio);
+            cover = makeCover(content[key].href);
             break;
         }
     }
@@ -248,9 +251,7 @@ void Book::load()
     cover = settings.value(key + "cover").value<QImage>().scaled(COVER_WIDTH,
         COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     if (cover.isNull()) {
-        cover = QImage(":/icons/book.png").scaled(COVER_WIDTH, COVER_HEIGHT,
-            Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).
-            scaled(COVER_WIDTH, COVER_HEIGHT, Qt::KeepAspectRatio);
+        cover = makeCover(":/icons/book.png");
     }
 
     // Load bookmarks
