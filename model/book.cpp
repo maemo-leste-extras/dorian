@@ -202,7 +202,6 @@ bool Book::parse()
         QFileInfo info(content[part].href);
         content[part].size = info.size();
         size += content[part].size;
-        t.trace(QString("Size of part %1: %2").arg(part).arg(content[part].size));
     }
 
     return ret;
@@ -406,9 +405,26 @@ QString Book::shortName() const
 
 int Book::chapterFromPart(int index)
 {
-    // FIXME
-    Q_UNUSED(index);
     int ret = -1;
+
+    QString partId = parts[index];
+    QString partHref = content[partId].href;
+
+    for (int i = 0; i < chapters.size(); i++) {
+        QString id = chapters[i];
+        QString href = content[id].href;
+        QString baseRef(href);
+        QUrl url(QString("file://") + href);
+        if (url.hasFragment()) {
+            QString fragment = url.fragment();
+            baseRef.chop(fragment.length() + 1);
+        }
+        if (baseRef == partHref) {
+            ret = i;
+            // Don't break, keep looking
+        }
+    }
+
     return ret;
 }
 

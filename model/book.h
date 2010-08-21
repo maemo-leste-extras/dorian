@@ -16,7 +16,7 @@ class Book: public QObject
 
 public:
 
-    /** Content item in the table of contents. */
+    /** Content item: An individual, named part of the book. */
     struct ContentItem
     {
         QString href;
@@ -116,8 +116,8 @@ public:
     QString subject;                        //< Subject.
     QString source;                         //< Source.
     QString rights;                         //< Rights.
-    QString tocPath;                        //< Path to toc ncx.
-    QString coverPath;                      //< Path to cover html.
+    QString tocPath;                        //< Path to toc NCX file.
+    QString coverPath;                      //< Path to cover HTML file.
     QStringList chapters;                   //< Main navigation items from EPUB.
     qint64 size;                            //< Size of all parts.
 

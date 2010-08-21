@@ -1,3 +1,9 @@
+dorian (0.1.4-1) unstable; urgency=low
+
+  * Show better bookmark descriptions
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 22 Aug 2010 02:00:00 +0200
+
 dorian (0.1.3-1) unstable; urgency=low
 
   * Retrieve book metadata when adding it to library

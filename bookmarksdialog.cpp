@@ -20,10 +20,15 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     foreach (Book::Bookmark bookmark, book_->bookmarks()) {
-        QString contentId = book_->parts[bookmark.part];
-        QString contentTitle = book_->content[contentId].name;
-        (void)new QListWidgetItem(QIcon(":icons/bookmark.png"), contentTitle +
-            "\nAt " + QString::number((int)(bookmark.pos*100)) + "%", list);
+        QString label("At ");
+        label += QString::number((int)(100 * book_->
+            getProgress(bookmark.part, bookmark.pos))) + "%";
+        int chapterIndex = book_->chapterFromPart(bookmark.part);
+        if (chapterIndex != -1) {
+            QString chapterId = book_->chapters[chapterIndex];
+            label += "\nIn \"" + book_->content[chapterId].name + "\"";
+        }
+        (void)new QListWidgetItem(QIcon(":icons/bookmark.png"), label, list);
     }
 
     horizontalLayout->addWidget(list);

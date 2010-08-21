@@ -35,7 +35,6 @@ public:
         (void)namespaceUri;
         (void)qName;
         if (name == "text") {
-            t.trace(currentText);
             contentTitle = currentText;
         } else if (name == "navPoint") {
             t.trace(QString("url: ") + contentUrl);
