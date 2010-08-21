@@ -34,7 +34,7 @@ void Progress::flash()
 {
     killTimer(timer);
     show();
-    timer = startTimer(400);
+    timer = startTimer(700);
 }
 
 void Progress::timerEvent(QTimerEvent *e)

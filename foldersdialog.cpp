@@ -25,6 +25,11 @@ FoldersDialog::FoldersDialog(QWidget *parent): ListWindow(parent)
     addItemAction(tr("Re-scan"), this, SLOT(onRefresh()));
     addItemAction(tr("Remove"), this, SLOT(onRemove()));
     addAction(tr("Re-scan all folders"), this, SLOT(onRefreshAll()));
+    progress = new QProgressDialog(tr("Scanning for books"), "", 0, 0, this);
+    progress->reset();
+    progress->setMinimumDuration(0);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setCancelButton(0);
 }
 
 void FoldersDialog::onAdd()
@@ -48,7 +53,7 @@ void FoldersDialog::onAdd()
         int rows = model->rowCount();
         model->insertRows(rows, 1);
         model->setData(model->index(rows), path);
-        onRefresh();
+        refresh(QStringList(path));
     } else {
 #ifdef Q_WS_MAEMO_5
         QMaemo5InformationBox::information(this,
@@ -83,6 +88,26 @@ void FoldersDialog::onRemove()
     }
 }
 
+void FoldersDialog::refresh(const QStringList &dirs)
+{
+    Trace t("FoldersDialog::refresh");
+
+    progress->setWindowTitle((dirs.length() > 1)?
+                             tr("Scanning all folders"): tr("Scanning folder"));
+    BookFinder *bookFinder = new BookFinder(this);
+    Library *library = Library::instance();
+    connect(bookFinder, SIGNAL(beginAdd(int)), progress, SLOT(setMaximum(int)));
+    connect(bookFinder, SIGNAL(add(const QString &)),
+            this, SLOT(onAddBook(const QString &)));
+    connect(bookFinder, SIGNAL(add(const QString &)),
+            library, SLOT(add(const QString &)));
+    connect(bookFinder, SIGNAL(remove(const QString &)),
+            library, SLOT(remove(const QString &)));
+    connect(bookFinder, SIGNAL(done(int,int)),
+            this, SLOT(onRefreshDone(int, int)));
+    bookFinder->find(dirs, library->bookPaths());
+}
+
 void FoldersDialog::onRefresh()
 {
     Trace t("FoldersDialog::onRefresh");
@@ -91,46 +116,14 @@ void FoldersDialog::onRefresh()
     if (selection.size() != 1) {
         return;
     }
-
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
-#endif
     QModelIndex selected = selection[0];
     QString path = list->model()->data(selected).toString();
-    t.trace(path);
-    BookFinder *bookFinder = new BookFinder(this);
-    Library *library = Library::instance();
-    connect(bookFinder, SIGNAL(add(const QString &)),
-            library, SLOT(add(const QString &)));
-    connect(bookFinder, SIGNAL(remove(const QString &)),
-            library, SLOT(remove(const QString &)));
-    connect(bookFinder, SIGNAL(done(int,int)),
-            this, SLOT(onRefreshDone(int, int)));
-    bookFinder->find(QStringList(path), library->bookPaths());
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
-#endif
+    refresh(QStringList(path));
 }
 
 void FoldersDialog::onRefreshAll()
 {
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
-#endif
-
-    BookFinder *bookFinder = new BookFinder(this);
-    Library *library = Library::instance();
-    connect(bookFinder, SIGNAL(add(const QString &)),
-            library, SLOT(add(const QString &)));
-    connect(bookFinder, SIGNAL(remove(const QString &)),
-            library, SLOT(remove(const QString &)));
-    connect(bookFinder, SIGNAL(done(int,int)),
-            this, SLOT(onRefreshDone(int, int)));
-    bookFinder->find(model->stringList(), library->bookPaths());
-
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
-#endif
+    refresh(model->stringList());
 }
 
 void FoldersDialog::onRefreshDone(int added, int removed)
@@ -150,6 +143,7 @@ void FoldersDialog::onRefreshDone(int added, int removed)
     default: removedMsg = tr("%1 books removed").arg(removed);
     }
 
+    progress->reset();
     QString msg(tr("Scanning complete\n\n%1, %2.").
                 arg(addedMsg).arg(removedMsg));
     Trace::trace(QString("FoldersDialog::onRefreshDone: " + msg));
@@ -158,4 +152,10 @@ void FoldersDialog::onRefreshDone(int added, int removed)
 #else
     // FIXME
 #endif
+}
+
+void FoldersDialog::onAddBook(const QString &path)
+{
+    progress->setLabelText(QFileInfo(path).fileName());
+    progress->setValue(progress->value() + 1);
 }

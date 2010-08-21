@@ -18,6 +18,7 @@ public slots:
     void find(const QStringList &directories, const QStringList &books);
 
 signals:
+    void beginAdd(int count);
     void add(const QString &book);
     void remove(const QString &book);
     void done(int added, int removed);

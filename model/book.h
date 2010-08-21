@@ -7,6 +7,7 @@
 #include <QIcon>
 #include <QMetaType>
 #include <QObject>
+#include <QTemporaryFile>
 
 /** A book. */
 class Book: public QObject
@@ -49,6 +50,9 @@ public:
 
     /** Extract and parse EPUB contents, fill in all members except mPath. */
     bool open();
+
+    /** Extract and parse EPUB metadata only, fill in all members except mPath. */
+    void peek();
 
     /** Clear toc and content members, remove extracted content files. */
     void close();
@@ -125,6 +129,9 @@ protected:
     /** Extract EPUB as ZIP. */
     bool extract();
 
+    /** Extract metadata from EPUB. */
+    bool extractMetaData();
+
     /** Parse extracted EPUB. */
     bool parse();
 
@@ -138,6 +145,7 @@ protected:
     Bookmark mLastBookmark;                 //< Last position read.
     QList<Bookmark> mBookmarks;             //< List of bookmarks.
     QString mRootPath;                      //< Path to root item in EPUB dir.
+    QTemporaryFile mTempFile;               //< Guards extracting books.
 };
 
 #endif // BOOK_H

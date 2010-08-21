@@ -3,6 +3,7 @@
 
 class QStringListModel;
 class QWidget;
+class QProgressDialog;
 
 #include "listwindow.h"
 
@@ -14,17 +15,18 @@ class FoldersDialog: public ListWindow
 public:
     explicit FoldersDialog(QWidget *parent = 0);
 
-signals:
-
 public slots:
     void onAdd();
     void onRemove();
     void onRefresh();
     void onRefreshAll();
     void onRefreshDone(int added, int removed);
+    void onAddBook(const QString &path);
 
 protected:
+    void refresh(const QStringList &folders);
     QStringListModel *model;
+    QProgressDialog *progress;
 };
 
 #endif // FOLDERSDIALOG_H

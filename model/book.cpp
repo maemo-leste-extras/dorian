@@ -6,6 +6,7 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QtAlgorithms>
+#include <QCryptographicHash>
 
 #include "book.h"
 #include "opshandler.h"
@@ -34,6 +35,7 @@ Book::Book(const QString &p, QObject *parent): QObject(parent)
         mPath = info.absoluteFilePath();
         title = info.baseName();
         cover = makeCover(":/icons/book.png");
+        mTempFile.open();
     }
 }
 
@@ -63,6 +65,26 @@ bool Book::open()
     return true;
 }
 
+void Book::peek()
+{
+    Trace t("Book::peek");
+    t.trace(path());
+    close();
+    clear();
+    if (path().isEmpty()) {
+        title = "No book";
+        return;
+    }
+    if (!extractMetaData()) {
+        return;
+    }
+    if (!parse()) {
+        return;
+    }
+    save();
+    close();
+}
+
 void Book::close()
 {
     Trace t("Book::close");
@@ -74,7 +96,8 @@ void Book::close()
 
 QString Book::tmpDir() const
 {
-    return QDir::tempPath() + "/dorian/book";
+    QString tmpName = QFileInfo(mTempFile.fileName()).fileName();
+    return QDir::tempPath() + "/dorian/" + tmpName;
 }
 
 bool Book::extract()
@@ -440,4 +463,10 @@ qreal Book::getProgress(int part, qreal position)
     key = parts[part];
     partSize += content[key].size * position;
     return partSize / (qreal)size;
+}
+
+bool Book::extractMetaData()
+{
+    // FIXME
+    return extract();
 }

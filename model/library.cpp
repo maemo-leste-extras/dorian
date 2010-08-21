@@ -114,8 +114,9 @@ bool Library::add(const QString &path)
         return false;
     }
     int size = mBooks.size();
-    Book *book = new Book(path);
     beginInsertRows(QModelIndex(), size, size);
+    Book *book = new Book(path);
+    book->peek();
     mBooks.append(book);
     save();
     endInsertRows();

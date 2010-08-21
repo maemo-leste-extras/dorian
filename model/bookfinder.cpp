@@ -25,6 +25,14 @@ void BookFinder::find(const QStringList &directories, const QStringList &books)
         }
     }
 
+    int toAdd = 0;
+    foreach (QString found, booksFound) {
+        if (!books.contains(found)) {
+            toAdd++;
+        }
+    }
+    emit beginAdd(toAdd);
+
     foreach (QString found, booksFound) {
         if (!books.contains(found)) {
             t.trace(QString("New book ") + found);
