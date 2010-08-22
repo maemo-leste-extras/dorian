@@ -148,13 +148,19 @@ Book *BookView::book()
 void BookView::goPrevious()
 {
     Trace t("BookView::goPrevious");
-    loadContent(contentIndex - 1);
+    if (mBook && (contentIndex > 0)) {
+        mBook->setLastBookmark(contentIndex - 1, 0);
+        loadContent(contentIndex - 1);
+    }
 }
 
 void BookView::goNext()
 {
     Trace t("BookView::goNext");
-    loadContent(contentIndex + 1);
+    if (mBook && (contentIndex < (mBook->parts.size() - 1))) {
+        mBook->setLastBookmark(contentIndex + 1, 0);
+        loadContent(contentIndex + 1);
+    }
 }
 
 void BookView::setLastBookmark()
@@ -257,10 +263,12 @@ void BookView::mousePressEvent(QMouseEvent *e)
 {
     QWebView::mousePressEvent(e);
 #ifdef Q_WS_MAEMO_5
+    // Start monitoring kinetic scroll
     if (scroller) {
         scrollerMonitor = startTimer(250);
     }
 #else
+    // Handle mouse presses on the scroll bar
     QWebFrame *frame = page()->mainFrame();
     if (frame->scrollBarGeometry(Qt::Vertical).contains(e->pos())) {
         e->accept();
@@ -352,7 +360,6 @@ void BookView::removeIcons()
 
 bool BookView::eventFilter(QObject *o, QEvent *e)
 {
-#if 0
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
         if (e->type() == QEvent::Resize) {
             Trace::trace(QString("BookView::eventFilter QEvent::Resize to %1").
@@ -362,7 +369,8 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
                          arg(Trace::event(e->type())));
         }
     }
-#endif
+
+    // Work around Qt bug that sometimes selects web view contents during swipe
     switch (e->type()) {
     case QEvent::MouseButtonPress:
         emit suppressedMouseButtonPress();
