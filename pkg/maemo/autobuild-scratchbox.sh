@@ -12,7 +12,7 @@ AUTO_DIR=/home/user/dorian-auto
 [ ! -d ${BUILD_DIR} ] && { echo "Missing $BUILD_DIR"; exit 1; }
 [ ! -x /usr/bin/uuencode ] && { echo "Missing /usr/bin/uuencode"; exit 1; }
 
-VERSION=`cat ${BUILD_DIR}/pkg/version.txt`
+VERSION=`tr -d '"' < ${BUILD_DIR}/pkg/version.txt`
 cd ${BUILD_DIR}
 make distclean 2>/dev/null || true
 

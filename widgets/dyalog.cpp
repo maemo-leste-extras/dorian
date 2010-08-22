@@ -1,8 +1,8 @@
 #include <QtGui>
 
-#include "dialog.h"
+#include "dyalog.h"
 
-Dialog::Dialog(QWidget *parent) :
+Dyalog::Dyalog(QWidget *parent) :
     QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
                     Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint)
 {
@@ -33,22 +33,22 @@ Dialog::Dialog(QWidget *parent) :
     scroller->setWidgetResizable(true);
 }
 
-void Dialog::addWidget(QWidget *widget)
+void Dyalog::addWidget(QWidget *widget)
 {
     contentLayout->addWidget(widget);
 }
 
-void Dialog::addStretch(int stretch)
+void Dyalog::addStretch(int stretch)
 {
     contentLayout->addStretch(stretch);
 }
 
-void Dialog::addButton(QPushButton *button, QDialogButtonBox::ButtonRole role)
+void Dyalog::addButton(QPushButton *button, QDialogButtonBox::ButtonRole role)
 {
     buttonBox->addButton(button, role);
 }
 
-QPushButton *Dialog::addButton(QDialogButtonBox::StandardButton button)
+QPushButton *Dyalog::addButton(QDialogButtonBox::StandardButton button)
 {
     return buttonBox->addButton(button);
 }

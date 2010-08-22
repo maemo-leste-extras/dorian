@@ -4,7 +4,7 @@
 #include "book.h"
 
 BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
-    Dialog(parent),
+    Dyalog(parent),
     book(b),
     index(i)
 {

@@ -3,7 +3,7 @@ Section: user/education
 Priority: extra
 Maintainer: Akos Polster <akos@pipacs.com>
 Build-Depends: debhelper (>= 5), libqt4-dev, libhildon1-dev, libhildondesktop1-dev, mce-dev
-Homepage: http://akos.pipacs.com
+Homepage: http://dorian.garage.maemo.org
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?atid=6138&group_id=1757
 
 Package: dorian

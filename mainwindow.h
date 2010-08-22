@@ -38,6 +38,7 @@ public slots:
     void onGoToBookmark(int index);
     void showChapters();
     void onGoToChapter(int index);
+    void about();
 
 protected:
     void closeEvent(QCloseEvent *event);

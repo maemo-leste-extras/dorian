@@ -22,7 +22,7 @@ SOURCES += \
     bookmarksdialog.cpp \
     model/sortedlibrary.cpp \
     bookmarkinfodialog.cpp \
-    widgets/dialog.cpp \
+    widgets/dyalog.cpp \
     chaptersdialog.cpp \
     widgets/fullscreenwindow.cpp \
     trace.cpp \
@@ -54,7 +54,7 @@ HEADERS += \
     model/sortedlibrary.h \
     model/ncxhandler.h \
     bookmarkinfodialog.h \
-    widgets/dialog.h \
+    widgets/dyalog.h \
     chaptersdialog.h \
     widgets/fullscreenwindow.h \
     trace.h \
@@ -86,7 +86,10 @@ OTHER_FILES += \
     styles/night.js \
     styles/default.js \
     styles/day.js \
-    www/index.html
+    www/index.html \
+    pkg/maemo/autobuild.sh \
+    pkg/maemo/autobuild-scratchbox.sh \
+    LICENSE.txt
 
 DEFINES += \
     USE_FILE32API \

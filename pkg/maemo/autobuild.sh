@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Prepare source for uploading to the Maemo autobuilder
+
 set -x
 
 SRC_DIR=/home/polster/workspace/dorian

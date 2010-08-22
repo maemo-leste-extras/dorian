@@ -30,6 +30,7 @@
 #include "trace.h"
 #include "bookfinder.h"
 #include "progress.h"
+#include "dyalog.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -42,6 +43,9 @@
 #endif
 
 const int PROGRESS_HEIGHT = 17;
+const char *DORIAN_VERSION =
+#include "pkg/version.txt"
+;
 
 MainWindow::MainWindow(QWidget *parent):
     BookWindow(parent), view(0), preventBlankingTimer(-1)
@@ -93,6 +97,8 @@ MainWindow::MainWindow(QWidget *parent):
     connect(settingsAction, SIGNAL(triggered()), this, SLOT(showSettings()));
     devToolsAction = menuBar()->addAction(tr("Developer"));
     connect(devToolsAction, SIGNAL(triggered()), this, SLOT(showDevTools()));
+    QAction *aboutAction = menuBar()->addAction(tr("About"));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
     infoAction = addToolBarAction(this, SLOT(showInfo()), "document-properties");
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
@@ -100,6 +106,7 @@ MainWindow::MainWindow(QWidget *parent):
     settingsAction = addToolBarAction(this, SLOT(showSettings()),
                                       "preferences-system");
     devToolsAction = addToolBarAction(this, SLOT(showDevTools()), "developer");
+    addToolBarAction(this, SLOT(about()), "about");
 #endif // Q_WS_MAEMO_5
 
     QFrame *frame = new QFrame(toolBar);
@@ -385,4 +392,20 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
     QMainWindow::resizeEvent(e);
+}
+
+void MainWindow::about()
+{
+    Dyalog *aboutDialog = new Dyalog(this);
+    aboutDialog->setWindowTitle(tr("About Dorian"));
+    QLabel *label = new QLabel(aboutDialog);
+    label->setTextFormat(Qt::RichText);
+    label->setOpenExternalLinks(true);
+    label->setText(tr("<b>Dorian %1</b><br><br>Copyright &copy; 2010 by "
+        "Akos Polster &lt;akos@pipacs.com&gt;<br>"
+        "Licensed under GNU General Public License, Version 3<br>"
+        "Source code: <a href='https://garage.maemo.org/projects/dorian/'>"
+        "garage.maemo.org/projects/dorian</a>").arg(DORIAN_VERSION));
+    aboutDialog->addWidget(label);
+    aboutDialog->show();
 }

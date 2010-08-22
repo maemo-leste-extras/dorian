@@ -1,11 +1,11 @@
 #ifndef BOOKMARKINFODIALOG_H
 #define BOOKMARKINFODIALOG_H
 
-#include "dialog.h"
+#include "dyalog.h"
 
 class Book;
 
-class BookmarkInfoDialog: public Dialog
+class BookmarkInfoDialog: public Dyalog
 {
     Q_OBJECT
 
