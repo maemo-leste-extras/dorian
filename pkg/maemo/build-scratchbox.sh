@@ -13,6 +13,6 @@ AUTO_DIR=/home/user/dorian-auto
 [ ! -d ${AUTO_DIR} ] && { echo "Missing $AUTO_DIR"; exit 1; }
 [ ! -d ${BUILD_DIR} ] && { echo "Missing $BUILD_DIR"; exit 1; }
 
-VERSION=`cat ${BUILD_DIR}/pkg/version.txt`
+VERSION=`tr -d '"' < ${BUILD_DIR}/pkg/version.txt`
 cd ${AUTO_DIR}/dorian-${VERSION} || exit 1
 dpkg-buildpackage -rfakeroot
