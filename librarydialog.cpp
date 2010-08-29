@@ -15,23 +15,13 @@
 #include "infodialog.h"
 #include "settings.h"
 #include "listwindow.h"
-#include "foldersdialog.h"
+#include "listview.h"
+#include "trace.h"
+#include "bookfinder.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
     setWindowTitle(tr("Library"));
-
-    // Create and add list view
-
-    list = new QListView(this);
-    sortedLibrary = new SortedLibrary(this);
-    list->setModel(sortedLibrary);
-    list->setSelectionMode(QAbstractItemView::SingleSelection);
-    list->setSpacing(1);
-    Library *library = Library::instance();
-    QModelIndex current = library->nowReading();
-    setSelected(current);
-    addList(list);
 
     // Add actions
 
@@ -42,7 +32,24 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 #endif // ! Q_WS_MAEMO_5
 
     addAction(tr("Add book"), this, SLOT(onAdd()));
-    addAction(tr("Manage folders"), this, SLOT(onShowFolders()));
+    addAction(tr("Add books from folder"), this, SLOT(onAddFolder()));
+
+    // Create and add list view
+    list = new ListView(this);
+    sortedLibrary = new SortedLibrary(this);
+    list->setModel(sortedLibrary);
+    list->setSelectionMode(QAbstractItemView::SingleSelection);
+    list->setSpacing(1);
+    Library *library = Library::instance();
+    QModelIndex current = library->nowReading();
+    setSelected(current);
+    addList(list);
+
+    progress = new QProgressDialog(tr("Adding books"), "", 0, 0, this);
+    progress->reset();
+    progress->setMinimumDuration(0);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setCancelButton(0);
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
@@ -177,8 +184,57 @@ QModelIndex LibraryDialog::selected() const
     return QModelIndex();
 }
 
-void LibraryDialog::onShowFolders()
+void LibraryDialog::onAddFolder()
 {
-    FoldersDialog *folders = new FoldersDialog(this);
-    folders->show();
+    Trace t("LibraryDialog::onAddFolder");
+
+    // Get folder name
+    Settings *settings = Settings::instance();
+    QString last =
+            settings->value("lastfolderadded", QDir::homePath()).toString();
+    QString path =
+            QFileDialog::getExistingDirectory(this, tr("Select folder"), last);
+    if (path == "") {
+        return;
+    }
+    settings->setValue("lastfolderadded", QFileInfo(path).absolutePath());
+    qDebug() << path;
+
+    // Add books from folder
+    progress->setWindowTitle(tr("Adding books"));
+    BookFinder *bookFinder = new BookFinder(this);
+    Library *library = Library::instance();
+    connect(bookFinder, SIGNAL(begin(int)), progress, SLOT(setMaximum(int)));
+    connect(bookFinder, SIGNAL(add(const QString &)),
+            this, SLOT(onAddFromFolder(const QString &)));
+    connect(bookFinder, SIGNAL(add(const QString &)),
+            library, SLOT(add(const QString &)));
+    connect(bookFinder, SIGNAL(done(int)),
+            this, SLOT(onAddFromFolderDone(int)));
+    bookFinder->find(path, Library::instance()->bookPaths());
+}
+
+void LibraryDialog::onAddFromFolderDone(int added)
+{
+    QString msg;
+
+    switch (added) {
+    case 0: msg = tr("No new books found"); break;
+    case 1: msg = tr("One new book added"); break;
+    default: msg = tr("%1 new books added").arg(added);
+    }
+
+    progress->reset();
+    qDebug() << "LibraryDialog::onRefreshDone:" << msg;
+#ifdef Q_WS_MAEMO_5
+    QMaemo5InformationBox::information(this, msg);
+#else
+    // FIXME
+#endif
+}
+
+void LibraryDialog::onAddFromFolder(const QString &path)
+{
+    progress->setLabelText(QFileInfo(path).fileName());
+    progress->setValue(progress->value() + 1);
 }

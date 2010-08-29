@@ -169,8 +169,8 @@ void BookView::setLastBookmark()
     if (mBook) {
         int height = contentsHeight;
         int pos = page()->mainFrame()->scrollPosition().y();
-        t.trace(QString("At %1 (%2%, height %3)").
-                arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height));
+        qDebug() << QString("At %1 (%2%, height %3)").
+                arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height);
         mBook->setLastBookmark(contentIndex, (qreal)pos / (qreal)height);
     }
 }
@@ -188,7 +188,7 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
     Trace t("BookView::goToBookmark");
     if (mBook) {
         if (bookmark.part != contentIndex) {
-            t.trace(QString("Loading new part %1").arg(bookmark.part));
+            qDebug () << "Loading new part" << bookmark.part;
             mBook->setLastBookmark(bookmark.part, bookmark.pos);
             restorePositionAfterLoad = true;
             positionAfterLoad = bookmark.pos;
@@ -203,7 +203,7 @@ void BookView::onLoadFinished(bool ok)
 {
     Trace t("BookView::onLoadFinished");
     if (!ok) {
-        t.trace("Not OK");
+        qDebug() << "Not OK";
         return;
     }
     loaded = true;
@@ -292,7 +292,7 @@ void BookView::addBookmark()
     }
     int y = page()->mainFrame()->scrollPosition().y();
     int height = page()->mainFrame()->contentsSize().height();
-    t.trace(QString().setNum((qreal)y / (qreal)height));
+    qDebug() << ((qreal)y / (qreal)height);
     mBook->addBookmark(contentIndex, (qreal)y / (qreal)height);
     update();
 }
@@ -362,11 +362,10 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
 {
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
         if (e->type() == QEvent::Resize) {
-            Trace::trace(QString("BookView::eventFilter QEvent::Resize to %1").
-                         arg(page()->mainFrame()->contentsSize().height()));
+            qDebug() << "BookView::eventFilter QEvent::Resize to"
+                    << page()->mainFrame()->contentsSize().height();
         } else {
-            Trace::trace(QString("BookView::eventFilter %1").
-                         arg(Trace::event(e->type())));
+            qDebug() << "BookView::eventFilter" << Trace::event(e->type());
         }
     }
 
@@ -404,7 +403,7 @@ void BookView::onContentsSizeChanged(const QSize &size)
     contentsHeight = size.height();
     if (decorated) {
         if (restorePositionAfterLoad) {
-            Trace::trace("BookView::onContentSizeChanged: Time to restore");
+            qDebug() << "BookView::onContentSizeChanged: Time to restore";
             restorePositionAfterLoad = false;
             goToPosition(positionAfterLoad);
         }
@@ -433,8 +432,8 @@ void BookView::goToPosition(qreal position)
     int scrollPos = (qreal)contentsHeight * position;
     page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));
     // FIXME: update();
-    Trace::trace(QString("BookView::goToPosition: To %1 (%2%, height %3)").
-            arg(scrollPos).arg(position * 100).arg(contentsHeight));
+    qDebug() << "BookView::goToPosition: To" << scrollPos << "("
+            << (position * 100) << "%, height" << contentsHeight << ")";
 }
 
 void BookView::showProgress()

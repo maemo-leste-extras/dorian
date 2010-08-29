@@ -2,6 +2,7 @@ dorian (0.1.5-1) unstable; urgency=low
 
   * Show better bookmark descriptions
   * Fix part navigation on desktops
+  * Remove complicated folder management
 
  -- Akos Polster <akos@pipacs.com>  Sun, 22 Aug 2010 02:00:00 +0200
 

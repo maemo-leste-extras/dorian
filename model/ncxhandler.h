@@ -37,9 +37,8 @@ public:
         if (name == "text") {
             contentTitle = currentText;
         } else if (name == "navPoint") {
-            t.trace(QString("url: ") + contentUrl);
-            t.trace(QString("title: ") + contentTitle);
-            t.trace(QString("id:") + contentId);
+            qDebug() << "url" << contentUrl << "\ntitl" << contentTitle
+                    << "\nid" << contentId;
             Book::ContentItem item;
             item.href = book.rootPath() + "/" + contentUrl;
             item.name = contentTitle;

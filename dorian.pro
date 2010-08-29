@@ -29,7 +29,6 @@ SOURCES += \
     widgets/toolbuttonbox.cpp \
     model/bookfinder.cpp \
     widgets/listwindow.cpp \
-    foldersdialog.cpp \
     widgets/progress.cpp \
     widgets/bookwindow.cpp
 
@@ -61,9 +60,9 @@ HEADERS += \
     widgets/toolbuttonbox.h \
     model/bookfinder.h \
     widgets/listwindow.h \
-    foldersdialog.h \
     widgets/progress.h \
-    widgets/bookwindow.h
+    widgets/bookwindow.h \
+    widgets/listview.h
 
 RESOURCES += \
     dorian.qrc
@@ -126,4 +125,7 @@ maemo5 {
 
     iconscalable.path = $$DATADIR/icons/hicolor/scalable/hildon
     iconscalable.files += pkg/maemo/icon-scalable/dorian.png
+}
+macx {
+    CONFIG += x86
 }

@@ -4,7 +4,6 @@
 #include <QtGui>
 
 #include "bookwindow.h"
-#include "bookfinder.h"
 
 class QString;
 class QModelIndex;
@@ -67,8 +66,6 @@ private:
     QModelIndex mCurrent;
     FullScreenWindow *fullScreenWindow;
     int preventBlankingTimer;
-    BookFinder *bookFinder;
-    BookFinderThread bookFinderThread;
     Progress *progress;
 };
 

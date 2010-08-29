@@ -9,54 +9,32 @@ BookFinder::BookFinder(QObject *parent): QObject(parent)
 {
 }
 
-void BookFinder::find(const QStringList &directories, const QStringList &books)
+void BookFinder::find(const QString &path, const QStringList &books)
 {
     Trace t("BookFinder::find");
     QStringList booksFound;
+    int toAdd = 0;
     int added = 0;
-    int removed = 0;
 
-    foreach (QString path, directories) {
-        QStringList filters(QString("*.epub"));
-        QFileInfoList entries =
-                QDir(path).entryInfoList(filters, QDir::Files | QDir::Readable);
-        foreach (QFileInfo entry, entries) {
-            booksFound.append(entry.absoluteFilePath());
-        }
+    QStringList filters(QString("*.epub"));
+    QFileInfoList entries =
+            QDir(path).entryInfoList(filters, QDir::Files | QDir::Readable);
+    foreach (QFileInfo entry, entries) {
+        booksFound.append(entry.absoluteFilePath());
     }
 
-    int toAdd = 0;
     foreach (QString found, booksFound) {
         if (!books.contains(found)) {
             toAdd++;
         }
     }
-    emit beginAdd(toAdd);
-
+    emit begin(toAdd);
     foreach (QString found, booksFound) {
         if (!books.contains(found)) {
-            t.trace(QString("New book ") + found);
+            qDebug() << "New book" << found;
             emit add(found);
             added++;
         }
     }
-
-    foreach (QString book, books) {
-        QFileInfo bookInfo = QFileInfo(book);
-        QString bookDir = bookInfo.absolutePath();
-        QString bookPath = bookInfo.absoluteFilePath();
-        foreach (QString dirName, directories) {
-            t.trace(bookDir + " vs. " + QDir(dirName).absolutePath());
-            if (bookDir == QDir(dirName).absolutePath()) {
-                if (!booksFound.contains(bookPath)) {
-                    t.trace(QString("Deleted book ") + bookPath);
-                    removed++;
-                    emit remove(bookPath);
-                }
-                break;
-            }
-        }
-    }
-
-    emit done(added, removed);
+    emit done(added);
 }

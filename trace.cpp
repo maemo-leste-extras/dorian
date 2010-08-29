@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <QEvent>
 
 #include "trace.h"
@@ -229,12 +228,46 @@ Trace::EventName Trace::eventTab[] = {
     {0, 0}
 };
 
+Trace::Trace(const QString &s): name(s)
+{
+    messageHandler(QtDebugMsg, QString(">%1").arg(name).toAscii().constData());
+    indent++;
+}
+
+Trace::~Trace()
+{
+    if (--indent < 0) {
+        indent = 0;
+    }
+    messageHandler(QtDebugMsg, QString("<%1").arg(name).toAscii().constData());
+}
+
+QString Trace::event(QEvent::Type t)
+{
+    for (int i = 0; eventTab[i].name; i++) {
+        if (eventTab[i].type == t) {
+            return eventTab[i].name;
+        }
+    }
+    if (t >= QEvent::User) {
+        return QString("QEvent::User+%1").arg(t - QEvent::User);
+    } else {
+        return QString("Unknown event %1").arg(t);
+    }
+}
+
+const char *Trace::prefix()
+{
+    return (QTime::currentTime().toString("hh:mm:ss.zzz ") +
+        QString(" ").repeated(indent)).toAscii().constData();
+}
+
 void Trace::messageHandler(QtMsgType type, const char *msg)
 {
     if (type >= Trace::level) {
         switch (type) {
         case QtDebugMsg:
-            fprintf(stderr, "%s\n", msg);
+            fprintf(stderr, "%s%s\n", prefix(), msg);
             break;
         case QtWarningMsg:
             fprintf(stderr, "Warning: %s\n", msg);

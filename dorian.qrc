@@ -37,5 +37,6 @@
         <file>icons/previous-disabled.png</file>
         <file>icons/chapters.png</file>
         <file>icons/mac/chapters.png</file>
+        <file>icons/library.png</file>
     </qresource>
 </RCC>

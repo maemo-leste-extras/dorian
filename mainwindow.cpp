@@ -153,15 +153,6 @@ MainWindow::MainWindow(QWidget *parent):
     fullScreenWindow = new FullScreenWindow(this);
     connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
 
-    // Create thread for finding books in directories
-    bookFinder = new BookFinder();
-    connect(bookFinder, SIGNAL(add(const QString &)),
-            library, SLOT(add(const QString &)));
-    connect(bookFinder, SIGNAL(remove(const QString &)),
-            library, SLOT(remove(const QString &)));
-    bookFinder->moveToThread(&bookFinderThread);
-    bookFinderThread.start();
-
     // Handle settings changes
     Settings *settings = Settings::instance();
     connect(settings, SIGNAL(valueChanged(const QString &)),
@@ -177,9 +168,6 @@ MainWindow::MainWindow(QWidget *parent):
 
 MainWindow::~MainWindow()
 {
-    bookFinderThread.quit();
-    bookFinderThread.wait();
-    delete bookFinder;
 }
 
 void MainWindow::onCurrentBookChanged()
@@ -275,8 +263,7 @@ void MainWindow::onSettingsChanged(const QString &key)
 #ifdef Q_WS_MAEMO_5
     if (key == "orientation") {
         QString value = Settings::instance()->value(key).toString();
-        Trace::trace(QString("MainWindow::onSettingsChanged: orientation %1").
-                     arg(value));
+        qDebug() << "MainWindow::onSettingsChanged: orientation" << value;
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
@@ -287,16 +274,14 @@ void MainWindow::onSettingsChanged(const QString &key)
         }
     } else if (key == "lightson") {
         bool enable = Settings::instance()->value(key, false).toBool();
-        Trace::trace(QString("MainWindow::onSettingsChanged: lightson: %1").
-                     arg(enable));
+        qDebug() << "MainWindow::onSettingsChanged: lightson:" << enable;
         killTimer(preventBlankingTimer);
         if (enable) {
             preventBlankingTimer = startTimer(29 * 1000);
         }
     } else if (key == "usevolumekeys") {
         bool value = Settings::instance()->value(key).toBool();
-        Trace::trace(QString("MainWindow::onSettingsChanged: usevolumekeys %1").
-                     arg(value));
+        qDebug() << "MainWindow::onSettingsChanged: usevolumekeys" << value;
         grabZoomKeys(value);
         fullScreenWindow->grabZoomKeys(value);
     }
@@ -384,7 +369,7 @@ void MainWindow::timerEvent(QTimerEvent *event)
                            MCE_REQUEST_IF, QDBusConnection::systemBus());
         mce.call(MCE_PREVENT_BLANK_REQ);
 #endif // Q_WS_MAEMO_5
-        Trace::trace("MainWindow::timerEvent: Prevent display blanking");
+        qDebug() << "MainWindow::timerEvent: Prevent display blanking";
     }
 }
 

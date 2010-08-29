@@ -7,10 +7,11 @@
 
 #include "listwindow.h"
 
-class QListView;
+class ListView;
 class QPushButton;
 class QModelIndex;
 class QCloseEvent;
+class QProgressDialog;
 class Book;
 class InfoWindow;
 class SortedLibrary;
@@ -24,7 +25,7 @@ public:
 
 public slots:
     void onAdd();
-    void onShowFolders();
+    void onAddFolder();
 #ifndef Q_WS_MAEMO_5
     void onRemove();
     void onDetails();
@@ -33,13 +34,15 @@ public slots:
     void onBookAdded();
     void onItemActivated(const QModelIndex &index);
     void onCurrentBookChanged();
-
+    void onAddFromFolder(const QString &path);
+    void onAddFromFolderDone(int added);
 private:
     QString createItemText(const Book *book);
     void setSelected(const QModelIndex &index);
     QModelIndex selected() const;
-    QListView *list;
+    ListView *list;
     SortedLibrary *sortedLibrary;
+    QProgressDialog *progress;
 };
 
 #endif // LIBRARYDIALOG_H

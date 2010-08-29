@@ -110,7 +110,7 @@ bool Library::add(const QString &path)
         return false;
     }
     if (find(path).isValid()) {
-        t.trace("Book already exists in library");
+        qDebug() << "Book already exists in library";
         return false;
     }
     int size = mBooks.size();

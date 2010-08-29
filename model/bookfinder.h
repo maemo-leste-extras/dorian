@@ -15,23 +15,12 @@ public:
     explicit BookFinder(QObject *parent = 0);
 
 public slots:
-    void find(const QStringList &directories, const QStringList &books);
+    void find(const QString &directory, const QStringList &books);
 
 signals:
-    void beginAdd(int count);
-    void add(const QString &book);
-    void remove(const QString &book);
-    void done(int added, int removed);
-
-public slots:
-};
-
-class BookFinderThread: public QThread
-{
-public:
-   void run () {
-       exec();
-   }
+    void begin(int count);
+    void add(const QString &bookPath);
+    void done(int count);
 };
 
 #endif // BOOKFINDER_H

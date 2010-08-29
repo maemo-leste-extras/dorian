@@ -68,10 +68,10 @@ void BookWindow::doGrabZoomKeys(bool grab)
     Trace t("BookWindow::doGrabZoomKeys");
 #ifdef Q_WS_MAEMO_5
     if (!isVisible()) {
-        t.trace("Not visible - skipping");
+        qDebug() << "Not visible - skipping";
     }
     if (!winId()) {
-        t.trace("Could not get window ID - skipping");
+        qDebug() << "Could not get window ID - skipping";
         return;
     }
     unsigned long val = grab? 1: 0;

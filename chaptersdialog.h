@@ -1,11 +1,13 @@
 #ifndef CHAPTERSDIALOG_H
 #define CHAPTERSDIALOG_H
 
+#include <QStringList>
+
 #include "listwindow.h"
 
 class QWidget;
-class QListWidget;
-class QListWidgetItem;
+class QModelIndex;
+class ListView;
 class Book;
 
 /** Display book chapters. */
@@ -20,10 +22,11 @@ signals:
     void goToChapter(int index);
 
 public slots:
-    void onItemActivated(QListWidgetItem *);
+    void onItemActivated(const QModelIndex &index);
 
 protected:
-    QListWidget *list;
+    ListView *list;
+    QStringList data;
 };
 
 #endif // CHAPTERSDIALOG_H

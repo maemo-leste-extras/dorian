@@ -7,11 +7,12 @@
 
 class QListView;
 class QString;
-class QHBoxLayout;
+class QBoxLayout;
 class QPushButton;
 class QModelIndex;
 class QItemSelection;
 class QEvent;
+class ListView;
 
 /** A window with a list and menu actions (Maemo) or buttons (non-Maemo). */
 class ListWindow: public QMainWindow
@@ -22,7 +23,7 @@ public:
     explicit ListWindow(QWidget *parent = 0);
 
     /** Add a list view to the window. */
-    void addList(QListView *list);
+    void addList(ListView *list);
 
     /**
      * Add an action to the window: either a button, or, on Maemo, a top
@@ -44,7 +45,9 @@ public:
 protected slots:
     void onSelectionChanged(const QItemSelection &selected,
                             const QItemSelection &deselected);
-#ifndef Q_WS_MAEMO_5
+#ifdef Q_WS_MAEMO_5
+    void onModelChanged();
+#else
     void activateItemButtons();
 #endif
 
@@ -56,9 +59,9 @@ protected:
 #else
     QDialogButtonBox *buttonBox;
     QList<QPushButton *> itemButtons;
-#endif
-    QHBoxLayout *frameLayout;
-    QListView *list;
+#endif // Q_WS_MAEMO_5
+    QBoxLayout *contentLayout;
+    ListView *list;
 };
 
 #endif // LISTWINDOW_H

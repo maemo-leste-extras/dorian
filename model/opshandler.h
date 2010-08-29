@@ -65,11 +65,10 @@ public:
             QString key = attrs.value("id");
             book.content[key] = item;
             partCount++;
-            t.trace(QString("name: ") + item.name);
-            t.trace(QString("href: ") + attrs.value("href"));
-            t.trace(QString("id: ") + key);
+            qDebug() << "name:"<< item.name << "\nhref:" << attrs.value("href")
+                    << "id:" << key;
         } else if (name == "itemref") {
-            t.trace(QString("id: ") + attrs.value("idref"));
+            qDebug() << "id:" << attrs.value("idref");
             book.parts.append(attrs.value("idref"));
         }
         return true;

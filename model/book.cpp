@@ -47,7 +47,7 @@ QString Book::path() const
 bool Book::open()
 {
     Trace t("Book::open");
-    t.trace(path());
+    qDebug() << path();
     close();
     clear();
     if (path().isEmpty()) {
@@ -68,7 +68,7 @@ bool Book::open()
 void Book::peek()
 {
     Trace t("Book::peek");
-    t.trace(path());
+    qDebug() << path();
     close();
     clear();
     if (path().isEmpty()) {
@@ -105,7 +105,7 @@ bool Book::extract()
     Trace t("Book::extract");
     bool ret = false;
     QString tmp = tmpDir();
-    t.trace("Extracting " + mPath + " to " + tmp);
+    qDebug() << "Extracting" << mPath << "to" << tmp;
 
     QDir::setCurrent(QDir::rootPath());
     if (!clearDir(tmp)) {
@@ -151,7 +151,7 @@ bool Book::parse()
     // Parse OPS file
     bool ret = false;
     QString opsFileName = opsPath();
-    t.trace("Parsing OPS file" + opsFileName);
+    qDebug() << "Parsing OPS file" << opsFileName;
     QFile opsFile(opsFileName);
     QXmlSimpleReader reader;
     QXmlInputSource *source = new QXmlInputSource(&opsFile);
@@ -173,7 +173,7 @@ bool Book::parse()
     coverKeys << "cover-image" << "img-cover-jpeg" << "cover";
     foreach (QString key, coverKeys) {
         if (content.contains(key)) {
-            t.trace("Loading cover image from " + content[key].href);
+            qDebug() << "Loading cover image from" << content[key].href;
             cover = makeCover(content[key].href);
             break;
         }
@@ -183,7 +183,7 @@ bool Book::parse()
     // contents
     if (content.contains("ncx")) {
         QString ncxFileName = content["ncx"].href;
-        t.trace("Parsing NCX file " + ncxFileName);
+        qDebug() << "Parsing NCX file" << ncxFileName;
         QFile ncxFile(ncxFileName);
         source = new QXmlInputSource(&ncxFile);
         NcxHandler *ncxHandler = new NcxHandler(*this);
@@ -253,14 +253,14 @@ void Book::clear()
 void Book::load()
 {
     Trace t("Book::load");
-    t.trace("path: " + path());
+    qDebug() << "path" << path();
     QSettings settings;
     QString key = "book/" + path() + "/";
-    t.trace("key: " + key);
+    qDebug() << "key" << key;
 
     // Load book info
     title = settings.value(key + "title").toString();
-    t.trace(title);
+    qDebug() << title;
     creators = settings.value(key + "creators").toStringList();
     date = settings.value(key + "date").toString();
     publisher = settings.value(key + "publisher").toString();
@@ -283,8 +283,8 @@ void Book::load()
                                      "/part").toInt();
         qreal pos = settings.value(key + "bookmark" + QString::number(i) +
                                    "/pos").toReal();
-        t.trace(QString("Bookmark %1 at part %2, %3").
-                arg(i).arg(part).arg(pos));
+        qDebug() << QString("Bookmark %1 at part %2, %3").
+                arg(i).arg(part).arg(pos);
         mBookmarks.append(Bookmark(part, pos));
     }
 }
@@ -294,11 +294,11 @@ void Book::save()
     Trace t("Book::save");
     QSettings settings;
     QString key = "book/" + path() + "/";
-    t.trace("key: " + key);
+    qDebug() << "key" << key;
 
     // Save book info
     settings.setValue(key + "title", title);
-    t.trace("title: " + title);
+    qDebug() << "title" << title;
     settings.setValue(key + "creators", creators);
     settings.setValue(key + "date", date);
     settings.setValue(key + "publisher", publisher);
@@ -313,8 +313,8 @@ void Book::save()
     // Save bookmarks
     settings.setValue(key + "bookmarks", mBookmarks.size());
     for (int i = 0; i < mBookmarks.size(); i++) {
-        t.trace(QString("Bookmark %1 at %2, %3").
-                arg(i).arg(mBookmarks[i].part).arg(mBookmarks[i].pos));
+        qDebug() << QString("Bookmark %1 at %2, %3").
+                arg(i).arg(mBookmarks[i].part).arg(mBookmarks[i].pos);
         settings.setValue(key + "bookmark" + QString::number(i) + "/part",
                           mBookmarks[i].part);
         settings.setValue(key + "bookmark" + QString::number(i) + "/pos",
@@ -358,7 +358,7 @@ QString Book::opsPath()
     QString ret;
 
     QFile container(tmpDir() + "/META-INF/container.xml");
-    t.trace(container.fileName());
+    qDebug() << container.fileName();
     QXmlSimpleReader reader;
     QXmlInputSource *source = new QXmlInputSource(&container);
     ContainerHandler *containerHandler = new ContainerHandler();
@@ -368,8 +368,7 @@ QString Book::opsPath()
     if (reader.parse(source)) {
         ret = tmpDir() + "/" + containerHandler->rootFile;
         mRootPath = QFileInfo(ret).absoluteDir().absolutePath();
-        t.trace("OSP path: " + ret);
-        t.trace("Root dir: " + mRootPath);
+        qDebug() << "OSP path" << ret << "\nRoot dir" << mRootPath;
     }
     delete errorHandler;
     delete containerHandler;
@@ -450,12 +449,12 @@ int Book::partFromChapter(int index)
         }
         if (content[contentKey].href == baseRef) {
             found = true;
-            t.trace(QString("Key for %1 is %2").arg(baseRef).arg(contentKey));
+            qDebug() << QString("Key for %1 is %2").arg(baseRef).arg(contentKey);
             break;
         }
     }
     if (!found) {
-        t.trace("Could not find key for " + baseRef);
+        qDebug() << "Could not find key for" << baseRef;
         return -1;
     }
     int partIndex = parts.indexOf(contentKey);
