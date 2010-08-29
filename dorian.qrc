@@ -38,5 +38,7 @@
         <file>icons/chapters.png</file>
         <file>icons/mac/chapters.png</file>
         <file>icons/library.png</file>
+        <file>icons/add.png</file>
+        <file>icons/folder.png</file>
     </qresource>
 </RCC>

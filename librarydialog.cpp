@@ -31,8 +31,9 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     addItemAction(tr("Delete"), this, SLOT(onRemove()));
 #endif // ! Q_WS_MAEMO_5
 
-    addAction(tr("Add book"), this, SLOT(onAdd()));
-    addAction(tr("Add books from folder"), this, SLOT(onAddFolder()));
+    addAction(tr("Add book"), this, SLOT(onAdd()), ":/icons/add.png");
+    addAction(tr("Add books from folder"), this, SLOT(onAddFolder()),
+              ":/icons/folder.png");
 
     // Create and add list view
     list = new ListView(this);

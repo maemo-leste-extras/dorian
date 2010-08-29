@@ -22,11 +22,18 @@ Dyalog::Dyalog(QWidget *parent) :
     contentLayout->setMargin(0);
     content->setLayout(contentLayout);
 
-    buttonBox = new QDialogButtonBox(Qt::Vertical, this);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(this);
-    horizontalLayout->addWidget(scroller);
-    horizontalLayout->addWidget(buttonBox);
-    setLayout(horizontalLayout);
+    QBoxLayout *boxLayout;
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    if (screenGeometry.width() < screenGeometry.height()) {
+        buttonBox = new QDialogButtonBox(Qt::Horizontal, this);
+        boxLayout = new QVBoxLayout(this);
+    } else {
+        buttonBox = new QDialogButtonBox(Qt::Vertical, this);
+        boxLayout = new QHBoxLayout(this);
+    }
+    boxLayout->addWidget(scroller);
+    boxLayout->addWidget(buttonBox);
+    setLayout(boxLayout);
 
     scroller->setWidget(content);
     content->show();

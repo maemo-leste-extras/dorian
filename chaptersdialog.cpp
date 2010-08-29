@@ -24,7 +24,8 @@ ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
             this, SLOT(onItemActivated(const QModelIndex &)));
 
 #ifndef Q_WS_MAEMO_5
-    addAction(tr("Close"), this, SLOT(close()), QDialogButtonBox::RejectRole);
+    addAction(tr("Close"), this, SLOT(close()), QString(),
+              QDialogButtonBox::RejectRole);
 #endif // Q_WS_MAEMO_5
 }
 

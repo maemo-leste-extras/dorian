@@ -60,17 +60,17 @@ void ListWindow::addList(ListView *listView)
 }
 
 void ListWindow::addAction(const QString &title, QObject *receiver,
-                           const char *slot, QDialogButtonBox::ButtonRole role)
+                           const char *slot, const QString &iconPath,
+                           QDialogButtonBox::ButtonRole role)
 {
     Trace t("ListWindow::addAction");
 #ifndef Q_WS_MAEMO_5
+    Q_UNUSED(iconPath);
     QPushButton *button = buttonBox->addButton(title, role);
     connect(button, SIGNAL(clicked()), receiver, slot);
 #else
     Q_UNUSED(role);
-    // QAction *action = menuBar()->addAction(title);
-    // connect(action, SIGNAL(triggered()), receiver, slot);
-    QPushButton *button = new QPushButton(title, this);
+    QPushButton *button = new QPushButton(QIcon(iconPath), title, this);
     contentLayout->addWidget(button);
     connect(button, SIGNAL(clicked()), receiver, slot);
 #endif // ! Q_WS_MAEMO_5

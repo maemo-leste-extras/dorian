@@ -149,7 +149,7 @@ MainWindow::MainWindow(QWidget *parent):
     // Handle progress
     connect(view, SIGNAL(progress(qreal)), progress, SLOT(setProgress(qreal)));
 
-    // Shadow window for full screen
+    // Shadow window for full screen reading
     fullScreenWindow = new FullScreenWindow(this);
     connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
 

@@ -31,6 +31,7 @@ public:
      * Activating the action invokes the slot with no parameters.
      */
     void addAction(const QString &title, QObject *receiver, const char *slot,
+        const QString &iconPath = QString(),
         QDialogButtonBox::ButtonRole role = QDialogButtonBox::ActionRole);
 
     /**

@@ -5,10 +5,14 @@
 #include "toolbuttonbox.h"
 
 #ifdef Q_OS_SYMBIAN
-#define DEFAULT_ORIENTATION "portrait"
+const char *DEFAULT_ORIENTATION = "portrait";
 #else
-#define DEFAULT_ORIENTATION "landscape"
+const char *DEFAULT_ORIENTATION = "landscape";
 #endif
+
+const int ZOOM_MIN = 75;
+const int ZOOM_MAX = 250;
+const int ZOOM_STEP = 25;
 
 SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 {
@@ -42,12 +46,20 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     layout->addWidget(grabVolume);
     grabVolume->setChecked(settings->value("usevolumekeys", false).toBool());
 
-    QLabel *zoomLabel = new QLabel(tr("Zoom level:"), contents);
+    int zoom = Settings::instance()->value("zoom").toInt();
+    if (zoom < ZOOM_MIN) {
+        zoom = ZOOM_MIN;
+    } else if (zoom > ZOOM_MAX) {
+        zoom = ZOOM_MAX;
+    }
+    zoomLabel = new QLabel(tr("Zoom level: %1%").arg(zoom), contents);
     layout->addWidget(zoomLabel);
     zoomSlider = new QSlider(Qt::Horizontal, contents);
-    zoomSlider->setMinimum(50);
-    zoomSlider->setMaximum(300);
-    zoomSlider->setValue(Settings::instance()->value("zoom").toInt());
+    zoomSlider->setMinimum(ZOOM_MIN);
+    zoomSlider->setMaximum(ZOOM_MAX);
+    zoomSlider->setSingleStep(ZOOM_STEP);
+    zoomSlider->setPageStep(ZOOM_STEP);
+    zoomSlider->setValue(zoom);
     layout->addWidget(zoomSlider);
 
     QLabel *fontLabel = new QLabel(tr("Font:"), contents);
@@ -118,8 +130,14 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
 void SettingsWindow::onSliderValueChanged(int value)
 {
-#ifdef Q_WS_MAEMO_5 // Re-scaling the book view is too much for the N900
-    Q_UNUSED(value);
+    int step = zoomSlider->singleStep();
+    if (value % step) {
+        zoomSlider->setValue((value + step / 2) / step * step);
+        return;
+    }
+    zoomLabel->setText(tr("Zoom level: %1%").arg(value));
+#ifdef Q_WS_MAEMO_5
+    // Re-scaling the book view is too much for the N900
 #else
     Settings::instance()->setValue("zoom", value);
 #endif // Q_WS_MAEMO_5
