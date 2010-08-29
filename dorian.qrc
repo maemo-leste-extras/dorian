@@ -40,5 +40,7 @@
         <file>icons/library.png</file>
         <file>icons/add.png</file>
         <file>icons/folder.png</file>
+        <file>icons/view-normal.png</file>
+        <file>icons/mac/view-normal.png</file>
     </qresource>
 </RCC>

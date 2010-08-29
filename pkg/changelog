@@ -3,6 +3,7 @@ dorian (0.1.6-1) unstable; urgency=low
   * Adjust zoom level in steps
   * Adjust dialog boxes according to orientation
   * Add icons to buttons
+  * Use Maemo icons for Maemo
 
  -- Akos Polster <akos@pipacs.com>  Sun, 29 Aug 2010 02:00:00 +0200
 

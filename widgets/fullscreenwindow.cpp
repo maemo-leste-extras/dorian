@@ -16,7 +16,7 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): BookWindow(parent)
     layout->setMargin(0);
     frame->setLayout(layout);
     setCentralWidget(frame);
-    restoreButton = new TranslucentButton("view-fullscreen", this);
+    restoreButton = new TranslucentButton("view-normal", this);
 }
 
 void FullScreenWindow::showFullScreen()
