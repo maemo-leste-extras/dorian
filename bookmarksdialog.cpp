@@ -3,22 +3,24 @@
 #include "bookmarksdialog.h"
 #include "book.h"
 #include "bookmarkinfodialog.h"
+#include "listview.h"
 
 BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
-    QMainWindow(parent), book(book_)
+    ListWindow(parent), book(book_)
 {
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
-#endif
     setWindowTitle(tr("Bookmarks"));
+    if (!book) {
+        return;
+    }
 
-    QFrame *frame = new QFrame(this);
-    setCentralWidget(frame);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(frame);
-    frame->setLayout(horizontalLayout);
+    addAction(tr("Add bookmark"), this, SLOT(onAdd()));
+#ifndef Q_WS_MAEMO_5
+    addItemAction(tr("Go to"), this, SLOT(onGo()));
+    addItemAction(tr("Delete"), this, SLOT(onDelete()));
+#endif // ! Q_WS_MAEMO_5
 
-    list = new QListWidget(this);
-    list->setSelectionMode(QAbstractItemView::SingleSelection);
+    // Build bookmark list
+    // FIXME: Localize me
     foreach (Book::Bookmark bookmark, book_->bookmarks()) {
         QString label("At ");
         label += QString::number((int)(100 * book_->
@@ -28,50 +30,32 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
             QString chapterId = book_->chapters[chapterIndex];
             label += "\nIn \"" + book_->content[chapterId].name + "\"";
         }
-        (void)new QListWidgetItem(QIcon(":icons/bookmark.png"), label, list);
+        data.append(label);
     }
 
-    horizontalLayout->addWidget(list);
-
-#ifndef Q_WS_MAEMO_5
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Vertical);
-
-    QPushButton *goButton = new QPushButton(tr("Go to"), this);
-    buttonBox->addButton(goButton, QDialogButtonBox::ActionRole);
-    connect(goButton, SIGNAL(clicked()), this, SLOT(onGo()));
-
-    QPushButton *closeButton = buttonBox->addButton(QDialogButtonBox::Close);
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(onClose()));
-
-    QPushButton *addButton = new QPushButton(tr("Add"), this);
-    buttonBox->addButton(addButton, QDialogButtonBox::ActionRole);
-    connect(addButton, SIGNAL(clicked()), this, SLOT(onAdd()));
-
-    QPushButton *deleteButton = new QPushButton(tr("Delete"), this);
-    buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
-    connect(deleteButton, SIGNAL(clicked()), this, SLOT(onDelete()));
-
-    horizontalLayout->addWidget(buttonBox);
-#else
-    QAction *addBookmarkAction = menuBar()->addAction(tr("Add bookmark"));
-    connect(addBookmarkAction, SIGNAL(triggered()), this, SLOT(onAdd()));
-#endif // Q_WS_MAEMO_5
-    connect(list, SIGNAL(itemActivated(QListWidgetItem *)),
-            this, SLOT(onItemActivated(QListWidgetItem *)));
+    // Create bookmark list view
+    QStringListModel *model = new QStringListModel(data, this);
+    list = new ListView;
+    list->setSelectionMode(QAbstractItemView::SingleSelection);
+    list->setModel(model);
+    addList(list);
+    connect(list, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
+    addList(list);
 }
 
 void BookmarksDialog::onGo()
 {
-    if (!list->selectedItems().isEmpty()) {
-        QListWidgetItem *item = list->selectedItems()[0];
-        emit goToBookmark(list->row(item));
+    QModelIndex current = list->currentIndex();
+    if (current.isValid()) {
+        emit goToBookmark(current.row());
         close();
     }
 }
 
-void BookmarksDialog::onItemActivated(QListWidgetItem *item)
+void BookmarksDialog::onItemActivated(const QModelIndex &index)
 {
-    switch ((new BookmarkInfoDialog(book, list->row(item), this))->exec()) {
+    switch ((new BookmarkInfoDialog(book, index.row(), this))->exec()) {
     case BookmarkInfoDialog::GoTo:
         onGo();
         break;
@@ -89,14 +73,10 @@ void BookmarksDialog::onAdd()
     close();
 }
 
-void BookmarksDialog::onClose()
-{
-    close();
-}
-
 void BookmarksDialog::onDelete(bool really)
 {
-    if (list->selectedItems().isEmpty()) {
+    QModelIndex current = list->currentIndex();
+    if (!current.isValid()) {
         return;
     }
     if (!really) {
@@ -107,16 +87,7 @@ void BookmarksDialog::onDelete(bool really)
             return;
         }
     }
-    QListWidgetItem *item = list->selectedItems()[0];
-    int row = list->row(item);
+    int row = current.row();
+    list->model()->removeRow(row);
     book->deleteBookmark(row);
-    delete item;
-}
-
-void BookmarksDialog::closeEvent(QCloseEvent *event)
-{
-#ifdef Q_WS_MAEMO_5
-    menuBar()->clear();
-#endif
-    event->accept();
 }

@@ -10,6 +10,8 @@ public:
     explicit ListView(QWidget *parent = 0): QListView(parent) {
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        setUniformItemSizes(true);
+        setEditTriggers(QAbstractItemView::NoEditTriggers);
     }
     int contentsHeight() const {return QListView::contentsSize().height() + 10;}
 };

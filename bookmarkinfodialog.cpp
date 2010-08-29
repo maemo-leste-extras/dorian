@@ -11,10 +11,15 @@ BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
     setWindowTitle(tr("Bookmark Details"));
 
     Book::Bookmark bookmark = book->bookmarks()[index];
-    QString contentId = book->parts[bookmark.part];
-    QString contentTitle = book->content[contentId].name;
-    QLabel *info = new QLabel(contentTitle + "\nAt " +
-        QString::number((int)(bookmark.pos*100)) + "%", this);
+    QString label("At ");
+    label += QString::number((int)(100 * book->
+        getProgress(bookmark.part, bookmark.pos))) + "%";
+    int chapterIndex = book->chapterFromPart(bookmark.part);
+    if (chapterIndex != -1) {
+        QString chapterId = book->chapters[chapterIndex];
+        label += ", in\n\"" + book->content[chapterId].name + "\"";
+    }
+    QLabel *info = new QLabel(label, this);
     addWidget(info);
     addStretch();
 

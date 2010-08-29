@@ -1,15 +1,16 @@
 #ifndef BOOKMARKSDIALOG_H
 #define BOOKMARKSDIALOG_H
 
-#include <QMainWindow>
+#include <QStringList>
+
+#include "listwindow.h"
 
 class QCloseEvent;
 class Book;
-class QListWidget;
-class QListWidgetItem;
+class ListView;
 
 /** Dialog box managing bookmarks. */
-class BookmarksDialog: public QMainWindow
+class BookmarksDialog: public ListWindow
 {
     Q_OBJECT
 
@@ -23,14 +24,13 @@ signals:
 public slots:
     void onGo();
     void onAdd();
-    void onItemActivated(QListWidgetItem *);
-    void onClose();
     void onDelete(bool really = false);
+    void onItemActivated(const QModelIndex &index);
 
 protected:
-    void closeEvent(QCloseEvent *e);
     Book *book;
-    QListWidget *list;
+    ListView *list;
+    QStringList data;
 };
 
 #endif // BOOKMARKSDIALOG_H

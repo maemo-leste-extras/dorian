@@ -13,8 +13,8 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
     QScrollArea *scroller = new QScrollArea(this);
     setCentralWidget(scroller);
     scroller->setProperty("FingerScrollable", true);
-    scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scroller->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // scroller->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scroller->setFrameStyle(QFrame::NoFrame);
     scroller->show();
 
