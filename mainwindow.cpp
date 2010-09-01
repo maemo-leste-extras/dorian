@@ -31,6 +31,7 @@
 #include "bookfinder.h"
 #include "progress.h"
 #include "dyalog.h"
+#include "translucentbutton.h"
 
 #ifdef DORIAN_TEST_MODEL
 #include "modeltest.h"
@@ -113,7 +114,12 @@ MainWindow::MainWindow(QWidget *parent):
     frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     toolBar->addWidget(frame);
 
-    fullScreenAction = addToolBarAction(this, SLOT(showBig()), "view-fullscreen");
+    fullScreenAction = addToolBarAction(this, SLOT(showBig()),
+                                        "view-fullscreen");
+
+    // Buttons for paging
+    previousButton = new TranslucentButton("back", this);
+    nextButton = new TranslucentButton("forward", this);
 
     // Handle model changes
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
@@ -161,6 +167,10 @@ MainWindow::MainWindow(QWidget *parent):
     settings->setValue("lightson", settings->value("lightson"));
     settings->setValue("usevolumekeys", settings->value("usevolumekeys"));
 
+    // Handle next/previous buttons
+    connect(nextButton, SIGNAL(triggered()), view, SLOT(goNextPage()));
+    connect(previousButton, SIGNAL(triggered()), view, SLOT(goPreviousPage()));
+
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
 #endif
@@ -180,11 +190,16 @@ void MainWindow::showRegular()
     Trace t("MainWindow::showRegular");
     fullScreenWindow->hide();
     fullScreenWindow->leaveChildren();
-    progress->setGeometry(0, 0, geometry().width(), PROGRESS_HEIGHT);
+    QRect geo = geometry();
+    progress->setGeometry(0, 0, geo.width(), PROGRESS_HEIGHT);
+    nextButton->setGeometry(geo.width() - 95, 0, 95, 95);
+    previousButton->setGeometry(0, geo.height() - 95, 95, 95);
     QList<QWidget *> otherChildren;
-    otherChildren.append(progress);
+    otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
     progress->flash();
+    nextButton->flash();
+    previousButton->flash();
 }
 
 void MainWindow::showBig()
@@ -192,12 +207,17 @@ void MainWindow::showBig()
     Trace t("MainWindow::showBig");
     leaveChildren();
     QList<QWidget *> otherChildren;
-    otherChildren.append(progress);
-    progress->setGeometry(0, 0, QApplication::desktop()->screenGeometry().width(),
-                          PROGRESS_HEIGHT);
+    otherChildren << progress << nextButton << previousButton;
+    QRect screen = QApplication::desktop()->screenGeometry();
+    progress->setGeometry(0, 0, screen.width(), PROGRESS_HEIGHT);
+    nextButton->setGeometry(screen.width() - 95, 0, 95, 95);
+    previousButton->setGeometry(0, screen.height() - 95, 95, 95);
+
     fullScreenWindow->takeChildren(view, otherChildren);
     fullScreenWindow->showFullScreen();
     progress->flash();
+    nextButton->flash();
+    previousButton->flash();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -375,7 +395,13 @@ void MainWindow::timerEvent(QTimerEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
+    Trace t("MainWindow::resizeEvent");
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
+    qDebug() << "Toolbar height" << toolBar->height();
+    previousButton->setGeometry(0, e->size().height() - 95, 95, 95);
+    nextButton->setGeometry(e->size().width() - 95, toolBar->height(), 95, 95);
+    previousButton->flash();
+    nextButton->flash();
     QMainWindow::resizeEvent(e);
 }
 

@@ -12,6 +12,7 @@ class BookView;
 class Book;
 class FullScreenWindow;
 class Progress;
+class TranslucentButton;
 
 class MainWindow: public BookWindow
 {
@@ -67,6 +68,8 @@ private:
     FullScreenWindow *fullScreenWindow;
     int preventBlankingTimer;
     Progress *progress;
+    TranslucentButton *previousButton;
+    TranslucentButton *nextButton;
 };
 
 #endif // MAINWINDOW_H

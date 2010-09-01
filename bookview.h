@@ -39,8 +39,12 @@ signals:
     void progress(qreal p);
 
 public slots:
+    /** Go to next part. */
     void goPrevious();
+
+    /** Go to previous part. */
     void goNext();
+
     void onLoadFinished(bool ok);
     void onSettingsChanged(const QString &key);
 
@@ -49,6 +53,12 @@ public slots:
 
     /** Handle main frame contents size changes. */
     void onContentsSizeChanged(const QSize &size);
+
+    /** Go to previous page. */
+    void goPreviousPage();
+
+    /** Go to next page. */
+    void goNextPage();
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -61,12 +71,6 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 
 private:
-    /** Save navigation icons from resource to the file system. */
-    void extractIcons();
-
-    /** Remove extracted icons. */
-    void removeIcons();
-
     /** Load given part. */
     void loadContent(int index);
 
@@ -81,12 +85,6 @@ private:
 
     /** Show progress. */
     void showProgress();
-
-    /** Go to previous page. */
-    void goPreviousPage();
-
-    /** Go to next page. */
-    void goNextPage();
 
     int contentIndex;   /**< Current part in book. */
     Book *mBook;        /**< Book to show. */

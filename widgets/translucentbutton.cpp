@@ -1,4 +1,5 @@
 #include "translucentbutton.h"
+#include "trace.h"
 
 #ifdef Q_WS_MAC
 #   define ICON_PREFIX ":/icons/mac/"
@@ -9,7 +10,7 @@
 TranslucentButton::TranslucentButton(const QString &name_, QWidget *parent):
     QWidget(parent), name(name_), opacity(1)
 {
-    setGeometry(0, 0, 50, 50);
+    setGeometry(0, 0, 95, 95);
     timer = new QTimer(this);
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(stopFlash()));
@@ -39,4 +40,11 @@ void TranslucentButton::stopFlash()
 {
     opacity = 1;
     update();
+}
+
+void TranslucentButton::mousePressEvent(QMouseEvent *e)
+{
+    Q_UNUSED(e);
+    Trace t("TranslucentButton::mousePressEvent");
+    emit triggered();
 }

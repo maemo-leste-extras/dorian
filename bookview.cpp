@@ -78,7 +78,6 @@ BookView::BookView(QWidget *parent):
     s->setValue("scheme", s->value("scheme", "default"));
     setBook(0);
 
-    extractIcons();
 #ifdef Q_WS_MAEMO_5
     scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
 #endif
@@ -87,7 +86,6 @@ BookView::BookView(QWidget *parent):
 BookView::~BookView()
 {
     Trace t("BookView::~BookView");
-    removeIcons();
 }
 
 void BookView::loadContent(int index)
@@ -299,63 +297,12 @@ void BookView::addBookmark()
 
 void BookView::addNavigationBar()
 {
-    Trace t("BookView::addNavigationBar");
-    if (!mBook) {
-        return;
-    }
-
-    QString naviPrev =
-            "<a href=\"javascript:bv.goPrevious();\">"
-            "<img width=\"95\" height=\"95\" style=\"float:left;clear:none;\" "
-            "src=\"file://"
-            + tmpPath() +
-            "/previous.png\" />"
-            "</a>";
-    QString naviNext =
-            "<a href=\"javascript:bv.goNext();\">"
-            "<img width=\"95\" height=\"95\" style=\"float:right;clear:none;\" "
-            "src=\"file://"
-            + tmpPath() +
-            "/next.png\" />"
-            "</a>";
-    if (contentIndex == 0) {
-        naviPrev = "";
-    }
-    if (contentIndex >= mBook->parts.size() - 1) {
-        naviNext = "";
-    }
-
-    QWebFrame *frame = page()->currentFrame();
-    QString headerScript = "document.body.innerHTML = '" +
-        naviPrev + naviNext + "<br />" + "' + document.body.innerHTML;";
-    QString trailerScript = "document.body.innerHTML += '<br /><br />" +
-        naviPrev + naviNext + "';";
-
-    frame->evaluateJavaScript(headerScript);
-    frame->evaluateJavaScript(trailerScript);
     decorated = true;
 }
 
 QString BookView::tmpPath()
 {
     return QDir::tempPath() + "/dorian";
-}
-
-void BookView::extractIcons()
-{
-    QFile next(ICON_PREFIX + QString("/next.png"));
-    QFile prev(ICON_PREFIX + QString("/previous.png"));
-
-    QDir().mkpath(tmpPath());
-    next.copy(tmpPath() + "/next.png");
-    prev.copy(tmpPath() + "/previous.png");
-}
-
-void BookView::removeIcons()
-{
-    QFile(ICON_PREFIX + QString("/next.png")).remove();
-    QFile(ICON_PREFIX + QString("/previous.png")).remove();
-    QDir().rmpath(tmpPath());
 }
 
 bool BookView::eventFilter(QObject *o, QEvent *e)
@@ -484,7 +431,9 @@ void BookView::goPreviousPage()
     frame->scroll(0, -height());
     if (pos == frame->scrollPosition().y()) {
         if (contentIndex > 0) {
-            goToBookmark(Book::Bookmark(contentIndex - 1, 1.0));
+            Book::Bookmark bookmark(contentIndex - 1, 1.0);
+            mBook->setLastBookmark(contentIndex - 1, 1.0);
+            goToBookmark(bookmark);
         }
     } else {
         showProgress();
@@ -500,6 +449,7 @@ void BookView::goNextPage()
     if (pos == frame->scrollPosition().y()) {
         goNext();
     } else {
+        setLastBookmark();
         showProgress();
     }
 }

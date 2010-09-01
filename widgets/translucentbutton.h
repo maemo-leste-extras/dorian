@@ -15,8 +15,12 @@ public slots:
     void flash(int duration = 3000);
     void stopFlash();
 
+signals:
+    void triggered();
+
 protected:
-    virtual void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent *);
     QString name;
     int opacity;
     QTimer *timer;
