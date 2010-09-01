@@ -6,6 +6,7 @@
 class QWidget;
 class Book;
 
+/** Display book information. */
 class InfoDialog: public Dyalog
 {
     Q_OBJECT

@@ -25,7 +25,7 @@
 BookView::BookView(QWidget *parent):
     QWebView(parent), contentIndex(-1), mBook(0),
     restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
-    contentsHeight(0), decorated(false), scrollerMonitor(-1)
+    contentsHeight(0), scrollerMonitor(-1)
 {
     Trace t("BookView::BookView");
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
@@ -104,7 +104,6 @@ void BookView::loadContent(int index)
     }
     else {
         loaded = false;
-        decorated = false;
         emit partLoadStart(index);
         load(QUrl(contentFile));
     }
@@ -205,7 +204,6 @@ void BookView::onLoadFinished(bool ok)
         return;
     }
     loaded = true;
-    addNavigationBar();
     onSettingsChanged("scheme");
     emit partLoadEnd(contentIndex);
     showProgress();
@@ -295,11 +293,6 @@ void BookView::addBookmark()
     update();
 }
 
-void BookView::addNavigationBar()
-{
-    decorated = true;
-}
-
 QString BookView::tmpPath()
 {
     return QDir::tempPath() + "/dorian";
@@ -348,12 +341,10 @@ void BookView::addJavaScriptObjects()
 void BookView::onContentsSizeChanged(const QSize &size)
 {
     contentsHeight = size.height();
-    if (decorated) {
-        if (restorePositionAfterLoad) {
-            qDebug() << "BookView::onContentSizeChanged: Time to restore";
-            restorePositionAfterLoad = false;
-            goToPosition(positionAfterLoad);
-        }
+    if (restorePositionAfterLoad) {
+        qDebug() << "BookView::onContentSizeChanged: Time to restore";
+        restorePositionAfterLoad = false;
+        goToPosition(positionAfterLoad);
     }
 }
 

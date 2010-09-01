@@ -74,9 +74,6 @@ private:
     /** Load given part. */
     void loadContent(int index);
 
-    /** Decorate web page frame with navigation icons. */
-    void addNavigationBar();
-
     /** Get temporary directory for extracting book contents. */
     QString tmpPath();
 
@@ -97,7 +94,6 @@ private:
     bool loaded;        /**< True if content has been loaded. */
     bool mousePressed;
     int contentsHeight; /**< Last know height of the frame. */
-    bool decorated;     /**< True after adding the arrows to the frame contents. */
 
     int scrollerMonitor;
 #ifdef Q_WS_MAEMO_5

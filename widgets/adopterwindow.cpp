@@ -6,10 +6,10 @@
 #   include <X11/Xatom.h>
 #endif // Q_WS_MAEMO_5
 
-#include "bookwindow.h"
+#include "adopterwindow.h"
 #include "trace.h"
 
-BookWindow::BookWindow(QWidget *parent):
+AdopterWindow::AdopterWindow(QWidget *parent):
         QMainWindow(parent), grabbingZoomKeys(false), mainChild(0)
 {
 #ifdef Q_WS_MAEMO_5
@@ -23,9 +23,9 @@ BookWindow::BookWindow(QWidget *parent):
     setCentralWidget(frame);
 }
 
-void BookWindow::takeChildren(QWidget *main, const QList<QWidget *> &others)
+void AdopterWindow::takeChildren(QWidget *main, const QList<QWidget *> &others)
 {
-    Trace t("BookWindow::takeChildren");
+    Trace t("AdopterWindow::takeChildren");
     leaveChildren();
     if (main) {
         mainChild = main;
@@ -40,32 +40,32 @@ void BookWindow::takeChildren(QWidget *main, const QList<QWidget *> &others)
     }
 }
 
-void BookWindow::leaveChildren()
+void AdopterWindow::leaveChildren()
 {
-    Trace t("BookWindow::leaveChildren");
+    Trace t("AdopterWindow::leaveChildren");
     if (mainChild) {
         centralWidget()->layout()->removeWidget(mainChild);
         mainChild = 0;
     }
 }
 
-void BookWindow::grabZoomKeys(bool grab)
+void AdopterWindow::grabZoomKeys(bool grab)
 {
-    Trace t("BookWindow::grabZoomKeys");
+    Trace t("AdopterWindow::grabZoomKeys");
     grabbingZoomKeys = grab;
     doGrabZoomKeys(grab);
 }
 
-void BookWindow::showEvent(QShowEvent *e)
+void AdopterWindow::showEvent(QShowEvent *e)
 {
-    Trace t("BookWindow::showEvent");
+    Trace t("AdopterWindow::showEvent");
     doGrabZoomKeys(grabbingZoomKeys);
     QMainWindow::showEvent(e);
 }
 
-void BookWindow::doGrabZoomKeys(bool grab)
+void AdopterWindow::doGrabZoomKeys(bool grab)
 {
-    Trace t("BookWindow::doGrabZoomKeys");
+    Trace t("AdopterWindow::doGrabZoomKeys");
 #ifdef Q_WS_MAEMO_5
     if (!isVisible()) {
         qDebug() << "Not visible - skipping";

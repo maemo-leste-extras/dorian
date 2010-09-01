@@ -3,7 +3,7 @@
 
 #include <QtGui>
 
-#include "bookwindow.h"
+#include "adopterwindow.h"
 
 class QString;
 class QModelIndex;
@@ -14,7 +14,7 @@ class FullScreenWindow;
 class Progress;
 class TranslucentButton;
 
-class MainWindow: public BookWindow
+class MainWindow: public AdopterWindow
 {
     Q_OBJECT
 
@@ -39,6 +39,8 @@ public slots:
     void showChapters();
     void onGoToChapter(int index);
     void about();
+    void goToNextPage();
+    void goToPreviousPage();
 
 protected:
     void closeEvent(QCloseEvent *event);

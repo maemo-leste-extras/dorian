@@ -16,6 +16,7 @@ class Book;
 class InfoWindow;
 class SortedLibrary;
 
+/** Manage library. */
 class LibraryDialog: public ListWindow
 {
     Q_OBJECT

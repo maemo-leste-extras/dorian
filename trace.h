@@ -6,6 +6,7 @@
 #include <QTime>
 #include <QEvent>
 
+/** Trace helper. */
 class Trace
 {
 public:

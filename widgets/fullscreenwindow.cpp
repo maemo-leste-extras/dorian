@@ -4,7 +4,7 @@
 #include "translucentbutton.h"
 #include "trace.h"
 
-FullScreenWindow::FullScreenWindow(QWidget *parent): BookWindow(parent)
+FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 {
     Q_ASSERT(parent);
 #ifdef Q_WS_MAEMO_5
@@ -17,6 +17,11 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): BookWindow(parent)
     frame->setLayout(layout);
     setCentralWidget(frame);
     restoreButton = new TranslucentButton("view-normal", this);
+    QRect screen = QApplication::desktop()->screenGeometry();
+    restoreButton->setGeometry((screen.width() - TranslucentButton::pixels) / 2,
+        screen.height() - TranslucentButton::pixels - 9,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    connect(restoreButton, SIGNAL(triggered()), this, SIGNAL(restore()));
 }
 
 void FullScreenWindow::showFullScreen()
@@ -31,24 +36,11 @@ void FullScreenWindow::showFullScreen()
     restoreButton->flash();
 }
 
-void FullScreenWindow::MOUSE_ACTIVATE_EVENT(QMouseEvent *event)
-{
-    Trace t("FullScreenWindow::MOUSE_ACTIVATE_EVENT");
-    if (fullScreenZone().contains(event->x(), event->y())) {
-        emit restore();
-    } else {
-        restoreButton->flash(700);
-    }
-    QMainWindow::MOUSE_ACTIVATE_EVENT(event);
-}
-
-QRect FullScreenWindow::fullScreenZone() const
-{
-    return QRect(width() / 2 - 45, height() - 104, 95, 95);
-}
-
 void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
-    restoreButton->setGeometry(fullScreenZone());
-    QMainWindow::resizeEvent(e);
+    Q_UNUSED(e);
+    QRect screen = QApplication::desktop()->screenGeometry();
+    restoreButton->setGeometry(screen.width() - TranslucentButton::pixels - 9,
+        screen.height() - TranslucentButton::pixels - 9,
+        TranslucentButton::pixels, TranslucentButton::pixels);
 }

@@ -1,15 +1,24 @@
 #ifndef TRANSLUCENTBUTTON_H
 #define TRANSLUCENTBUTTON_H
 
-#include <QtGui>
+#include <QLabel>
 #include <QString>
 
-class TranslucentButton: public QWidget
+class QWidget;
+class QPaintEvent;
+class QMouseEvent;
+class QTimer;
+
+/**
+ * A button that is transparent, but can temporarily made opaque by flashing it.
+ */
+class TranslucentButton: public QLabel
 {
     Q_OBJECT
 
 public:
-    explicit TranslucentButton(const QString &name, QWidget *parent);
+    static const int pixels;
+    explicit TranslucentButton(const QString &iconName, QWidget *parent);
 
 public slots:
     void flash(int duration = 3000);
@@ -20,9 +29,9 @@ signals:
 
 protected:
     void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
     QString name;
-    int opacity;
+    bool transparent;
     QTimer *timer;
 };
 

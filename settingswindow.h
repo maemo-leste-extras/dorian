@@ -11,6 +11,7 @@ class QFontComboBox;
 class QLabel;
 class ToolButtonBox;
 
+/** Display settings. */
 class SettingsWindow: public QMainWindow
 {
     Q_OBJECT

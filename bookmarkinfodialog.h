@@ -5,6 +5,7 @@
 
 class Book;
 
+/** Show bookmark info. */
 class BookmarkInfoDialog: public Dyalog
 {
     Q_OBJECT

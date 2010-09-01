@@ -3,9 +3,11 @@
 
 #include <QListView>
 
+/** Same as QListView, except contentsHeight() is public. */
 class ListView: public QListView
 {
     Q_OBJECT
+
 public:
     explicit ListView(QWidget *parent = 0): QListView(parent) {
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -3,6 +3,7 @@
 
 #include <QtGui>
 
+/** Display developer tools. */
 class DevTools: public QDialog
 {
     Q_OBJECT

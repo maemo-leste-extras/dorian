@@ -4,15 +4,15 @@
 #include <QRect>
 #include <QObject>
 
-#include "bookwindow.h"
+#include "adopterwindow.h"
 
 class QWidget;
 class QMouseEvent;
 class QResizeEvent;
 class TranslucentButton;
 
-/** A full screen window that can adopt a child widget from another window. */
-class FullScreenWindow: public BookWindow
+/** A full screen window with a restore button. */
+class FullScreenWindow: public AdopterWindow
 {
     Q_OBJECT
 
@@ -21,17 +21,11 @@ public:
     void showFullScreen();
 
 signals:
+    /** Emitted when the restore button is pressed. */
     void restore();
 
 protected:
-#ifdef Q_WS_MAEMO_5
-#   define MOUSE_ACTIVATE_EVENT mouseReleaseEvent
-#else
-#   define MOUSE_ACTIVATE_EVENT mousePressEvent
-#endif
-    virtual void MOUSE_ACTIVATE_EVENT(QMouseEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
-    QRect fullScreenZone() const;
+    void resizeEvent(QResizeEvent *e);
     TranslucentButton *restoreButton;
 };
 

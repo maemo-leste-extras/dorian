@@ -49,7 +49,7 @@ const char *DORIAN_VERSION =
 ;
 
 MainWindow::MainWindow(QWidget *parent):
-    BookWindow(parent), view(0), preventBlankingTimer(-1)
+    AdopterWindow(parent), view(0), preventBlankingTimer(-1)
 {
     Trace t("MainWindow::MainWindow");
 #ifdef Q_WS_MAEMO_5
@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent):
     progress = new Progress(central);
 
     // Tool bar
+
     setUnifiedTitleAndToolBarOnMac(true);
     settings = new QDialog(this);
     toolBar = addToolBar("controls");
@@ -117,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent):
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
                                         "view-fullscreen");
 
-    // Buttons for paging
+    // Buttons on top of the book view
     previousButton = new TranslucentButton("back", this);
     nextButton = new TranslucentButton("forward", this);
 
@@ -167,9 +168,9 @@ MainWindow::MainWindow(QWidget *parent):
     settings->setValue("lightson", settings->value("lightson"));
     settings->setValue("usevolumekeys", settings->value("usevolumekeys"));
 
-    // Handle next/previous buttons
-    connect(nextButton, SIGNAL(triggered()), view, SLOT(goNextPage()));
-    connect(previousButton, SIGNAL(triggered()), view, SLOT(goPreviousPage()));
+    // Handle book view buttons
+    connect(nextButton, SIGNAL(triggered()), this, SLOT(goToNextPage()));
+    connect(previousButton, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
 
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
@@ -190,24 +191,31 @@ void MainWindow::showRegular()
     Trace t("MainWindow::showRegular");
     fullScreenWindow->hide();
     fullScreenWindow->leaveChildren();
-    QRect geo = geometry();
-    qDebug() << "Geometry:" << geo;
-    progress->setGeometry(0, 0, geo.width(), PROGRESS_HEIGHT);
-#ifdef Q_WS_MAEMO_5
-    previousButton->setGeometry(0,geo.height() - toolBar->height() - 95,
-                                95, 95);
-    nextButton->setGeometry(geo.width() - 95, 0, 95, 95);
-#else
-    previousButton->setGeometry(0, geo.height() - 95, 95, 95);
-    nextButton->setGeometry(geo.width() - 95, toolBar->height(), 95, 95);
-#endif // Q_WS_MAEMO_5
 
     QList<QWidget *> otherChildren;
     otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
+    QRect geo = geometry();
+    qDebug() << "Geometry" << geo << "toolbar" << toolBar->height();
+    progress->setGeometry(0, 0, geo.width(), PROGRESS_HEIGHT);
+#ifdef Q_WS_MAEMO_5
+    previousButton->setGeometry(0,
+        geo.height() - toolBar->height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(geo.width() - TranslucentButton::pixels, 0,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+#else
+    previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(geo.width() - TranslucentButton::pixels,
+        toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
+#endif // Q_WS_MAEMO_5
+    qDebug() << "previousButton geometry" << previousButton->geometry();
     progress->flash();
-    nextButton->flash();
-    previousButton->flash();
+    nextButton->show();
+    previousButton->show();
+    nextButton->flash(1500);
+    previousButton->flash(1500);
 }
 
 void MainWindow::showBig()
@@ -218,14 +226,16 @@ void MainWindow::showBig()
     otherChildren << progress << nextButton << previousButton;
     QRect screen = QApplication::desktop()->screenGeometry();
     progress->setGeometry(0, 0, screen.width(), PROGRESS_HEIGHT);
-    nextButton->setGeometry(screen.width() - 95, 0, 95, 95);
-    previousButton->setGeometry(0, screen.height() - 95, 95, 95);
+    nextButton->setGeometry(screen.width() - TranslucentButton::pixels, 0,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    previousButton->setGeometry(0, screen.height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
 
     fullScreenWindow->takeChildren(view, otherChildren);
     fullScreenWindow->showFullScreen();
     progress->flash();
-    nextButton->flash();
-    previousButton->flash();
+    nextButton->flash(1500);
+    previousButton->flash(1500);
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -407,15 +417,20 @@ void MainWindow::resizeEvent(QResizeEvent *e)
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
     qDebug() << "Toolbar height" << toolBar->height();
 #ifdef Q_WS_MAEMO_5
-    previousButton->setGeometry(0, e->size().height() - toolBar->height() - 95,
-                                95, 95);
-    nextButton->setGeometry(e->size().width() - 95, 0, 95, 95);
+    previousButton->setGeometry(0,
+        e->size().height() - toolBar->height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels, 0,
+        TranslucentButton::pixels, TranslucentButton::pixels);
 #else
-    previousButton->setGeometry(0, e->size().height() - 95, 95, 95);
-    nextButton->setGeometry(e->size().width() - 95, toolBar->height(), 95, 95);
+    previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels,
+        toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
-    previousButton->flash();
-    nextButton->flash();
+    qDebug() << "previousButton geometry" << previousButton->geometry();
+    previousButton->flash(1500);
+    nextButton->flash(1500);
     QMainWindow::resizeEvent(e);
 }
 
@@ -433,4 +448,19 @@ void MainWindow::about()
         "garage.maemo.org/projects/dorian</a>").arg(DORIAN_VERSION));
     aboutDialog->addWidget(label);
     aboutDialog->show();
+}
+
+
+void MainWindow::goToNextPage()
+{
+    nextButton->flash(1500);
+    previousButton->flash(1500);
+    view->goNextPage();
+}
+
+void MainWindow::goToPreviousPage()
+{
+    nextButton->flash(1500);
+    previousButton->flash(1500);
+    view->goPreviousPage();
 }

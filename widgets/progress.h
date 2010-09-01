@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 
+/** Subtle progress bar. */
 class Progress: public QLabel
 {
     Q_OBJECT

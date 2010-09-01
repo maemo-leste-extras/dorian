@@ -1,3 +1,5 @@
+#include <QtGui>
+
 #include "translucentbutton.h"
 #include "trace.h"
 
@@ -7,10 +9,12 @@
 #   define ICON_PREFIX ":/icons/"
 #endif
 
+const int TranslucentButton::pixels = 95;
+
 TranslucentButton::TranslucentButton(const QString &name_, QWidget *parent):
-    QWidget(parent), name(name_), opacity(1)
+    QLabel(parent), name(name_), transparent(true)
 {
-    setGeometry(0, 0, 95, 95);
+    setGeometry(0, 0, pixels, pixels);
     timer = new QTimer(this);
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(stopFlash()));
@@ -20,32 +24,33 @@ TranslucentButton::TranslucentButton(const QString &name_, QWidget *parent):
 void TranslucentButton::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    if (opacity < 1) {
+    if (!transparent) {
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.drawPixmap(0, 0, QPixmap(ICON_PREFIX + name + ".png").scaled(
-                QSize(95, 95), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+                QSize(pixels, pixels), Qt::IgnoreAspectRatio,
+                Qt::SmoothTransformation));
     } else {
-        painter.fillRect(0, 0, 95, 95, Qt::NoBrush);
+        painter.fillRect(0, 0, pixels, pixels, Qt::NoBrush);
     }
 }
 
 void TranslucentButton::flash(int duration)
 {
-    opacity = 0;
+    raise();
+    transparent = false;
     update();
     timer->start(duration);
 }
 
 void TranslucentButton::stopFlash()
 {
-    opacity = 1;
+    transparent = true;
     update();
 }
 
-void TranslucentButton::mousePressEvent(QMouseEvent *e)
+void TranslucentButton::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_UNUSED(e);
-    Trace t("TranslucentButton::mousePressEvent");
     emit triggered();
     e->accept();
 }

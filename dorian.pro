@@ -30,7 +30,7 @@ SOURCES += \
     model/bookfinder.cpp \
     widgets/listwindow.cpp \
     widgets/progress.cpp \
-    widgets/bookwindow.cpp
+    widgets/adopterwindow.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -61,7 +61,7 @@ HEADERS += \
     model/bookfinder.h \
     widgets/listwindow.h \
     widgets/progress.h \
-    widgets/bookwindow.h \
+    widgets/adopterwindow.h \
     widgets/listview.h
 
 RESOURCES += \
