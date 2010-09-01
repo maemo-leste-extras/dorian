@@ -85,16 +85,12 @@ MainWindow::MainWindow(QWidget *parent):
     toolBar->setIconSize(QSize(42, 42));
 #endif
 
-    previousAction = addToolBarAction(view, SLOT(goPrevious()), "previous");
-    nextAction = addToolBarAction(view, SLOT(goNext()), "next");
     chaptersAction = addToolBarAction(this, SLOT(showChapters()), "chapters");
     bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()), "bookmarks");
+    infoAction = addToolBarAction(this, SLOT(showInfo()), "info");
+    libraryAction = addToolBarAction(this, SLOT(showLibrary()), "library");
 
 #ifdef Q_WS_MAEMO_5
-    infoAction = menuBar()->addAction(tr("Book details"));
-    connect(infoAction, SIGNAL(triggered()), this, SLOT(showInfo()));
-    libraryAction = menuBar()->addAction(tr("Library"));
-    connect(libraryAction, SIGNAL(triggered()), this, SLOT(showLibrary()));
     settingsAction = menuBar()->addAction(tr("Settings"));
     connect(settingsAction, SIGNAL(triggered()), this, SLOT(showSettings()));
     devToolsAction = menuBar()->addAction(tr("Developer"));
@@ -102,9 +98,6 @@ MainWindow::MainWindow(QWidget *parent):
     QAction *aboutAction = menuBar()->addAction(tr("About"));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
-    infoAction = addToolBarAction(this, SLOT(showInfo()), "document-properties");
-    libraryAction = addToolBarAction(this, SLOT(showLibrary()),
-                                     "system-file-manager");
     settingsAction = addToolBarAction(this, SLOT(showSettings()),
                                       "preferences-system");
     devToolsAction = addToolBarAction(this, SLOT(showDevTools()), "developer");
@@ -267,7 +260,7 @@ void MainWindow::showSettings()
 void MainWindow::showInfo()
 {
     if (mCurrent.isValid()) {
-        (new InfoDialog(Library::instance()->book(mCurrent), this))->exec();
+        (new InfoDialog(Library::instance()->book(mCurrent), this, false))->exec();
     }
 }
 
@@ -352,13 +345,7 @@ void MainWindow::onPartLoadEnd(int index)
     }
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
-    previousAction->setIcon(QIcon(enablePrevious?
-        ":/icons/previous.png" : ":/icons/previous-disabled.png"));
-    nextAction->setIcon(QIcon(enableNext?
-        ":/icons/next.png": ":/icons/next-disabled.png"));
 #endif // Q_WS_MAEMO_5
-    previousAction->setEnabled(enablePrevious);
-    nextAction->setEnabled(enableNext);
 }
 
 void MainWindow::onAddBookmark()

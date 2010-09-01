@@ -15,7 +15,7 @@ class Dyalog: public QDialog
     Q_OBJECT
 
 public:
-    explicit Dyalog(QWidget *parent = 0);
+    explicit Dyalog(QWidget *parent, bool showButtons = true);
 
     /** Add widget to the scrollable content pane. */
     void addWidget(QWidget *widget);

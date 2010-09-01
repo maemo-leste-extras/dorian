@@ -12,7 +12,7 @@ class InfoDialog: public Dyalog
     Q_OBJECT
 
 public:
-    explicit InfoDialog(Book *book, QWidget *parent = 0);
+    explicit InfoDialog(Book *book, QWidget *parent, bool showButtons = true);
 
 public slots:
     void onReadBook();

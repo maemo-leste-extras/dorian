@@ -82,8 +82,7 @@ void BookmarksDialog::onDelete(bool really)
     if (!really) {
         if (QMessageBox::Yes !=
             QMessageBox::question(this, tr("Delete bookmark"),
-                                  tr("Delete bookmark?"),
-                                  QMessageBox::Yes | QMessageBox::No)) {
+                tr("Delete bookmark?"), QMessageBox::Yes | QMessageBox::No)) {
             return;
         }
     }

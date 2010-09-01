@@ -60,8 +60,6 @@ private:
     QAction *fullScreenAction;
     QAction *forwardAction;
     QAction *backwardAction;
-    QAction *previousAction;
-    QAction *nextAction;
     QAction *chaptersAction;
     QToolBar *toolBar;
     QDialog *settings;

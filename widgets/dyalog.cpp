@@ -2,7 +2,7 @@
 
 #include "dyalog.h"
 
-Dyalog::Dyalog(QWidget *parent) :
+Dyalog::Dyalog(QWidget *parent, bool showButtons):
     QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
                     Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint)
 {
@@ -32,7 +32,11 @@ Dyalog::Dyalog(QWidget *parent) :
         boxLayout = new QHBoxLayout(this);
     }
     boxLayout->addWidget(scroller);
-    boxLayout->addWidget(buttonBox);
+    if (showButtons) {
+        boxLayout->addWidget(buttonBox);
+    } else {
+        buttonBox->hide();
+    }
     setLayout(boxLayout);
 
     scroller->setWidget(content);

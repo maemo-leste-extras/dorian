@@ -1,11 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/document-properties.png</file>
         <file>icons/preferences-system.png</file>
         <file>icons/system-file-manager.png</file>
         <file>icons/developer.png</file>
         <file>icons/view-fullscreen.png</file>
-        <file>icons/mac/document-properties.png</file>
         <file>icons/mac/preferences-system.png</file>
         <file>icons/mac/system-file-manager.png</file>
         <file>icons/mac/developer.png</file>
@@ -42,5 +40,7 @@
         <file>icons/folder.png</file>
         <file>icons/view-normal.png</file>
         <file>icons/mac/view-normal.png</file>
+        <file>icons/info.png</file>
+        <file>icons/mac/info.png</file>
     </qresource>
 </RCC>

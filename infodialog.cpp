@@ -4,7 +4,8 @@
 #include "book.h"
 #include "library.h"
 
-InfoDialog::InfoDialog(Book *b, QWidget *parent): Dyalog(parent), book(b)
+InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
+        Dyalog(parent, showButtons), book(b)
 {
     setWindowTitle(tr("Book Details"));
 

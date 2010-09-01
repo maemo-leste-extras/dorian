@@ -1,10 +1,12 @@
 #ifndef DEVTOOLS_H
 #define DEVTOOLS_H
 
-#include <QtGui>
+#include "dyalog.h"
+
+class QWidget;
 
 /** Display developer tools. */
-class DevTools: public QDialog
+class DevTools: public Dyalog
 {
     Q_OBJECT
 
