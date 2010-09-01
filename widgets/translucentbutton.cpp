@@ -47,4 +47,5 @@ void TranslucentButton::mousePressEvent(QMouseEvent *e)
     Q_UNUSED(e);
     Trace t("TranslucentButton::mousePressEvent");
     emit triggered();
+    e->accept();
 }

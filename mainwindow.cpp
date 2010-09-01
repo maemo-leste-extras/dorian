@@ -191,9 +191,17 @@ void MainWindow::showRegular()
     fullScreenWindow->hide();
     fullScreenWindow->leaveChildren();
     QRect geo = geometry();
+    qDebug() << "Geometry:" << geo;
     progress->setGeometry(0, 0, geo.width(), PROGRESS_HEIGHT);
+#ifdef Q_WS_MAEMO_5
+    previousButton->setGeometry(0,geo.height() - toolBar->height() - 95,
+                                95, 95);
     nextButton->setGeometry(geo.width() - 95, 0, 95, 95);
+#else
     previousButton->setGeometry(0, geo.height() - 95, 95, 95);
+    nextButton->setGeometry(geo.width() - 95, toolBar->height(), 95, 95);
+#endif // Q_WS_MAEMO_5
+
     QList<QWidget *> otherChildren;
     otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
@@ -398,8 +406,14 @@ void MainWindow::resizeEvent(QResizeEvent *e)
     Trace t("MainWindow::resizeEvent");
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
     qDebug() << "Toolbar height" << toolBar->height();
+#ifdef Q_WS_MAEMO_5
+    previousButton->setGeometry(0, e->size().height() - toolBar->height() - 95,
+                                95, 95);
+    nextButton->setGeometry(e->size().width() - 95, 0, 95, 95);
+#else
     previousButton->setGeometry(0, e->size().height() - 95, 95, 95);
     nextButton->setGeometry(e->size().width() - 95, toolBar->height(), 95, 95);
+#endif // Q_WS_MAEMO_5
     previousButton->flash();
     nextButton->flash();
     QMainWindow::resizeEvent(e);
