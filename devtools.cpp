@@ -30,7 +30,7 @@ DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
 void DevTools::onClear()
 {
     if (QMessageBox::Yes ==
-        QMessageBox::question(this, tr("Clear persistent data?"),
+        QMessageBox::question(this, tr("Clear persistent data"),
                               tr("Library and settings will be cleared, "
                                  "application will be restarted. Continue?"),
                               QMessageBox::Yes | QMessageBox::No)) {
