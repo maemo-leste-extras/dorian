@@ -96,14 +96,21 @@ DEFINES += \
 
 include(model/modeltest/modeltest.pri)
 
-unix: !symbian {
-    LIBS += -lz
+unix {
+    symbian {
+    } else {
+        LIBS += -lz
+    }
 }
 windows {
     # FIXME: Build zlib, too
 }
 symbian {
-    # FIXME: Add OpenC ZLIB
+    # ICON = ...
+    TARGET.UID3 = 0xEA633557
+    # TARGET.CAPABILITY = ...
+    # FIXME: Add OpenC ZLIB?
+    INCLUDE += C:\NokiaQtSDK\Symbian\SDK\src\3rdparty\zlib
 }
 maemo5 {
     QT += maemo5 dbus
