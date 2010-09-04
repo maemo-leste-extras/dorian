@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     int ret = a.exec();
     if (ret == 1000) {
-#ifdef Q_OS_UNIX
+#if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
         extern char **environ;
         execve(argv[0], argv, environ);
 #endif

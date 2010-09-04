@@ -96,11 +96,14 @@ DEFINES += \
 
 include(model/modeltest/modeltest.pri)
 
-unix {
+unix: !symbian {
     LIBS += -lz
 }
-windows, symbian {
+windows {
     # FIXME: Build zlib, too
+}
+symbian {
+    # FIXME: Add OpenC ZLIB
 }
 maemo5 {
     QT += maemo5 dbus
