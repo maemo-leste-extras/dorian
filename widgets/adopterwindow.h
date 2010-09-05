@@ -47,7 +47,9 @@ protected:
     void doGrabZoomKeys(bool grab);
     bool grabbingZoomKeys;
     QWidget *mainChild;
+#ifndef Q_OS_SYMBIAN
     QToolBar *toolBar;
+#endif
 };
 
 #endif // ADOPTERWINDOW_H

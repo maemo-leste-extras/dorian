@@ -12,12 +12,20 @@ static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
 ;
 
+static const QtMsgType DORIAN_DEFAULT_TRACE_LEVEL =
+#ifdef Q_OS_SYMBIAN
+        QtDebugMsg
+#else
+        QtWarningMsg
+#endif
+        ;
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     Trace::level = (QtMsgType)Settings::instance()->
-        value("tracelevel", (int)QtWarningMsg).toInt();
+        value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
     qInstallMsgHandler(Trace::messageHandler);
 
     a.setApplicationName("Dorian");
@@ -25,15 +33,15 @@ int main(int argc, char *argv[])
     a.setOrganizationDomain("pipacs.com");
     a.setOrganizationName("Pipacs");
 
-#ifdef Q_OS_SYMBIAN
+    MainWindow w;
+    w.show();
+
+#if 0 // FIXME #ifdef Q_OS_SYMBIAN
     // Remove context menu from all widgets
     foreach (QWidget *w, QApplication::allWidgets()) {
         w->setContextMenuPolicy(Qt::NoContextMenu);
     }
 #endif // Q_OS_SYMBIAN
-
-    MainWindow w;
-    w.show();
 
     int ret = a.exec();
     if (ret == 1000) {

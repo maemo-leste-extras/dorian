@@ -102,10 +102,7 @@ MainWindow::MainWindow(QWidget *parent):
     addToolBarAction(this, SLOT(about()), "about", tr("About"));
 #endif // Q_WS_MAEMO_5
 
-    QFrame *frame = new QFrame(toolBar);
-    frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    toolBar->addWidget(frame);
-
+    addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
                                         "view-fullscreen", tr("Full screen"));
 
@@ -187,14 +184,18 @@ void MainWindow::showRegular()
     otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
     QRect geo = geometry();
-    qDebug() << "Geometry" << geo << "toolbar" << toolBar->height();
     progress->setGeometry(0, 0, geo.width(), PROGRESS_HEIGHT);
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     previousButton->setGeometry(0,
         geo.height() - toolBar->height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
     nextButton->setGeometry(geo.width() - TranslucentButton::pixels, 0,
         TranslucentButton::pixels, TranslucentButton::pixels);
+#elif defined(Q_OS_SYMBIAN)
+    previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(geo.width() - TranslucentButton::pixels,
+        0, TranslucentButton::pixels, TranslucentButton::pixels);
 #else
     previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
@@ -392,13 +393,17 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     Trace t("MainWindow::resizeEvent");
     progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
-    qDebug() << "Toolbar height" << toolBar->height();
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     previousButton->setGeometry(0,
         e->size().height() - toolBar->height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
     nextButton->setGeometry(e->size().width() - TranslucentButton::pixels, 0,
         TranslucentButton::pixels, TranslucentButton::pixels);
+#elif defined(Q_OS_SYMBIAN)
+    previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels,
+        0, TranslucentButton::pixels, TranslucentButton::pixels);
 #else
     previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);

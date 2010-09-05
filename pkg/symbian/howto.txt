@@ -1,0 +1,20 @@
+Install everything into default location on C:
+
+- Perl 5.8
+- N97 SDK
+- OpenC plugin
+- Qt for Symbian 4.6
+- Nokia Qt SDK 1.0
+- Nokia Ovi Suite
+
+My PATH is:
+
+C:\Perl\bin;C:\WINNT\system32;C:\WINNT;C:\WINNT\System32\Wbem;C:\Program Files\Common Files\Symbian\tools;C:\NokiaQtSDK\Symbian\gcce\bin
+
+My test phone is a Nokia N97 mini
+
+Connect phone to PC via USB, using PC Suite mode. Add phone to Ovi Suite
+
+Install TRK to phone using Start/Programs/Nokia Qt SDK/Symbian/Install TRK
+to Symbian device/TRK S60 5th Edition
+ 

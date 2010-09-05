@@ -18,6 +18,8 @@
 AdopterWindow::AdopterWindow(QWidget *parent):
         QMainWindow(parent), grabbingZoomKeys(false), mainChild(0)
 {
+    Trace t("AdopterWindow::AdopterWindow");
+
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif // Q_WS_MAEMO_5
@@ -125,6 +127,8 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
                                          const QString &iconName,
                                          const QString &text)
 {
+    Trace t("AdopterWindow::addToolBarAction");
+    qDebug() << "icon" << iconName << "text" << text;
 #ifndef Q_OS_SYMBIAN
     return toolBar->addAction(QIcon(ICON_PREFIX + iconName + ".png"), text,
                               receiver, member);
@@ -134,5 +138,14 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     menuBar()->addAction(action);
     connect(action, SIGNAL(triggered()), receiver, member);
     return action;
+#endif
+}
+
+void AdopterWindow::addToolBarSpace()
+{
+#ifndef Q_OS_SYMBIAN
+    QFrame *frame = new QFrame(toolBar);
+    frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    toolBar->addWidget(frame);
 #endif
 }

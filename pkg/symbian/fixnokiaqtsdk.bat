@@ -1,5 +1,6 @@
 @echo off
 rem Add directories to stop warnings during build
+rem Note: Apparently, this does not stops warnings at all
 c:
 cd \S60\devices\
 if not exist Nokia_N97_SDK_v1.0 goto sdkmissing
