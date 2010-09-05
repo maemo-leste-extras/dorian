@@ -88,7 +88,8 @@ OTHER_FILES += \
     www/index.html \
     pkg/maemo/autobuild.sh \
     pkg/maemo/autobuild-scratchbox.sh \
-    LICENSE.txt
+    LICENSE.txt \
+    pkg/symbian/book.svg
 
 DEFINES += \
     USE_FILE32API \
@@ -108,7 +109,7 @@ win32 {
     LIBS += pkg/win32/zlibstat.lib
 }
 symbian {
-    # ICON = ...
+    ICON = $$PWD/pkg/symbian/book.svgt
     TARGET.UID3 = 0xEA633557
     # TARGET.CAPABILITY = ...
     # FIXME: Add OpenC ZLIB?

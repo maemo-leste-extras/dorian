@@ -1,4 +1,4 @@
-Book icon by bmson (http://bmson.deviantart.com/)
+Book PNG icon by bmson (http://bmson.deviantart.com/)
 
 Basic Icons by PixelMixer (http://pixel-mixer.com/)
 
@@ -10,3 +10,9 @@ Mark Adler (http://zlib.net/)
 
 Minizip library copyright (C) 1998-2010 Gilles Vollant, Even Rouault and
 Mathias Svensson (http://www.winimage.com/zLibDll/minizip.html)
+
+Book SVG icon by Chris Down/Tango project:
+http://tango.freedesktop.org/Tango_Desktop_Project. The icon is released into
+the public domain. The Tango! Desktop Project grants anyone the right to use
+this work for any purpose, without any conditions, unless such conditions are
+required by law.
