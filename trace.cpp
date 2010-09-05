@@ -256,28 +256,23 @@ QString Trace::event(QEvent::Type t)
     }
 }
 
-const char *Trace::prefix()
+QString Trace::prefix()
 {
-    return (QTime::currentTime().toString("hh:mm:ss.zzz ") +
-        QString(" ").repeated(indent)).toAscii().constData();
+    return QTime::currentTime().toString("hh:mm:ss.zzz ") +
+            QString(" ").repeated(indent);
 }
 
 void Trace::messageHandler(QtMsgType type, const char *msg)
 {
     if (type >= Trace::level) {
+        QtMsgHandler oldHandler = qInstallMsgHandler(0);
         switch (type) {
         case QtDebugMsg:
-            fprintf(stderr, "%s%s\n", prefix(), msg);
+            qt_message_output(QtDebugMsg, (prefix()+msg).toUtf8().constData());
             break;
-        case QtWarningMsg:
-            fprintf(stderr, "Warning: %s\n", msg);
-            break;
-        case QtCriticalMsg:
-            fprintf(stderr, "Critical: %s\n", msg);
-            break;
-        case QtFatalMsg:
-            fprintf(stderr, "Fatal: %s\n", msg);
-            abort();
+        default:
+            qt_message_output(type, msg);
         }
+        qInstallMsgHandler(oldHandler);
     }
 }

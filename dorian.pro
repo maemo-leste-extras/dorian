@@ -102,15 +102,17 @@ unix {
         LIBS += -lz
     }
 }
-windows {
-    # FIXME: Build zlib, too
+win32 {
+    DEFINES += ZLIB_WINAPI
+    INCLUDEPATH += $$PWD/model/zlib
+    LIBS += pkg/win32/zlibstat.lib
 }
 symbian {
     # ICON = ...
     TARGET.UID3 = 0xEA633557
     # TARGET.CAPABILITY = ...
     # FIXME: Add OpenC ZLIB?
-    INCLUDE += C:\NokiaQtSDK\Symbian\SDK\src\3rdparty\zlib
+    INCLUDEPATH += C:\NokiaQtSDK\Symbian\SDK\src\3rdparty\zlib
 }
 maemo5 {
     QT += maemo5 dbus

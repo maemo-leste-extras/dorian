@@ -49,8 +49,6 @@ protected:
 
 private:
     void setCurrentBook(const QModelIndex &current);
-    QAction *addToolBarAction(const QObject *receiver, const char *member,
-                              const QString &name);
     BookView *view;
     QAction *settingsAction;
     QAction *libraryAction;
@@ -61,7 +59,6 @@ private:
     QAction *forwardAction;
     QAction *backwardAction;
     QAction *chaptersAction;
-    QToolBar *toolBar;
     QDialog *settings;
     DevTools *devTools;
     QModelIndex mCurrent;

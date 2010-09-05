@@ -1,10 +1,18 @@
+dorian (0.2.0-1) unstable; urgency=low
+
+  * Add support for Windows
+  * Add support for Symbian
+  * Fix tracing on Windows
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  5 Sep 2010 02:00:00 +0200
+
 dorian (0.1.7-1) unstable; urgency=low
 
   * Navigate through pages instead of book parts
   * Move some menu items to the toolbar
   * Don't show buttons in current book's information dialog
 
- -- Akos Polster <akos@pipacs.com>  Wed,  1 Aug 2010 02:00:00 +0200
+ -- Akos Polster <akos@pipacs.com>  Wed,  1 Sep 2010 02:00:00 +0200
 
 dorian (0.1.6-1) unstable; urgency=low
 

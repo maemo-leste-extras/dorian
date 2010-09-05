@@ -17,7 +17,7 @@ public:
     static QtMsgType level;
 
 protected:
-    static const char *prefix();
+    static QString prefix();
     QString name;
     static int indent;
     typedef struct {int type; const char *name;} EventName;

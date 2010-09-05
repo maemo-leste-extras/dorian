@@ -44,7 +44,7 @@
 #endif
 
 const int PROGRESS_HEIGHT = 17;
-const char *DORIAN_VERSION =
+static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
 ;
 
@@ -73,22 +73,19 @@ MainWindow::MainWindow(QWidget *parent):
     // Progress
     progress = new Progress(central);
 
-    // Tool bar
-
-    setUnifiedTitleAndToolBarOnMac(true);
+    // Settings dialog
     settings = new QDialog(this);
-    toolBar = addToolBar("controls");
-    toolBar->setMovable(false);
-    toolBar->setFloatable(false);
-    toolBar->toggleViewAction()->setVisible(false);
-#if defined(Q_WS_X11) && !defined(Q_WS_MAEMO_5)
-    toolBar->setIconSize(QSize(42, 42));
-#endif
 
-    chaptersAction = addToolBarAction(this, SLOT(showChapters()), "chapters");
-    bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()), "bookmarks");
-    infoAction = addToolBarAction(this, SLOT(showInfo()), "info");
-    libraryAction = addToolBarAction(this, SLOT(showLibrary()), "library");
+    // Tool bar actions
+
+    chaptersAction = addToolBarAction(this, SLOT(showChapters()),
+                                      "chapters", tr("Chapters"));
+    bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
+                                       "bookmarks", tr("Bookmarks"));
+    infoAction = addToolBarAction(this, SLOT(showInfo()),
+                                  "info", tr("Book info"));
+    libraryAction = addToolBarAction(this, SLOT(showLibrary()),
+                                     "library", tr("Library"));
 
 #ifdef Q_WS_MAEMO_5
     settingsAction = menuBar()->addAction(tr("Settings"));
@@ -99,9 +96,10 @@ MainWindow::MainWindow(QWidget *parent):
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
     settingsAction = addToolBarAction(this, SLOT(showSettings()),
-                                      "preferences-system");
-    devToolsAction = addToolBarAction(this, SLOT(showDevTools()), "developer");
-    addToolBarAction(this, SLOT(about()), "about");
+                                      "preferences-system", tr("Settings"));
+    devToolsAction = addToolBarAction(this, SLOT(showDevTools()),
+                                      "developer", tr("Developer"));
+    addToolBarAction(this, SLOT(about()), "about", tr("About"));
 #endif // Q_WS_MAEMO_5
 
     QFrame *frame = new QFrame(toolBar);
@@ -109,7 +107,7 @@ MainWindow::MainWindow(QWidget *parent):
     toolBar->addWidget(frame);
 
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
-                                        "view-fullscreen");
+                                        "view-fullscreen", tr("Full screen"));
 
     // Buttons on top of the book view
     previousButton = new TranslucentButton("back", this);
@@ -237,14 +235,6 @@ void MainWindow::setCurrentBook(const QModelIndex &current)
     Book *book = Library::instance()->book(current);
     view->setBook(book);
     setWindowTitle(book? book->shortName(): tr("Dorian"));
-}
-
-QAction *MainWindow::addToolBarAction(const QObject *receiver,
-                                      const char *member,
-                                      const QString &name)
-{
-    return toolBar->
-        addAction(QIcon(ICON_PREFIX + name + ".png"), "", receiver, member);
 }
 
 void MainWindow::showLibrary()

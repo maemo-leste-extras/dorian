@@ -9,6 +9,12 @@
 #include "adopterwindow.h"
 #include "trace.h"
 
+#ifdef Q_WS_MAC
+#   define ICON_PREFIX ":/icons/mac/"
+#else
+#   define ICON_PREFIX ":/icons/"
+#endif
+
 AdopterWindow::AdopterWindow(QWidget *parent):
         QMainWindow(parent), grabbingZoomKeys(false), mainChild(0)
 {
@@ -21,6 +27,18 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     layout->setMargin(0);
     frame->setLayout(layout);
     setCentralWidget(frame);
+
+#ifndef Q_OS_SYMBIAN
+    // Tool bar
+    setUnifiedTitleAndToolBarOnMac(true);
+    toolBar = addToolBar("controls");
+    toolBar->setMovable(false);
+    toolBar->setFloatable(false);
+    toolBar->toggleViewAction()->setVisible(false);
+#if defined(Q_WS_X11) && !defined(Q_WS_MAEMO_5)
+    toolBar->setIconSize(QSize(42, 42));
+#endif
+#endif // Q_OS_SYMBIAN
 }
 
 void AdopterWindow::takeChildren(QWidget *main, const QList<QWidget *> &others)
@@ -91,4 +109,30 @@ void AdopterWindow::doGrabZoomKeys(bool grab)
 #else
     Q_UNUSED(grab);
 #endif // Q_WS_MAEMO_5
+}
+
+void AdopterWindow::show()
+{
+#ifdef Q_OS_SYMBIAN
+    showMaximized();
+#else
+    QMainWindow::show();
+#endif
+}
+
+QAction *AdopterWindow::addToolBarAction(QObject *receiver,
+                                         const char *member,
+                                         const QString &iconName,
+                                         const QString &text)
+{
+#ifndef Q_OS_SYMBIAN
+    return toolBar->addAction(QIcon(ICON_PREFIX + iconName + ".png"), text,
+                              receiver, member);
+#else
+    Q_UNUSED(iconName);
+    QAction *action = new QAction(text, this);
+    menuBar()->addAction(action);
+    connect(action, SIGNAL(triggered()), receiver, member);
+    return action;
+#endif
 }

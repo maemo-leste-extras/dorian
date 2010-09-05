@@ -5,6 +5,8 @@
 #include <QList>
 
 class QWidget;
+class QToolBar;
+class QAction;
 
 /**
   * A main window that can adopt other windows' children, and grabs the
@@ -19,6 +21,23 @@ public:
     void takeChildren(QWidget *main, const QList<QWidget *> &others);
     void leaveChildren();
 
+    /**
+     * Add action that is visible on the tool bar (except on Symbian, where
+     * it is visible on the Options menu.
+     */
+    QAction *addToolBarAction(QObject *receiver, const char *slot,
+                              const QString &iconName, const QString &text);
+
+    /** Add space. */
+    void addToolBarSpace();
+
+    /** Add action that is visible on the menu. */
+    QAction *addAction(QObject *receiver, const char *slot,
+                       const QString &text);
+
+    /** Show window. */
+    void show();
+
 signals:
 
 public slots:
@@ -28,6 +47,7 @@ protected:
     void doGrabZoomKeys(bool grab);
     bool grabbingZoomKeys;
     QWidget *mainChild;
+    QToolBar *toolBar;
 };
 
 #endif // ADOPTERWINDOW_H
