@@ -42,6 +42,15 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons):
     scroller->setWidget(content);
     content->show();
     scroller->setWidgetResizable(true);
+
+#ifdef Q_OS_SYMBIAN
+    QAction *closeAction = new QAction(tr("Close"), this);
+    closeAction->setSoftKeyRole(QAction::CancelSoftKey);
+    connect(closeAction, SIGNAL(triggered()), this, SLOT(reject()));
+    QList<QAction *> softKeys;
+    softKeys.append(closeAction);
+    setSoftKeys(softKeys);
+#endif // Q_OS_SYMBIAN
 }
 
 void Dyalog::addWidget(QWidget *widget)

@@ -34,7 +34,7 @@
 #include "translucentbutton.h"
 
 #ifdef DORIAN_TEST_MODEL
-#include "modeltest.h"
+#   include "modeltest.h"
 #endif
 
 #ifdef Q_WS_MAC
