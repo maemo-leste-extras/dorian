@@ -4,6 +4,7 @@ dorian (0.2.0-1) unstable; urgency=low
   * Add support for Symbian
   * Fix tracing on Windows
   * Fix TOC and navigation with O'Reilly books
+  * Reduce RAM footprint
 
  -- Akos Polster <akos@pipacs.com>  Sun,  5 Sep 2010 02:00:00 +0200
 

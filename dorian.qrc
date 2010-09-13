@@ -5,7 +5,6 @@
         <file>icons/developer.png</file>
         <file>icons/view-fullscreen.png</file>
         <file>icons/mac/preferences-system.png</file>
-        <file>icons/mac/system-file-manager.png</file>
         <file>icons/mac/developer.png</file>
         <file>icons/mac/view-fullscreen.png</file>
         <file>icons/book.png</file>
@@ -42,5 +41,6 @@
         <file>icons/mac/view-normal.png</file>
         <file>icons/info.png</file>
         <file>icons/mac/info.png</file>
+        <file>icons/mac/library.png</file>
     </qresource>
 </RCC>
