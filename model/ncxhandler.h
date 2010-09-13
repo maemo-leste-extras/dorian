@@ -40,7 +40,7 @@ public:
             qDebug() << "url" << contentUrl << "\ntitl" << contentTitle
                     << "\nid" << contentId;
             Book::ContentItem item;
-            item.href = book.rootPath() + "/" + contentUrl;
+            item.href = contentUrl;
             item.name = contentTitle;
             book.content[contentId] = item;
             book.chapters.append(contentId);

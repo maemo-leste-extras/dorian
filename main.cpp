@@ -24,14 +24,14 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Trace::level = (QtMsgType)Settings::instance()->
-        value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
-    qInstallMsgHandler(Trace::messageHandler);
-
     a.setApplicationName("Dorian");
     a.setApplicationVersion(DORIAN_VERSION);
     a.setOrganizationDomain("pipacs.com");
     a.setOrganizationName("Pipacs");
+
+    Trace::level = (QtMsgType)Settings::instance()->
+        value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
+    qInstallMsgHandler(Trace::messageHandler);
 
     MainWindow w;
     w.show();

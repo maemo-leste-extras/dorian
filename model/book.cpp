@@ -174,25 +174,32 @@ bool Book::parse()
     foreach (QString key, coverKeys) {
         if (content.contains(key)) {
             qDebug() << "Loading cover image from" << content[key].href;
-            cover = makeCover(content[key].href);
+            cover = makeCover(rootPath() + "/" + content[key].href);
             break;
         }
     }
 
     // If there is an "ncx" item in content, parse it: That's the real table of
     // contents
+    QString ncxFileName;
     if (content.contains("ncx")) {
-        QString ncxFileName = content["ncx"].href;
+        ncxFileName = content["ncx"].href;
+    } else if (content.contains("ncxtoc")) {
+        ncxFileName = content["ncxtoc"].href;
+    } else {
+        qDebug() << "No NCX table of contents";
+    }
+    if (!ncxFileName.isEmpty()) {
         qDebug() << "Parsing NCX file" << ncxFileName;
-        QFile ncxFile(ncxFileName);
+        QFile ncxFile(rootPath() + "/" + ncxFileName);
         source = new QXmlInputSource(&ncxFile);
         NcxHandler *ncxHandler = new NcxHandler(*this);
         errorHandler = new XmlErrorHandler();
         reader.setContentHandler(ncxHandler);
         reader.setErrorHandler(errorHandler);
         ret = reader.parse(source);
-        delete ncxHandler;
         delete errorHandler;
+        delete ncxHandler;
         delete source;
     }
 
@@ -438,32 +445,22 @@ int Book::partFromChapter(int index)
         QString fragment = url.fragment();
         baseRef.chop(fragment.length() + 1);
     }
+    qDebug() << "Chapter" << index;
+    qDebug() << " id" << id;
+    qDebug() << " href" << href;
+    qDebug() << " base href" << baseRef;
 
-    // Swipe through all content items to find the one matching the chapter href
-    // FIXME: Do we need to index content items by href, too?
-    QString contentKey;
-    bool found = false;
-    foreach (contentKey, content.keys()) {
-        if (contentKey == id) {
-            continue;
-        }
-        if (content[contentKey].href == baseRef) {
-            found = true;
-            qDebug() << QString("Key for %1 is %2").arg(baseRef).arg(contentKey);
-            break;
+    for (int i = 0; i < parts.size(); i++) {
+        QString partId = parts[i];
+        if (content[partId].href == baseRef) {
+            qDebug() << "Part index for" << baseRef << "is" << i;
+            return i;
         }
     }
-    if (!found) {
-        qDebug() << "Could not find key for" << baseRef;
-        return -1;
-    }
-    int partIndex = parts.indexOf(contentKey);
-    if (partIndex == -1) {
-        qCritical()
-            << "Book::partFromChapter: Could not find part index of chapter"
-            << id;
-    }
-    return partIndex;
+
+    qWarning() << "Book::partFromChapter: Could not find part index for"
+            << baseRef;
+    return -1;
 }
 
 qreal Book::getProgress(int part, qreal position)

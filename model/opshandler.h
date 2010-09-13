@@ -59,16 +59,17 @@ public:
 
         if (name == "item") {
             Book::ContentItem item;
-            item.href = book.rootPath() + "/" + attrs.value("href");
+            item.href = attrs.value("href");
             item.name = QString("Part %1").arg(partCount + 1);
             item.size = 0;
             QString key = attrs.value("id");
             book.content[key] = item;
             partCount++;
-            qDebug() << "name:"<< item.name << "\nhref:" << attrs.value("href")
-                    << "id:" << key;
+            qDebug() << "name:"<< item.name << "\nhref:"
+                    << attrs.value("href") << "id:" << key;
         } else if (name == "itemref") {
-            qDebug() << "id:" << attrs.value("idref");
+            qDebug() << "parts[" << book.parts.size() << "]:"
+                    << attrs.value("idref");
             book.parts.append(attrs.value("idref"));
         }
         return true;
