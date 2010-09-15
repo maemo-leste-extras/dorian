@@ -1,6 +1,6 @@
 dorian (0.2.1-1) unstable; urgency=low
 
-  * Fix TOC in "The Awakening" (and possibly other Google books)
+  * Fix TOC in "The Awakening" (and possibly other Google books) [#6318]
 
  -- Akos Polster <akos@pipacs.com>  Thu, 16 Sep 2010 02:00:00 +0200
 
@@ -32,7 +32,7 @@ dorian (0.1.6-1) unstable; urgency=low
 
  -- Akos Polster <akos@pipacs.com>  Sun, 29 Aug 2010 02:00:00 +0200
 
-dorian (0.1.5-1) unstable; urgency=low
+dorian (0.1.5-1) unstable; urgency=lowœ
 
   * Show better bookmark descriptions
   * Fix part navigation on desktops
