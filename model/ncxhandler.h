@@ -31,13 +31,13 @@ public:
 
     bool endElement(const QString &namespaceUri, const QString &name,
                     const QString &qName) {
-        Trace t("NcxHandler::endElement" + name);
+        Trace t("NcxHandler::endElement " + name);
         (void)namespaceUri;
         (void)qName;
         if (name == "text") {
             contentTitle = currentText;
         } else if (name == "navPoint") {
-            qDebug() << "url" << contentUrl << "\ntitl" << contentTitle
+            qDebug() << "url" << contentUrl << "\ntitle" << contentTitle
                     << "\nid" << contentId;
             Book::ContentItem item;
             item.href = contentUrl;

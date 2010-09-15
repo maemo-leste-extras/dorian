@@ -186,6 +186,8 @@ bool Book::parse()
         ncxFileName = content["ncx"].href;
     } else if (content.contains("ncxtoc")) {
         ncxFileName = content["ncxtoc"].href;
+    } else if (content.contains("toc")) {
+        ncxFileName = content["toc"].href;
     } else {
         qDebug() << "No NCX table of contents";
     }
