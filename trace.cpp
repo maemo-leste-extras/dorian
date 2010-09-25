@@ -204,7 +204,6 @@ Trace::EventName Trace::eventTab[] = {
     {QEvent::UngrabMouse, "QEvent::UngrabMouse"},
     {QEvent::GrabKeyboard, "QEvent::GrabKeyboard"},
     {QEvent::UngrabKeyboard, "QEvent::UngrabKeyboard"},
-    {QEvent::CocoaRequestModal, "QEvent::CocoaRequestModal"},
     {QEvent::MacGLClearDrawable, "QEvent::MacGLClearDrawable"},
 
     {QEvent::StateMachineSignal, "QEvent::StateMachineSignal"},

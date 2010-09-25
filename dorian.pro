@@ -113,7 +113,8 @@ symbian {
     TARGET.UID3 = 0xEA633557
     # TARGET.CAPABILITY = ...
     # FIXME: Add OpenC ZLIB?
-    INCLUDEPATH += C:\NokiaQtSDK\Symbian\SDK\src\3rdparty\zlib
+    INCLUDEPATH += C:/NokiaQtSDK/Symbian/SDK/src/3rdparty/zlib \
+        c:/Qt/4.7.0/src/3rdparty/zlib
 }
 maemo5 {
     QT += maemo5 dbus

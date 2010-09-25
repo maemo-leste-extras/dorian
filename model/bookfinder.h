@@ -7,6 +7,7 @@
 class QStringList;
 class QString;
 
+/** Find new books in a folder. */
 class BookFinder: public QObject
 {
     Q_OBJECT

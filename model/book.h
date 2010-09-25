@@ -28,7 +28,7 @@ public:
     struct Bookmark
     {
         Bookmark(int part_, qreal pos_): part(part_), pos(pos_) {}
-        Bookmark() {part = pos = 0;}
+        Bookmark(): part(0), pos(0.0) {}
         int part;
         qreal pos;
         bool operator<(const Bookmark&other) const {
@@ -51,7 +51,7 @@ public:
     /** Extract and parse EPUB contents, fill in all members except mPath. */
     bool open();
 
-    /** Extract and parse EPUB metadata only, fill in all members except mPath. */
+    /** Extract and parse metadata only, fill in all members except mPath. */
     void peek();
 
     /** Clear toc and content members, remove extracted content files. */
