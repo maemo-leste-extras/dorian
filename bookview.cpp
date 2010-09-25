@@ -250,7 +250,7 @@ void BookView::paintEvent(QPaintEvent *e)
             continue;
         }
         int height = contentsHeight;
-        int bookmarkPos = (qreal)height * (qreal)b.pos;
+        int bookmarkPos = (int)((qreal)height * (qreal)b.pos);
         painter.drawPixmap(2, bookmarkPos - scrollPos.y(), bookmarkPixmap);
     }
 }
@@ -367,7 +367,7 @@ void BookView::enterEvent(QEvent *e)
 
 void BookView::goToPosition(qreal position)
 {
-    int scrollPos = (qreal)contentsHeight * position;
+    int scrollPos = (int)((qreal)contentsHeight * position);
     page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));
     // FIXME: update();
     qDebug() << "BookView::goToPosition: To" << scrollPos << "("

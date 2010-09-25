@@ -45,11 +45,9 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons):
 
 #ifdef Q_OS_SYMBIAN
     QAction *closeAction = new QAction(tr("Close"), this);
-    closeAction->setSoftKeyRole(QAction::CancelSoftKey);
+    closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(reject()));
-    QList<QAction *> softKeys;
-    softKeys.append(closeAction);
-    setSoftKeys(softKeys);
+    addAction(closeAction);
 #endif // Q_OS_SYMBIAN
 }
 
