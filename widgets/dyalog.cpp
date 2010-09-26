@@ -99,12 +99,15 @@ void Dyalog::addButton(const QString &label, QObject *receiver,
 
 void Dyalog::show()
 {
+    foreach (QWidget *w, QApplication::allWidgets()) {
+        w->setContextMenuPolicy(Qt::NoContextMenu);
+    }
     showMaximized();
 }
 
 int Dyalog::exec()
 {
-    showMaximized();
+    show();
     return QDialog::exec();
 }
 

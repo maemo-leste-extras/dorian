@@ -132,6 +132,13 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
             this, SLOT(onSchemeButtonClicked(int)));
     connect(orientationBox, SIGNAL(buttonClicked(int)),
             this, SLOT(onOrientationButtonClicked(int)));
+
+#ifdef Q_OS_SYMBIAN
+    QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
+    closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
+    connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
+    QMainWindow::addAction(closeAction);
+#endif
 }
 
 void SettingsWindow::onSliderValueChanged(int value)

@@ -34,6 +34,7 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
+    QMainWindow::addAction(closeAction);
 #else
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
@@ -120,6 +121,9 @@ void AdopterWindow::doGrabZoomKeys(bool grab)
 void AdopterWindow::show()
 {
 #ifdef Q_OS_SYMBIAN
+    foreach (QWidget *w, QApplication::allWidgets()) {
+        w->setContextMenuPolicy(Qt::NoContextMenu);
+    }
     showMaximized();
 #else
     QMainWindow::show();
