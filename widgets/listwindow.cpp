@@ -31,9 +31,11 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
     setCentralWidget(frame);
     contentLayout = new QHBoxLayout();
     frame->setLayout(contentLayout);
+#ifndef Q_OS_SYMBIAN
     buttonBox = new QDialogButtonBox(Qt::Vertical, this);
     contentLayout->addWidget(buttonBox);
-#endif
+#endif // Q_OS_SYMBIAN
+#endif // Q_WS_MAEMO_5
 }
 
 void ListWindow::addList(ListView *listView)
@@ -64,31 +66,43 @@ void ListWindow::addAction(const QString &title, QObject *receiver,
                            QDialogButtonBox::ButtonRole role)
 {
     Trace t("ListWindow::addAction");
-#ifndef Q_WS_MAEMO_5
-    Q_UNUSED(iconPath);
-    QPushButton *button = buttonBox->addButton(title, role);
-    connect(button, SIGNAL(clicked()), receiver, slot);
-#else
+#ifdef Q_WS_MAEMO_5
     Q_UNUSED(role);
     QPushButton *button = new QPushButton(QIcon(iconPath), title, this);
     contentLayout->addWidget(button);
     connect(button, SIGNAL(clicked()), receiver, slot);
-#endif // ! Q_WS_MAEMO_5
+#elif defined(Q_OS_SYMBIAN)
+    Q_UNUSED(role);
+    QAction *action = new QAction(title, this);
+    connect(action, SIGNAL(triggered()), receiver, slot);
+    action->setSoftKeyRole(QAction::PositiveSoftKey);
+    menuBar()->addAction(action);
+#else
+    Q_UNUSED(iconPath);
+    QPushButton *button = buttonBox->addButton(title, role);
+    connect(button, SIGNAL(clicked()), receiver, slot);
+#endif // Q_WS_MAEMO_5
 }
 
 void ListWindow::addItemAction(const QString &title, QObject *receiver,
                                const char *slot)
 {
     Trace t("ListWindow::addItemAction");
-#ifndef Q_WS_MAEMO_5
+#ifdef Q_WS_MAEMO
+    popup->addAction(title, receiver, slot);
+#elif defined Q_OS_SYMBIAN
+    QAction *action = new QAction(title, this);
+    connect(action, SIGNAL(triggered()), receiver, slot);
+    action->setSoftKeyRole(QAction::PositiveSoftKey);
+    menuBar()->addAction(action);
+    // FIXME: Add action to the list of item specific actions
+#else
     QPushButton *button =
             buttonBox->addButton(title, QDialogButtonBox::ActionRole);
     connect(button, SIGNAL(clicked()), receiver, slot);
     itemButtons.append(button);
     activateItemButtons();
-#else
-    popup->addAction(title, receiver, slot);
-#endif // ! Q_WS_MAEMO_5
+#endif // Q_WS_MAEMO_5
 }
 
 #ifdef Q_WS_MAEMO_5
@@ -155,3 +169,12 @@ void ListWindow::onModelChanged()
 }
 
 #endif // Q_WS_MAEMO_5
+
+#ifdef Q_OS_SYMBIAN
+
+void ListWindow::show()
+{
+    showMaximized();
+}
+
+#endif // Q_OS_SYMBIAN

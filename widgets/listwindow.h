@@ -43,6 +43,11 @@ public:
     void addItemAction(const QString &title, QObject *receiver,
                        const char *slot);
 
+public slots:
+#ifdef Q_OS_SYMBIAN
+    void show();
+#endif
+
 protected slots:
     void onSelectionChanged(const QItemSelection &selected,
                             const QItemSelection &deselected);

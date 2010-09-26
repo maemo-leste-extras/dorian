@@ -30,7 +30,11 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     frame->setLayout(layout);
     setCentralWidget(frame);
 
-#ifndef Q_OS_SYMBIAN
+#ifdef Q_OS_SYMBIAN
+    QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
+    closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
+    connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
+#else
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
     toolBar = addToolBar("controls");

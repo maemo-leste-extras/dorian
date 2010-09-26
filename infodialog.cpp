@@ -43,12 +43,10 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
         addStretch();
     }
 
-    QPushButton *read = new QPushButton(tr("Read"), this);
-    QPushButton *remove = new QPushButton(tr("Delete"), this);
-    connect(read, SIGNAL(clicked()), this, SLOT(onReadBook()));
-    connect(remove, SIGNAL(clicked()), this, SLOT(onRemoveBook()));
-    addButton(read, QDialogButtonBox::ActionRole);
-    addButton(remove, QDialogButtonBox::DestructiveRole);
+    addButton(tr("Read"), this, SLOT(onReadBook()),
+              QDialogButtonBox::ActionRole);
+    addButton(tr("Delete"), this, SLOT(onRemoveBook()),
+              QDialogButtonBox::DestructiveRole);
 }
 
 void InfoDialog::onReadBook()

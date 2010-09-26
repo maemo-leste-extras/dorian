@@ -251,7 +251,8 @@ void MainWindow::showSettings()
 void MainWindow::showInfo()
 {
     if (mCurrent.isValid()) {
-        (new InfoDialog(Library::instance()->book(mCurrent), this, false))->exec();
+        (new InfoDialog(Library::instance()->book(mCurrent), this, false))->
+                exec();
     }
 }
 
@@ -423,12 +424,14 @@ void MainWindow::about()
     QLabel *label = new QLabel(aboutDialog);
     label->setTextFormat(Qt::RichText);
     label->setOpenExternalLinks(true);
+    label->setWordWrap(true);
     label->setText(tr("<b>Dorian %1</b><br><br>Copyright &copy; 2010 "
         "Akos Polster &lt;akos@pipacs.com&gt;<br>"
         "Licensed under GNU General Public License, Version 3<br>"
         "Source code: <a href='https://garage.maemo.org/projects/dorian/'>"
         "garage.maemo.org/projects/dorian</a>").arg(DORIAN_VERSION));
     aboutDialog->addWidget(label);
+    aboutDialog->addStretch();
     aboutDialog->show();
 }
 

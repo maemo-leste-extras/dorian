@@ -25,6 +25,7 @@ DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
     box->toggle(Trace::level);
     connect(box, SIGNAL(buttonClicked(int)),
             this, SLOT(onLevelButtonClicked(int)));
+    addStretch();
 }
 
 void DevTools::onClear()

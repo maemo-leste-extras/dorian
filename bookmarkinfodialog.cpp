@@ -22,13 +22,9 @@ BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
     QLabel *info = new QLabel(label, this);
     addWidget(info);
     addStretch();
-
-    QPushButton *read = new QPushButton(tr("Go to"), this);
-    QPushButton *remove = new QPushButton(tr("Delete"), this);
-    connect(read, SIGNAL(clicked()), this, SLOT(onRead()));
-    connect(remove, SIGNAL(clicked()), this, SLOT(onRemove()));
-    addButton(read, QDialogButtonBox::ActionRole);
-    addButton(remove, QDialogButtonBox::DestructiveRole);
+    addButton(tr("Go to"), this, SLOT(onRead()), QDialogButtonBox::ActionRole);
+    addButton(tr("Delete"), this, SLOT(onRemove()),
+              QDialogButtonBox::DestructiveRole);
 }
 
 void BookmarkInfoDialog::onRead()

@@ -41,10 +41,12 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     layout->addWidget(backlight);
     backlight->setChecked(settings->value("lightson", false).toBool());
 
+#ifndef Q_OS_SYMBIAN
     QCheckBox *grabVolume =
             new QCheckBox(tr("Navigate with volume keys"), contents);
     layout->addWidget(grabVolume);
     grabVolume->setChecked(settings->value("usevolumekeys", false).toBool());
+#endif
 
     int zoom = Settings::instance()->value("zoom").toInt();
     if (zoom < ZOOM_MIN) {
@@ -65,7 +67,8 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     QLabel *fontLabel = new QLabel(tr("Font:"), contents);
     layout->addWidget(fontLabel);
     QString defaultFamily = fontLabel->fontInfo().family();
-    QString family = Settings::instance()->value("font", defaultFamily).toString();
+    QString family =
+            Settings::instance()->value("font", defaultFamily).toString();
     fontButton = new QFontComboBox(contents);
     fontButton->setCurrentFont(QFont(family));
     fontButton->setEditable(false);
@@ -115,9 +118,12 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
     setCentralWidget(scroller);
 
-    connect(backlight, SIGNAL(toggled(bool)), this, SLOT(onLightsToggled(bool)));
+    connect(backlight, SIGNAL(toggled(bool)),
+            this, SLOT(onLightsToggled(bool)));
+#ifndef Q_OS_SYMBIAN
     connect(grabVolume, SIGNAL(toggled(bool)),
             this, SLOT(onGrabVolumeToggled(bool)));
+#endif
     connect(zoomSlider, SIGNAL(valueChanged(int)),
             this, SLOT(onSliderValueChanged(int)));
     connect(fontButton, SIGNAL(currentFontChanged(const QFont &)),
@@ -136,8 +142,8 @@ void SettingsWindow::onSliderValueChanged(int value)
         return;
     }
     zoomLabel->setText(tr("Zoom level: %1%").arg(value));
-#ifdef Q_WS_MAEMO_5
-    // Re-scaling the book view is too much for the N900
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+    // Constant re-scaling of the book view is too much for mobiles
 #else
     Settings::instance()->setValue("zoom", value);
 #endif // Q_WS_MAEMO_5
