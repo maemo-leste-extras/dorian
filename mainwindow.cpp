@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget *parent):
         }
         else {
             if (!library->rowCount()) {
-                library->add(":/books/2 B R 0 2 B.epub");
+                library->add(":/books/2BR02B.epub");
             }
             library->setNowReading(library->index(0));
         }

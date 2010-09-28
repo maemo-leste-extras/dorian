@@ -22,7 +22,6 @@
         <file>icons/bookmark.png</file>
         <file>icons/bookmarks.png</file>
         <file>icons/mac/bookmarks.png</file>
-        <file>books/2 B R 0 2 B.epub</file>
         <file>styles/day.js</file>
         <file>styles/default.js</file>
         <file>styles/night.js</file>
@@ -42,5 +41,6 @@
         <file>icons/info.png</file>
         <file>icons/mac/info.png</file>
         <file>icons/mac/library.png</file>
+        <file>books/2BR02B.epub</file>
     </qresource>
 </RCC>

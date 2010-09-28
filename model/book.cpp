@@ -97,7 +97,8 @@ void Book::close()
 QString Book::tmpDir() const
 {
     QString tmpName = QFileInfo(mTempFile.fileName()).fileName();
-    return QDir::tempPath() + "/dorian/" + tmpName;
+    return QDir(QDir::temp().absoluteFilePath("dorian")).
+            absoluteFilePath(tmpName);
 }
 
 bool Book::extract()
@@ -112,20 +113,22 @@ bool Book::extract()
         qCritical() << "Book::extract: Failed to remove" << tmp;
         return false;
     }
-    QDir d;
-    if (!d.mkpath(tmp)) {
-        qCritical() << "Book::extract: Could not create" << tmp;
-        return false;
+    QDir d(tmp);
+    if (!d.exists()) {
+        if (!d.mkpath(tmp)) {
+            qCritical() << "Book::extract: Could not create" << tmp;
+            return false;
+        }
     }
 
     // If book comes from resource, copy it to the temporary directory first
     QString bookPath = path();
     if (bookPath.startsWith(":/books/")) {
         QFile src(bookPath);
-        QString dst(tmp + "/book.epub");
+        QString dst(QDir(tmp).absoluteFilePath("book.epub"));
         if (!src.copy(dst)) {
-            qCritical() << "Book::extract: Failed to copy built-in book to"
-                    << dst;
+            qCritical() << "Book::extract: Failed to copy built-in book"
+                    << bookPath << "to" << dst;
             return false;
         }
         bookPath = dst;
