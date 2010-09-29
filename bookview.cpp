@@ -105,7 +105,10 @@ void BookView::loadContent(int index)
     else {
         loaded = false;
         emit partLoadStart(index);
-        load(QUrl(mBook->rootPath() + "/" + contentFile));
+        QUrl u = QUrl::fromLocalFile(QDir(mBook->rootPath()).
+                                     absoluteFilePath(contentFile));
+        qDebug() << "Loading" << u;
+        load(u);
     }
     contentIndex = index;
 }
