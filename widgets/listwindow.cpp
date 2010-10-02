@@ -31,16 +31,21 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
     setCentralWidget(frame);
     contentLayout = new QHBoxLayout();
     frame->setLayout(contentLayout);
-#ifdef Q_OS_SYMBIAN
+#   ifdef Q_OS_SYMBIAN
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
     QMainWindow::addAction(closeAction);
-#else
+#   else
     buttonBox = new QDialogButtonBox(Qt::Vertical, this);
     contentLayout->addWidget(buttonBox);
-#endif // Q_OS_SYMBIAN
+#   endif // Q_OS_SYMBIAN
 #endif // Q_WS_MAEMO_5
+
+#ifdef Q_WS_MAC
+    addAction(tr("Close"), this, SLOT(close()), QString(),
+              QDialogButtonBox::RejectRole);
+#endif // Q_WS_MAC
 }
 
 void ListWindow::addList(ListView *listView)
@@ -93,7 +98,7 @@ void ListWindow::addItemAction(const QString &title, QObject *receiver,
                                const char *slot)
 {
     Trace t("ListWindow::addItemAction");
-#ifdef Q_WS_MAEMO
+#ifdef Q_WS_MAEMO_5
     popup->addAction(title, receiver, slot);
 #elif defined Q_OS_SYMBIAN
     QAction *action = new QAction(title, this);

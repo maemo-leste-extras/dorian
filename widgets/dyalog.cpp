@@ -52,7 +52,7 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
     content->show();
     scroller->setWidgetResizable(true);
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN)
     QAction *closeAction = new QAction(tr("Back"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(reject()));
