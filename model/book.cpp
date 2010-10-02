@@ -444,27 +444,25 @@ int Book::partFromChapter(int index)
     Trace t("Book::partFromChapter");
     QString id = chapters[index];
     QString href = content[id].href;
-    QString baseRef(href);
-    QUrl url(QString("file://") + href);
-    if (url.hasFragment()) {
-        QString fragment = url.fragment();
-        baseRef.chop(fragment.length() + 1);
+    int hashPos = href.indexOf("#");
+    if (hashPos != -1) {
+        href = href.left(hashPos);
     }
+
     qDebug() << "Chapter" << index;
     qDebug() << " id" << id;
     qDebug() << " href" << href;
-    qDebug() << " base href" << baseRef;
 
     for (int i = 0; i < parts.size(); i++) {
         QString partId = parts[i];
-        if (content[partId].href == baseRef) {
-            qDebug() << "Part index for" << baseRef << "is" << i;
+        if (content[partId].href == href) {
+            qDebug() << "Part index for" << href << "is" << i;
             return i;
         }
     }
 
     qWarning() << "Book::partFromChapter: Could not find part index for"
-            << baseRef;
+            << href;
     return -1;
 }
 

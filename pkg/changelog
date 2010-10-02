@@ -4,6 +4,7 @@ dorian (0.2.1-1) unstable; urgency=low
   * Works on Symbian (far from usable)
   * Make modal dialogs closeable on Mac
   * Fix progress and bookmark positions
+  * Improve chapter navigation: Work around a QUrl bug
 
  -- Akos Polster <akos@pipacs.com>  Thu, 16 Sep 2010 02:00:00 +0200
 

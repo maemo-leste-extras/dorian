@@ -266,6 +266,7 @@ void BookView::mousePressEvent(QMouseEvent *e)
     // Start monitoring kinetic scroll
     if (scrollerMonitor) {
         killTimer(scrollerMonitor);
+        scrollerMonitor = 0;
     }
     if (scroller) {
         scrollerMonitor = startTimer(500);
@@ -395,8 +396,8 @@ void BookView::showProgress()
 
 void BookView::timerEvent(QTimerEvent *e)
 {
-    if (e->timerId() == scrollerMonitor) {
 #ifdef Q_WS_MAEMO_5
+    if (e->timerId() == scrollerMonitor) {
         if (scroller &&
             ((scroller->state() == QAbstractKineticScroller::AutoScrolling) ||
              (scroller->state() == QAbstractKineticScroller::Pushing))) {
@@ -404,8 +405,10 @@ void BookView::timerEvent(QTimerEvent *e)
         } else {
             killTimer(scrollerMonitor);
         }
-#endif // Q_WS_MAEMO_5
     }
+#else
+    Q_UNUSED(e);
+#endif // Q_WS_MAEMO_5
 }
 
 void BookView::keyPressEvent(QKeyEvent* event)
