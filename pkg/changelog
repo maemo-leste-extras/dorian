@@ -3,6 +3,7 @@ dorian (0.2.1-1) unstable; urgency=low
   * Fix TOC in "The Awakening" (and possibly other Google books) [#6318]
   * Works on Symbian (far from usable)
   * Make modal dialogs closeable on Mac
+  * Fix progress and bookmark positions
 
  -- Akos Polster <akos@pipacs.com>  Thu, 16 Sep 2010 02:00:00 +0200
 

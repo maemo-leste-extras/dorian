@@ -95,8 +95,8 @@ private:
     bool mousePressed;
     int contentsHeight; /**< Last know height of the frame. */
 
-    int scrollerMonitor;
 #ifdef Q_WS_MAEMO_5
+    int scrollerMonitor;
     QAbstractKineticScroller *scroller;
 #endif
 };

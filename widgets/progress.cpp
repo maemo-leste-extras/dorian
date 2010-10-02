@@ -3,13 +3,15 @@
 #include "progress.h"
 #include "trace.h"
 
-Progress::Progress(QWidget *parent): QLabel(parent), progress(0), timer(-1)
+Progress::Progress(QWidget *parent): QLabel(parent), progress(-1.0), timer(-1)
 {
     hide();
 }
 
 void Progress::setProgress(qreal p)
 {
+    Trace t("Progress::setProgress");
+    qDebug() << p;
     if (progress != p) {
         progress = p;
         flash();

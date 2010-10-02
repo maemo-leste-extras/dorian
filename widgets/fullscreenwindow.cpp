@@ -11,6 +11,7 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
     setAttribute(Qt::WA_Maemo5NonComposited, true);
 #endif // Q_WS_MAEMO_5
+    toolBar->hide();
     QFrame *frame = new QFrame(this);
     QVBoxLayout *layout = new QVBoxLayout(frame);
     layout->setMargin(0);

@@ -4,6 +4,8 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QStringList>
+#include <QWebView>
+#include <QWebFrame>
 
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>
@@ -199,7 +201,7 @@ void MainWindow::showRegular()
 #else
     previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(geo.width() - TranslucentButton::pixels,
+    nextButton->setGeometry(geo.width() - TranslucentButton::pixels - 25,
         toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
     qDebug() << "previousButton geometry" << previousButton->geometry();
@@ -218,8 +220,13 @@ void MainWindow::showBig()
     otherChildren << progress << nextButton << previousButton;
     QRect screen = QApplication::desktop()->screenGeometry();
     progress->setGeometry(0, 0, screen.width(), PROGRESS_HEIGHT);
+#if defined(Q_WS_MAEMO_5)
     nextButton->setGeometry(screen.width() - TranslucentButton::pixels, 0,
         TranslucentButton::pixels, TranslucentButton::pixels);
+#else
+    nextButton->setGeometry(screen.width() - TranslucentButton::pixels - 25, 0,
+                            TranslucentButton::pixels, TranslucentButton::pixels);
+#endif // Q_WS_MAEMO_5
     previousButton->setGeometry(0, screen.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
 
@@ -408,7 +415,7 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 #else
     previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels,
+    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels - 25,
         toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
     qDebug() << "previousButton geometry" << previousButton->geometry();

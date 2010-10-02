@@ -177,7 +177,7 @@ bool Book::parse()
     foreach (QString key, coverKeys) {
         if (content.contains(key)) {
             qDebug() << "Loading cover image from" << content[key].href;
-            cover = makeCover(rootPath() + "/" + content[key].href);
+            cover = makeCover(QDir(rootPath()).absoluteFilePath(content[key].href));
             break;
         }
     }
@@ -196,7 +196,7 @@ bool Book::parse()
     }
     if (!ncxFileName.isEmpty()) {
         qDebug() << "Parsing NCX file" << ncxFileName;
-        QFile ncxFile(rootPath() + "/" + ncxFileName);
+        QFile ncxFile(QDir(rootPath()).absoluteFilePath(ncxFileName));
         source = new QXmlInputSource(&ncxFile);
         NcxHandler *ncxHandler = new NcxHandler(*this);
         errorHandler = new XmlErrorHandler();
@@ -211,7 +211,7 @@ bool Book::parse()
     // Calculate book part sizes
     size = 0;
     foreach (QString part, parts) {
-        QFileInfo info(content[part].href);
+        QFileInfo info(QDir(rootPath()).absoluteFilePath(content[part].href));
         content[part].size = info.size();
         size += content[part].size;
     }

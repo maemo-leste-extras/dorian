@@ -25,7 +25,7 @@
 BookView::BookView(QWidget *parent):
     QWebView(parent), contentIndex(-1), mBook(0),
     restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
-    contentsHeight(0), scrollerMonitor(-1)
+    contentsHeight(0)
 {
     Trace t("BookView::BookView");
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
@@ -79,6 +79,7 @@ BookView::BookView(QWidget *parent):
     setBook(0);
 
 #ifdef Q_WS_MAEMO_5
+    scrollerMonitor = 0;
     scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
 #endif
 }
@@ -263,8 +264,11 @@ void BookView::mousePressEvent(QMouseEvent *e)
     QWebView::mousePressEvent(e);
 #ifdef Q_WS_MAEMO_5
     // Start monitoring kinetic scroll
+    if (scrollerMonitor) {
+        killTimer(scrollerMonitor);
+    }
     if (scroller) {
-        scrollerMonitor = startTimer(250);
+        scrollerMonitor = startTimer(500);
     }
 #else
     // Handle mouse presses on the scroll bar
@@ -307,6 +311,9 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
         if (e->type() == QEvent::Resize) {
             qDebug() << "BookView::eventFilter QEvent::Resize to"
                     << page()->mainFrame()->contentsSize().height();
+        } else if (e->type() == QEvent::Timer) {
+            qDebug() << "BookView::eventFilter" << "QEvent::Timer"
+                    << ((QTimerEvent *)e)->timerId();
         } else {
             qDebug() << "BookView::eventFilter" << Trace::event(e->type());
         }
