@@ -1,3 +1,10 @@
+dorian (0.2.2-1) unstable; urgency=low
+
+  * Speed up book parsing
+  * Improve default book
+
+ -- Akos Polster <akos@pipacs.com>  Thu,  3 Oct 2010 02:00:00 +0200
+
 dorian (0.2.1-1) unstable; urgency=low
 
   * Fix TOC in "The Awakening" (and possibly other Google books) [#6318]

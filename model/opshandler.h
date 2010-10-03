@@ -1,32 +1,15 @@
 #ifndef OPSHANDLER_H
 #define OPSHANDLER_H
 
-#include <QXmlContentHandler>
-
+#include "xmlhandler.h"
 #include "book.h"
 #include "trace.h"
 
 /** XML content handler for OPS format. */
-class OpsHandler: public QXmlContentHandler
+class OpsHandler: public XmlHandler
 {
 public:
     OpsHandler(Book &b): book(b), partCount(0) {}
-    bool endDocument() {return true;}
-    bool endPrefixMapping(const QString &) {return true;}
-    QString errorString() const {return QString();}
-    bool ignorableWhitespace(const QString &) {return true;}
-    bool processingInstruction(const QString &, const QString &) {
-        return true;
-    }
-    void setDocumentLocator(QXmlLocator *) {}
-    bool skippedEntity(const QString &) {return true;}
-    bool startDocument() {return true;}
-    bool startPrefixMapping(const QString &, const QString &) {return true;}
-
-    bool characters(const QString &ch) {
-        currentText += ch;
-        return true;
-    }
 
     bool endElement(const QString &namespaceUri, const QString &name,
                     const QString &qName) {
@@ -52,7 +35,6 @@ public:
 
     bool startElement(const QString &namespaceUri, const QString &name,
                       const QString &qName, const QXmlAttributes &attrs) {
-        Trace t("OpsHandler::startElement " + name);
         (void)namespaceUri;
         (void)qName;
         currentText = "";
@@ -65,11 +47,11 @@ public:
             QString key = attrs.value("id");
             book.content[key] = item;
             partCount++;
-            qDebug() << "name:"<< item.name << "\nhref:"
-                    << attrs.value("href") << "id:" << key;
+            qDebug() << "OpsHandler::startElement: name" << item.name << "href"
+                    << attrs.value("href") << "id" << key;
         } else if (name == "itemref") {
-            qDebug() << "parts[" << book.parts.size() << "]:"
-                    << attrs.value("idref");
+            qDebug() << "OpsHandler::startElement: parts[" << book.parts.size()
+                    << "]" << attrs.value("idref");
             book.parts.append(attrs.value("idref"));
         }
         return true;
@@ -77,7 +59,6 @@ public:
 
 private:
     Book &book;
-    QString currentText;
     int partCount;
 };
 

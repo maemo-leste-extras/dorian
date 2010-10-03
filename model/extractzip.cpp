@@ -1,6 +1,8 @@
 #include <QDebug>
 #include <QFile>
 #include <QDir>
+#include <QString>
+#include <QStringList>
 
 #include "extractzip.h"
 #include "unzip/unzip.h"
@@ -8,7 +10,7 @@
 #define WRITEBUFFERSIZE (8192)
 #define MAXFILENAME (256)
 
-int doExtractCurrentFile(unzFile uf)
+int doExtractCurrentFile(unzFile uf, const QStringList &excludedExtensions)
 {
     char fileNameInZip[MAXFILENAME];
     char *fileNameWithoutPath;
@@ -39,7 +41,7 @@ int doExtractCurrentFile(unzFile uf)
     p = fileNameWithoutPath = fileNameInZip;
     while ((*p) != '\0') {
         if (((*p) == '/') || ((*p) == '\\')) {
-            fileNameWithoutPath = p+1;
+            fileNameWithoutPath = p + 1;
         }
         p++;
     }
@@ -48,6 +50,15 @@ int doExtractCurrentFile(unzFile uf)
         dir.mkdir(fileNameInZip);
     }
     else {
+        QString name(fileNameInZip);
+        for (int i = 0; i < excludedExtensions.length(); i++) {
+            if (name.endsWith(excludedExtensions[i], Qt::CaseInsensitive)) {
+                qDebug() << "Skipping" << name;
+                free(buf);
+                return UNZ_OK;
+            }
+        }
+
         const char *writeFileName;
         int skip = 0;
 
@@ -104,7 +115,7 @@ int doExtractCurrentFile(unzFile uf)
             f->close();
         }
 
-        if (err== UNZ_OK) {
+        if (err == UNZ_OK) {
             err = unzCloseCurrentFile(uf);
             if (err != UNZ_OK) {
                 qDebug() << "doExtractCurrentFile: Error" << err
@@ -121,20 +132,20 @@ int doExtractCurrentFile(unzFile uf)
     return err;
 }
 
-bool doExtract(unzFile uf)
+bool doExtract(unzFile uf, const QStringList &excludedExtensions)
 {
     uLong i;
     unz_global_info64 gi;
     int err;
 
-    err = unzGetGlobalInfo64(uf,&gi);
+    err = unzGetGlobalInfo64(uf, &gi);
     if (err != UNZ_OK) {
         qDebug() << "doExtract: Error" << err << "in unzGetGlobalInfo";
         return false;
     }
 
     for (i = 0; i < gi.number_entry; i++) {
-        if (doExtractCurrentFile(uf) != UNZ_OK) {
+        if (doExtractCurrentFile(uf, excludedExtensions) != UNZ_OK) {
             return false;
         }
         if ((i + 1) < gi.number_entry) {
@@ -149,14 +160,14 @@ bool doExtract(unzFile uf)
     return true;
 }
 
-bool extractZip(const QString &zipFile)
+bool extractZip(const QString &zipFile, const QStringList &excludedExtensions)
 {
     unzFile uf;
     bool ret = false;
 
     uf = unzOpen64(zipFile.toUtf8().constData());
     if (uf) {
-        ret = doExtract(uf);
+        ret = doExtract(uf, excludedExtensions);
         unzClose(uf);
     }
     return ret;

@@ -127,7 +127,7 @@ signals:
 
 protected:
     /** Extract EPUB as ZIP. */
-    bool extract();
+    bool extract(const QStringList &excludedExtensions);
 
     /** Extract metadata from EPUB. */
     bool extractMetaData();

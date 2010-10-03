@@ -1,44 +1,27 @@
 #ifndef NCXHANDLER_H
 #define NCXHANDLER_H
 
-#include <QXmlContentHandler>
-
+#include "xmlhandler.h"
 #include "book.h"
 #include "trace.h"
 
 /** XML content handler for NCX format. */
-class NcxHandler: public QXmlContentHandler
+class NcxHandler: public XmlHandler
 {
 public:
-    bool endDocument() {return true;}
-    bool endPrefixMapping(const QString &) {return true;}
-    QString errorString() const {return "";}
-    bool ignorableWhitespace(const QString &) {return true;}
-    bool processingInstruction(const QString &, const QString &) {return true;}
-    void setDocumentLocator(QXmlLocator *) {}
-    bool skippedEntity(const QString &) {return true;}
-    bool startDocument() {return true;}
-    bool startPrefixMapping(const QString &, const QString &) {return true;}
-
     NcxHandler(Book &b): book(b) {
         book.chapters.clear();
     }
 
-    bool characters(const QString &ch) {
-        currentText += ch;
-        return true;
-    }
-
     bool endElement(const QString &namespaceUri, const QString &name,
                     const QString &qName) {
-        Trace t("NcxHandler::endElement " + name);
         (void)namespaceUri;
         (void)qName;
         if (name == "text") {
             contentTitle = currentText;
         } else if (name == "navPoint") {
-            qDebug() << "url" << contentUrl << "\ntitle" << contentTitle
-                    << "\nid" << contentId;
+            qDebug() << "BcxHander::endElement: url" << contentUrl << "title"
+                    << contentTitle << "id" << contentId;
             Book::ContentItem item;
             item.href = contentUrl;
             item.name = contentTitle;
@@ -63,7 +46,6 @@ public:
 
 private:
     Book &book;
-    QString currentText;
     QString contentId;
     QString contentUrl;
     QString contentTitle;

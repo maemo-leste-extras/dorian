@@ -54,7 +54,7 @@ bool Book::open()
         title = "No book";
         return false;
     }
-    if (!extract()) {
+    if (!extract(QStringList())) {
         return false;
     }
     if (!parse()) {
@@ -101,7 +101,7 @@ QString Book::tmpDir() const
             absoluteFilePath(tmpName);
 }
 
-bool Book::extract()
+bool Book::extract(const QStringList &excludedExtensions)
 {
     Trace t("Book::extract");
     bool ret = false;
@@ -139,7 +139,7 @@ bool Book::extract()
         qCritical() << "Book::extract: Could not change to" << tmp;
         return false;
     }
-    ret = extractZip(bookPath);
+    ret = extractZip(bookPath, excludedExtensions);
     if (!ret) {
         qCritical() << "Book::extract: Extracting ZIP failed";
     }
@@ -172,14 +172,25 @@ bool Book::parse()
     chapters = parts;
 
     // Load cover image
+    QString coverPath;
     QStringList coverKeys;
     coverKeys << "cover-image" << "img-cover-jpeg" << "cover";
     foreach (QString key, coverKeys) {
         if (content.contains(key)) {
-            qDebug() << "Loading cover image from" << content[key].href;
-            cover = makeCover(QDir(rootPath()).absoluteFilePath(content[key].href));
+            coverPath = QDir(rootPath()).absoluteFilePath(content[key].href);
             break;
         }
+    }
+    if (coverPath.isEmpty()) {
+        // Last resort
+        QString coverJpeg = QDir(rootPath()).absoluteFilePath("cover.jpg");
+        if (QFileInfo(coverJpeg).exists()) {
+            coverPath = coverJpeg;
+        }
+    }
+    if (!coverPath.isEmpty()) {
+        qDebug() << "Loading cover image from" << coverPath;
+        cover = makeCover(coverPath);
     }
 
     // If there is an "ncx" item in content, parse it: That's the real table of
@@ -482,6 +493,7 @@ qreal Book::getProgress(int part, qreal position)
 
 bool Book::extractMetaData()
 {
-    // FIXME
-    return extract();
+    QStringList excludedExtensions;
+    excludedExtensions << ".html" << ".xhtml" << ".xht" << ".htm";
+    return extract(excludedExtensions);
 }

@@ -1,25 +1,12 @@
 #ifndef CONTAINERHANDLER_H
 #define CONTAINERHANDLER_H
 
-#include <QXmlContentHandler>
-#include <QString>
+#include "xmlhandler.h"
 
 /** XML content handler for EPUB container format. */
-class ContainerHandler: public QXmlContentHandler
+class ContainerHandler: public XmlHandler
 {
 public:
-    bool endDocument() {return true;}
-    bool endPrefixMapping(const QString &) {return true;}
-    QString errorString() const {return "";}
-    bool ignorableWhitespace(const QString &) {return true;}
-    bool processingInstruction(const QString &, const QString &) {
-        return true;
-    }
-    void setDocumentLocator(QXmlLocator *) {}
-    bool skippedEntity(const QString &) {return true;}
-    bool startDocument() {return true;}
-    bool startPrefixMapping(const QString &, const QString &) {return true;}
-    bool characters(const QString &) {return true;}
     bool endElement(const QString &, const QString &, const QString &) {
         return true;
     }

@@ -62,7 +62,8 @@ HEADERS += \
     widgets/listwindow.h \
     widgets/progress.h \
     widgets/adopterwindow.h \
-    widgets/listview.h
+    widgets/listview.h \
+    model/xmlhandler.h
 
 RESOURCES += \
     dorian.qrc

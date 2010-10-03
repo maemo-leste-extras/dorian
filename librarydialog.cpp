@@ -221,8 +221,8 @@ void LibraryDialog::onAddFromFolderDone(int added)
 
     switch (added) {
     case 0: msg = tr("No new books found"); break;
-    case 1: msg = tr("One new book added"); break;
-    default: msg = tr("%1 new books added").arg(added);
+    case 1: msg = tr("One book added"); break;
+    default: msg = tr("%1 books added").arg(added);
     }
 
     progress->reset();
