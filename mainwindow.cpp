@@ -39,12 +39,6 @@
 #   include "modeltest.h"
 #endif
 
-#ifdef Q_WS_MAC
-#   define ICON_PREFIX ":/icons/mac/"
-#else
-#   define ICON_PREFIX ":/icons/"
-#endif
-
 const int PROGRESS_HEIGHT = 17;
 static const char *DORIAN_VERSION =
 #include "pkg/version.txt"

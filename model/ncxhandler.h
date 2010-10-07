@@ -20,7 +20,7 @@ public:
         if (name == "text") {
             contentTitle = currentText;
         } else if (name == "navPoint") {
-            qDebug() << "BcxHander::endElement: url" << contentUrl << "title"
+            qDebug() << "NcxHander::endElement: url" << contentUrl << "title"
                     << contentTitle << "id" << contentId;
             Book::ContentItem item;
             item.href = contentUrl;

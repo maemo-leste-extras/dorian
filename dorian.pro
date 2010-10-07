@@ -30,7 +30,8 @@ SOURCES += \
     model/bookfinder.cpp \
     widgets/listwindow.cpp \
     widgets/progress.cpp \
-    widgets/adopterwindow.cpp
+    widgets/adopterwindow.cpp \
+    platform.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -63,7 +64,8 @@ HEADERS += \
     widgets/progress.h \
     widgets/adopterwindow.h \
     widgets/listview.h \
-    model/xmlhandler.h
+    model/xmlhandler.h \
+    platform.h
 
 RESOURCES += \
     dorian.qrc

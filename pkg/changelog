@@ -1,3 +1,9 @@
+dorian (0.2.3-1) unstable; urgency=low
+
+  * Keep library data in database
+
+ -- Akos Polster <akos@pipacs.com>  Thu,  8 Oct 2010 02:00:00 +0200
+
 dorian (0.2.2-1) unstable; urgency=low
 
   * Speed up book parsing

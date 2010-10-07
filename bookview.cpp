@@ -16,12 +16,6 @@
 #include "trace.h"
 #include "progress.h"
 
-#ifdef Q_WS_MAC
-#   define ICON_PREFIX ":/icons/mac/"
-#else
-#   define ICON_PREFIX ":/icons/"
-#endif
-
 BookView::BookView(QWidget *parent):
     QWebView(parent), contentIndex(-1), mBook(0),
     restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),

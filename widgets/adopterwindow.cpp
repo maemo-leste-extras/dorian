@@ -7,13 +7,8 @@
 #endif // Q_WS_MAEMO_5
 
 #include "adopterwindow.h"
+#include "platform.h"
 #include "trace.h"
-
-#ifdef Q_WS_MAC
-#   define ICON_PREFIX ":/icons/mac/"
-#else
-#   define ICON_PREFIX ":/icons/"
-#endif
 
 AdopterWindow::AdopterWindow(QWidget *parent):
         QMainWindow(parent), grabbingZoomKeys(false), mainChild(0)
@@ -138,8 +133,8 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     Trace t("AdopterWindow::addToolBarAction");
     qDebug() << "icon" << iconName << "text" << text;
 #ifndef Q_OS_SYMBIAN
-    return toolBar->addAction(QIcon(ICON_PREFIX + iconName + ".png"), text,
-                              receiver, member);
+    return toolBar->addAction(QIcon(Platform::icon(iconName)),
+                              text, receiver, member);
 #else
     Q_UNUSED(iconName);
     QAction *action = new QAction(text, this);

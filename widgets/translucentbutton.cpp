@@ -1,13 +1,8 @@
 #include <QtGui>
 
 #include "translucentbutton.h"
+#include "platform.h"
 #include "trace.h"
-
-#ifdef Q_WS_MAC
-#   define ICON_PREFIX ":/icons/mac/"
-#else
-#   define ICON_PREFIX ":/icons/"
-#endif
 
 const int TranslucentButton::pixels = 95;
 
@@ -26,7 +21,7 @@ void TranslucentButton::paintEvent(QPaintEvent *)
     QPainter painter(this);
     if (!transparent) {
         painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.drawPixmap(0, 0, QPixmap(ICON_PREFIX + name + ".png").scaled(
+        painter.drawPixmap(0, 0, QPixmap(Platform::icon(name)).scaled(
                 QSize(pixels, pixels), Qt::IgnoreAspectRatio,
                 Qt::SmoothTransformation));
     } else {
