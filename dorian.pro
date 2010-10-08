@@ -1,4 +1,4 @@
-QT += webkit xml
+QT += webkit xml sql
 
 INCLUDEPATH += $$PWD \
     $$PWD/model \
@@ -31,7 +31,8 @@ SOURCES += \
     widgets/listwindow.cpp \
     widgets/progress.cpp \
     widgets/adopterwindow.cpp \
-    platform.cpp
+    platform.cpp \
+    model/bookdb.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -65,7 +66,8 @@ HEADERS += \
     widgets/adopterwindow.h \
     widgets/listview.h \
     model/xmlhandler.h \
-    platform.h
+    platform.h \
+    model/bookdb.h
 
 RESOURCES += \
     dorian.qrc

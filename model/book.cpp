@@ -6,7 +6,7 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QtAlgorithms>
-#include <QCryptographicHash>
+#include <QVariantHash>
 
 #include "book.h"
 #include "opshandler.h"
@@ -16,6 +16,7 @@
 #include "containerhandler.h"
 #include "ncxhandler.h"
 #include "trace.h"
+#include "bookdb.h"
 
 const int COVER_WIDTH = 53;
 const int COVER_HEIGHT = 59;
@@ -277,6 +278,32 @@ void Book::load()
 {
     Trace t("Book::load");
     qDebug() << "path" << path();
+
+#if 1
+    QVariantHash data = BookDb::instance()->load(path());
+    title = data["title"].toString();
+    qDebug() << title;
+    creators = data["creators"].toStringList();
+    date = data["date"].toString();
+    publisher = data["publisher"].toString();
+    datePublished = data["datepublished"].toString();
+    subject = data["subject"].toString();
+    source = data["source"].toString();
+    rights = data["rights"].toString();
+    mLastBookmark.part = data["lastpart"].toInt();
+    mLastBookmark.pos = data["lastpos"].toReal();
+    cover = data["cover"].value<QImage>().scaled(COVER_WIDTH,
+        COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if (cover.isNull()) {
+        cover = makeCover(":/icons/book.png");
+    }
+    int size = data["bookmarks"].toInt();
+    for (int i = 0; i < size; i++) {
+        int part = data[QString("bookmark%1part").arg(i)].toInt();
+        qreal pos = data[QString("bookmark%1pos").arg(i)].toReal();
+        mBookmarks.append(Bookmark(part, pos));
+    }
+#else
     QSettings settings;
     QString key = "book/" + path() + "/";
     qDebug() << "key" << key;
@@ -310,11 +337,33 @@ void Book::load()
                 arg(i).arg(part).arg(pos);
         mBookmarks.append(Bookmark(part, pos));
     }
+#endif
 }
 
 void Book::save()
 {
     Trace t("Book::save");
+
+#if 1
+    QVariantHash data;
+    data["title"] = title;
+    data["creators"] = creators;
+    data["date"] = date;
+    data["publisher"] = publisher;
+    data["datepublished"] = datePublished;
+    data["subject"] = subject;
+    data["source"] = source;
+    data["rights"] = rights;
+    data["lastpart"] = mLastBookmark.part;
+    data["lastpos"] = mLastBookmark.pos;
+    data["cover"] = cover;
+    data["bookmarks"] = mBookmarks.size();
+    for (int i = 0; i < mBookmarks.size(); i++) {
+        data[QString("bookmark%1part").arg(i)] = mBookmarks[i].part;
+        data[QString("bookmark%1pos").arg(i)] = mBookmarks[i].pos;
+    }
+    BookDb::instance()->save(path(), data);
+#else
     QSettings settings;
     QString key = "book/" + path() + "/";
     qDebug() << "key" << key;
@@ -343,6 +392,7 @@ void Book::save()
         settings.setValue(key + "bookmark" + QString::number(i) + "/pos",
                           mBookmarks[i].pos);
     }
+#endif
 }
 
 void Book::setLastBookmark(int part, qreal position)

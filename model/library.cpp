@@ -5,6 +5,7 @@
 #include "library.h"
 #include "book.h"
 #include "trace.h"
+#include "bookdb.h"
 
 static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
@@ -76,6 +77,7 @@ void Library::load()
 {
     QSettings settings;
     clear();
+#if 0
     int size = settings.value("lib/size").toInt();
     for (int i = 0; i < size; i++) {
         QString key = "lib/book" + QString::number(i);
@@ -86,6 +88,16 @@ void Library::load()
         book->load();
         mBooks.append(book);
     }
+#else
+    foreach(QString path, BookDb::instance()->books()) {
+        Book *book = new Book(path);
+        connect(book, SIGNAL(opened(const QString &)),
+                this, SLOT(onBookOpened(const QString &)));
+        book->load();
+        mBooks.append(book);
+    }
+#endif
+
     QString currentPath = settings.value("lib/nowreading").toString();
     mNowReading = find(currentPath);
 }
@@ -93,11 +105,13 @@ void Library::load()
 void Library::save()
 {
     QSettings settings;
+#if 0
     settings.setValue("lib/size", mBooks.size());
     for (int i = 0; i < mBooks.size(); i++) {
         QString key = "lib/book" + QString::number(i);
         settings.setValue(key, mBooks[i]->path());
     }
+#endif
     Book *currentBook = book(mNowReading);
     settings.setValue("lib/nowreading",
                       currentBook? currentBook->path(): QString());
