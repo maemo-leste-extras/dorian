@@ -42,11 +42,14 @@ public:
     /** Default constructor. */
     Book();
 
-    /** Load book from persistent storage. */
+    /** Load book meta-data from persistent storage. */
     void load();
 
-    /** Save book to persistent storage. */
+    /** Save book meta-data to persistent storage. */
     void save();
+
+    /** Upgrade persistent storage of book meta-data. */
+    void upgrade();
 
     /** Extract and parse EPUB contents, fill in all members except mPath. */
     bool open();

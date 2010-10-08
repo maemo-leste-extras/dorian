@@ -497,3 +497,9 @@ bool Book::extractMetaData()
     excludedExtensions << ".html" << ".xhtml" << ".xht" << ".htm";
     return extract(excludedExtensions);
 }
+
+void Book::upgrade()
+{
+    Trace t("Book::upgrade");
+    qDebug() << path();
+}

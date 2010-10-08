@@ -6,11 +6,14 @@
 #include "book.h"
 #include "trace.h"
 
+static const char *DORIAN_VERSION =
+#include "pkg/version.txt"
+;
+
 Library *Library::mInstance = 0;
 
 Library::Library(QObject *parent): QAbstractListModel(parent)
 {
-    load();
 }
 
 Library::~Library()
@@ -206,4 +209,26 @@ QStringList Library::bookPaths()
         ret.append(book->path());
     }
     return ret;
+}
+
+void Library::upgrade()
+{
+    Trace t("Library::upgrade");
+    QSettings settings;
+    QString oldVersion = settings.value("lib/version").toString();
+    if (true /* oldVersion.isEmpty() */) {
+        int size = settings.value("lib/size").toInt();
+        emit beginUpgrade(size);
+        for (int i = 0; i < size; i++) {
+            QString key = "lib/book" + QString::number(i);
+            QString path = settings.value(key).toString();
+            emit upgrading(path);
+            Book *book = new Book(path);
+            book->upgrade();
+        }
+    } else {
+        emit beginUpgrade(0);
+    }
+    settings.setValue("lib/version", QString(DORIAN_VERSION));
+    emit endUpgrade();
 }

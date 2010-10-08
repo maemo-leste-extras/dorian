@@ -20,6 +20,7 @@ public:
     static void close();
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
+    void load();
     void save();
     QModelIndex find(QString path) const;
     QModelIndex find(const Book *book) const;
@@ -27,9 +28,13 @@ public:
     QModelIndex nowReading() const;
     Book *book(const QModelIndex &index);
     QStringList bookPaths();
+    void upgrade();
 
 signals:
     void nowReadingChanged();
+    void beginUpgrade(int total);
+    void upgrading(const QString &book);
+    void endUpgrade();
 
 public slots:
     bool add(const QString &path);
@@ -40,7 +45,6 @@ public slots:
 private:
     explicit Library(QObject *parent = 0);
     ~Library();
-    void load();
     void clear();
     static Library *mInstance;
     QList<Book *> mBooks;

@@ -110,8 +110,21 @@ MainWindow::MainWindow(QWidget *parent):
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
 
-    // Load book on command line, or load last read book, or load default book
+    // Load library, upgrade it if needed
+    upgradeProgress = new QProgressDialog(tr("Upgrading library"), "", 0, 0, this);
+    upgradeProgress->reset();
+    upgradeProgress->setMinimumDuration(0);
+    upgradeProgress->setWindowModality(Qt::WindowModal);
+    upgradeProgress->setCancelButton(0);
     Library *library = Library::instance();
+    connect(library, SIGNAL(beginUpgrade(int)), this, SLOT(onBeginUpgrade(int)));
+    connect(library, SIGNAL(upgrading(const QString &)),
+            this, SLOT(onUpgrading(const QString &)));
+    connect(library, SIGNAL(endUpgrade()), this, SLOT(onEndUpgrade()));
+    library->upgrade();
+    library->load();
+
+    // Load book on command line, or load last read book, or load default book
     if (QCoreApplication::arguments().size() == 2) {
         QString path = QCoreApplication::arguments()[1];
         library->add(path);
@@ -119,13 +132,11 @@ MainWindow::MainWindow(QWidget *parent):
         if (index.isValid()) {
             library->setNowReading(index);
         }
-    }
-    else {
+    } else {
         QModelIndex index = library->nowReading();
         if (index.isValid()) {
             library->setNowReading(index);
-        }
-        else {
+        } else {
             if (!library->rowCount()) {
                 library->add(":/books/2BR02B.epub");
             }
@@ -291,8 +302,7 @@ void MainWindow::onSettingsChanged(const QString &key)
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-        }
-        else {
+        } else {
             setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
         }
@@ -450,3 +460,23 @@ void MainWindow::goToPreviousPage()
     previousButton->flash(1500);
     view->goPreviousPage();
 }
+
+void MainWindow::onBeginUpgrade(int total)
+{
+    upgradeProgress->setVisible(total > 0);
+    upgradeProgress->setMaximum(total);
+}
+
+void MainWindow::onUpgrading(const QString &path)
+{
+    upgradeProgress->setLabelText(tr("Upgrading %1").
+                                  arg(QFileInfo(path).fileName()));
+    upgradeProgress->setValue(upgradeProgress->value() + 1);
+}
+
+void MainWindow::onEndUpgrade()
+{
+    upgradeProgress->hide();
+    upgradeProgress->reset();
+}
+

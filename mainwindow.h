@@ -41,6 +41,9 @@ public slots:
     void about();
     void goToNextPage();
     void goToPreviousPage();
+    void onBeginUpgrade(int total);
+    void onUpgrading(const QString &book);
+    void onEndUpgrade();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -67,6 +70,7 @@ private:
     Progress *progress;
     TranslucentButton *previousButton;
     TranslucentButton *nextButton;
+    QProgressDialog *upgradeProgress;
 };
 
 #endif // MAINWINDOW_H
