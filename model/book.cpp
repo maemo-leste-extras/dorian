@@ -279,7 +279,6 @@ void Book::load()
     Trace t("Book::load");
     qDebug() << "path" << path();
 
-#if 1
     QVariantHash data = BookDb::instance()->load(path());
     title = data["title"].toString();
     qDebug() << title;
@@ -303,48 +302,12 @@ void Book::load()
         qreal pos = data[QString("bookmark%1pos").arg(i)].toReal();
         mBookmarks.append(Bookmark(part, pos));
     }
-#else
-    QSettings settings;
-    QString key = "book/" + path() + "/";
-    qDebug() << "key" << key;
-
-    // Load book info
-    title = settings.value(key + "title").toString();
-    qDebug() << title;
-    creators = settings.value(key + "creators").toStringList();
-    date = settings.value(key + "date").toString();
-    publisher = settings.value(key + "publisher").toString();
-    datePublished = settings.value(key + "datepublished").toString();
-    subject = settings.value(key + "subject").toString();
-    source = settings.value(key + "source").toString();
-    rights = settings.value(key + "rights").toString();
-    mLastBookmark.part = settings.value(key + "lastpart").toInt();
-    mLastBookmark.pos = settings.value(key + "lastpos").toReal();
-    cover = settings.value(key + "cover").value<QImage>().scaled(COVER_WIDTH,
-        COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    if (cover.isNull()) {
-        cover = makeCover(":/icons/book.png");
-    }
-
-    // Load bookmarks
-    int size = settings.value(key + "bookmarks").toInt();
-    for (int i = 0; i < size; i++) {
-        int part = settings.value(key + "bookmark" + QString::number(i) +
-                                     "/part").toInt();
-        qreal pos = settings.value(key + "bookmark" + QString::number(i) +
-                                   "/pos").toReal();
-        qDebug() << QString("Bookmark %1 at part %2, %3").
-                arg(i).arg(part).arg(pos);
-        mBookmarks.append(Bookmark(part, pos));
-    }
-#endif
 }
 
 void Book::save()
 {
     Trace t("Book::save");
 
-#if 1
     QVariantHash data;
     data["title"] = title;
     data["creators"] = creators;
@@ -363,40 +326,12 @@ void Book::save()
         data[QString("bookmark%1pos").arg(i)] = mBookmarks[i].pos;
     }
     BookDb::instance()->save(path(), data);
-#else
-    QSettings settings;
-    QString key = "book/" + path() + "/";
-    qDebug() << "key" << key;
-
-    // Save book info
-    settings.setValue(key + "title", title);
-    qDebug() << "title" << title;
-    settings.setValue(key + "creators", creators);
-    settings.setValue(key + "date", date);
-    settings.setValue(key + "publisher", publisher);
-    settings.setValue(key + "datepublished", datePublished);
-    settings.setValue(key + "subject", subject);
-    settings.setValue(key + "source", source);
-    settings.setValue(key + "rights", rights);
-    settings.setValue(key + "lastpart", mLastBookmark.part);
-    settings.setValue(key + "lastpos", mLastBookmark.pos);
-    settings.setValue(key + "cover", cover);
-
-    // Save bookmarks
-    settings.setValue(key + "bookmarks", mBookmarks.size());
-    for (int i = 0; i < mBookmarks.size(); i++) {
-        qDebug() << QString("Bookmark %1 at %2, %3").
-                arg(i).arg(mBookmarks[i].part).arg(mBookmarks[i].pos);
-        settings.setValue(key + "bookmark" + QString::number(i) + "/part",
-                          mBookmarks[i].part);
-        settings.setValue(key + "bookmark" + QString::number(i) + "/pos",
-                          mBookmarks[i].pos);
-    }
-#endif
 }
 
 void Book::setLastBookmark(int part, qreal position)
 {
+    Trace t("Book:setLastBookmark");
+    qDebug() << "part" << part << "position" << position;
     mLastBookmark.part = part;
     mLastBookmark.pos = position;
     save();
@@ -551,5 +486,47 @@ bool Book::extractMetaData()
 void Book::upgrade()
 {
     Trace t("Book::upgrade");
+
     qDebug() << path();
+
+    // Load book from old database (QSettings)
+
+    QSettings settings;
+    QString key = "book/" + path() + "/";
+    title = settings.value(key + "title").toString();
+    qDebug() << title;
+    creators = settings.value(key + "creators").toStringList();
+    date = settings.value(key + "date").toString();
+    publisher = settings.value(key + "publisher").toString();
+    datePublished = settings.value(key + "datepublished").toString();
+    subject = settings.value(key + "subject").toString();
+    source = settings.value(key + "source").toString();
+    rights = settings.value(key + "rights").toString();
+    mLastBookmark.part = settings.value(key + "lastpart").toInt();
+    mLastBookmark.pos = settings.value(key + "lastpos").toReal();
+    cover = settings.value(key + "cover").value<QImage>().scaled(COVER_WIDTH,
+        COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if (cover.isNull()) {
+        cover = makeCover(":/icons/book.png");
+    }
+    int size = settings.value(key + "bookmarks").toInt();
+    for (int i = 0; i < size; i++) {
+        int part = settings.value(key + "bookmark" + QString::number(i) +
+                                     "/part").toInt();
+        qreal pos = settings.value(key + "bookmark" + QString::number(i) +
+                                   "/pos").toReal();
+        qDebug() << QString("Bookmark %1 at part %2, %3").
+                arg(i).arg(part).arg(pos);
+        mBookmarks.append(Bookmark(part, pos));
+    }
+
+    // Save book to new database
+
+    save();
+}
+
+void Book::remove()
+{
+    Trace t("Book::remove");
+    BookDb::instance()->remove(path());
 }

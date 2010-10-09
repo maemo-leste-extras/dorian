@@ -75,43 +75,31 @@ void Library::close()
 
 void Library::load()
 {
-    QSettings settings;
-    clear();
-#if 0
-    int size = settings.value("lib/size").toInt();
-    for (int i = 0; i < size; i++) {
-        QString key = "lib/book" + QString::number(i);
-        QString path = settings.value(key).toString();
-        Book *book = new Book(path);
-        connect(book, SIGNAL(opened(const QString &)),
-                this, SLOT(onBookOpened(const QString &)));
-        book->load();
-        mBooks.append(book);
-    }
-#else
-    foreach(QString path, BookDb::instance()->books()) {
-        Book *book = new Book(path);
-        connect(book, SIGNAL(opened(const QString &)),
-                this, SLOT(onBookOpened(const QString &)));
-        book->load();
-        mBooks.append(book);
-    }
-#endif
+    Trace t("Library::load");
 
+    clear();
+    QStringList books = BookDb::instance()->books();
+    emit beginLoad(books.size());
+
+    foreach(QString path, books) {
+        emit loading(path);
+        Book *book = new Book(path);
+        connect(book, SIGNAL(opened(const QString &)),
+                this, SLOT(onBookOpened(const QString &)));
+        book->load();
+        mBooks.append(book);
+    }
+
+    QSettings settings;
     QString currentPath = settings.value("lib/nowreading").toString();
     mNowReading = find(currentPath);
+    emit endLoad();
 }
 
 void Library::save()
 {
+    Trace t("Library::save");
     QSettings settings;
-#if 0
-    settings.setValue("lib/size", mBooks.size());
-    for (int i = 0; i < mBooks.size(); i++) {
-        QString key = "lib/book" + QString::number(i);
-        settings.setValue(key, mBooks[i]->path());
-    }
-#endif
     Book *currentBook = book(mNowReading);
     settings.setValue("lib/nowreading",
                       currentBook? currentBook->path(): QString());
@@ -140,10 +128,12 @@ bool Library::add(const QString &path)
 
 void Library::remove(const QModelIndex &index)
 {
+    Trace t("Library::remove");
     Book *toRemove = book(index);
     if (!toRemove) {
         return;
     }
+    toRemove->remove();
     int row = index.row();
     beginRemoveRows(QModelIndex(), row, row);
     mBooks.removeAt(row);
@@ -230,7 +220,7 @@ void Library::upgrade()
     Trace t("Library::upgrade");
     QSettings settings;
     QString oldVersion = settings.value("lib/version").toString();
-    if (true /* oldVersion.isEmpty() */) {
+    if (/* true */ oldVersion.isEmpty()) {
         int size = settings.value("lib/size").toInt();
         emit beginUpgrade(size);
         for (int i = 0; i < size; i++) {

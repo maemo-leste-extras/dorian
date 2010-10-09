@@ -1,6 +1,8 @@
-dorian (0.2.3-1) unstable; urgency=low
+dorian (0.3.0-1) unstable; urgency=low
 
   * Keep library data in database
+  * Upgrade from old data format if needed
+  * Show progress during library load and upgrade
 
  -- Akos Polster <akos@pipacs.com>  Thu,  8 Oct 2010 02:00:00 +0200
 

@@ -61,10 +61,18 @@ QVariantHash BookDb::load(const QString &book)
     Trace t("BookDb::load");
     qDebug() << book;
     QVariantHash ret;
+    QByteArray bytes;
     QSqlQuery query("select content from book where name = ?");
     query.bindValue(0, book);
+    query.setForwardOnly(true);
+    if (!query.exec()) {
+        qCritical() << "Query failed";
+        return ret;
+    }
     while (query.next()) {
-        ret = query.value(0).toHash();
+        bytes = query.value(0).toByteArray();
+        QDataStream in(bytes);
+        in >> ret;
         break;
     }
     qDebug() << ret;
@@ -75,16 +83,21 @@ void BookDb::save(const QString &book, const QVariantHash &data)
 {
     Trace t("BookDb::save");
     qDebug() << book;
+    qDebug() << data;
+    QByteArray bytes;
+    QDataStream out(&bytes, QIODevice::WriteOnly);
+    out << data;
     QSqlQuery query("insert or replace into book values (?, ?)");
     query.bindValue(0, book);
-    query.bindValue(1, data);
+    query.bindValue(1, bytes);
     if (!query.exec()) {
-        qCritical() << "Failed to insert or replace";
+        qCritical() << "Query failed";
     }
 }
 
 void BookDb::remove(const QString &book)
 {
+    // FIXME
     Q_UNUSED(book);
 }
 
@@ -94,6 +107,10 @@ QStringList BookDb::books()
     QStringList ret;
     QSqlQuery query("select name from book");
     query.setForwardOnly(true);
+    if (!query.exec()) {
+        qCritical() << "Query failed";
+        return ret;
+    }
     while (query.next()) {
         ret.append(query.value(0).toString());
     }

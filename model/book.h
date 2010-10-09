@@ -51,6 +51,9 @@ public:
     /** Upgrade persistent storage of book meta-data. */
     void upgrade();
 
+    /** Delete book meta-data from persistent storage. */
+    void remove();
+
     /** Extract and parse EPUB contents, fill in all members except mPath. */
     bool open();
 

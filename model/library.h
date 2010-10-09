@@ -35,6 +35,9 @@ signals:
     void beginUpgrade(int total);
     void upgrading(const QString &book);
     void endUpgrade();
+    void beginLoad(int total);
+    void loading(const QString &book);
+    void endLoad();
 
 public slots:
     bool add(const QString &path);

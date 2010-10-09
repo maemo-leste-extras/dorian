@@ -111,16 +111,20 @@ MainWindow::MainWindow(QWidget *parent):
             this, SLOT(onCurrentBookChanged()));
 
     // Load library, upgrade it if needed
-    upgradeProgress = new QProgressDialog(tr("Upgrading library"), "", 0, 0, this);
-    upgradeProgress->reset();
-    upgradeProgress->setMinimumDuration(0);
-    upgradeProgress->setWindowModality(Qt::WindowModal);
-    upgradeProgress->setCancelButton(0);
+    libraryProgress = new QProgressDialog(tr("Upgrading library"), "", 0, 0, this);
+    libraryProgress->reset();
+    libraryProgress->setMinimumDuration(0);
+    libraryProgress->setWindowModality(Qt::WindowModal);
+    libraryProgress->setCancelButton(0);
     Library *library = Library::instance();
     connect(library, SIGNAL(beginUpgrade(int)), this, SLOT(onBeginUpgrade(int)));
     connect(library, SIGNAL(upgrading(const QString &)),
             this, SLOT(onUpgrading(const QString &)));
     connect(library, SIGNAL(endUpgrade()), this, SLOT(onEndUpgrade()));
+    connect(library, SIGNAL(beginLoad(int)), this, SLOT(onBeginLoad(int)));
+    connect(library, SIGNAL(loading(const QString &)),
+            this, SLOT(onLoading(const QString &)));
+    connect(library, SIGNAL(endLoad()), this, SLOT(onEndLoad()));
     library->upgrade();
     library->load();
 
@@ -463,20 +467,42 @@ void MainWindow::goToPreviousPage()
 
 void MainWindow::onBeginUpgrade(int total)
 {
-    upgradeProgress->setVisible(total > 0);
-    upgradeProgress->setMaximum(total);
+    libraryProgress->setVisible(total > 0);
+    libraryProgress->setWindowTitle(tr("Upgrading library"));
+    libraryProgress->setMaximum(total);
 }
 
 void MainWindow::onUpgrading(const QString &path)
 {
-    upgradeProgress->setLabelText(tr("Upgrading %1").
+    libraryProgress->setLabelText(tr("Upgrading %1").
                                   arg(QFileInfo(path).fileName()));
-    upgradeProgress->setValue(upgradeProgress->value() + 1);
+    libraryProgress->setValue(libraryProgress->value() + 1);
 }
 
 void MainWindow::onEndUpgrade()
 {
-    upgradeProgress->hide();
-    upgradeProgress->reset();
+    libraryProgress->hide();
+    libraryProgress->reset();
+}
+
+
+void MainWindow::onBeginLoad(int total)
+{
+    libraryProgress->setVisible(total > 0);
+    libraryProgress->setWindowTitle(tr("Loading library"));
+    libraryProgress->setMaximum(total);
+}
+
+void MainWindow::onLoading(const QString &path)
+{
+    libraryProgress->setLabelText(tr("Loading %1").
+                                  arg(QFileInfo(path).fileName()));
+    libraryProgress->setValue(libraryProgress->value() + 1);
+}
+
+void MainWindow::onEndLoad()
+{
+    libraryProgress->hide();
+    libraryProgress->reset();
 }
 
