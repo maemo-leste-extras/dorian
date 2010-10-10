@@ -17,6 +17,12 @@ Settings *Settings::instance()
     return inst;
 }
 
+void Settings::close()
+{
+    delete inst;
+    inst = 0;
+}
+
 void Settings::setValue(const QString &key, const QVariant &value)
 {
     QSettings s;

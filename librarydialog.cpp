@@ -18,6 +18,7 @@
 #include "listview.h"
 #include "trace.h"
 #include "bookfinder.h"
+#include "searchdialog.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
@@ -31,10 +32,9 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     addItemAction(tr("Delete"), this, SLOT(onRemove()));
 #endif // ! Q_WS_MAEMO_5
 
-    addAction(tr("Add book"), this, SLOT(onAdd()), ":/icons/add.png");
-    addAction(tr("Add books from folder"), this, SLOT(onAddFolder()),
-              ":/icons/folder.png");
-    addAction(tr("Search the Web"), this, SLOT(onSearch()), ":/icons/search.png");
+    addAction(tr("Add book"), this, SLOT(onAdd()), "add");
+    addAction(tr("Add books from folder"), this, SLOT(onAddFolder()), "folder");
+    addAction(tr("Search the Web"), this, SLOT(onSearch()), "search");
 
     // Create and add list view
     list = new ListView(this);
@@ -61,6 +61,9 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
             SLOT(onBookAdded()));
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
+
+    // Create search dialog
+    searchDialog = new SearchDialog(this);
 }
 
 void LibraryDialog::onAdd()
@@ -239,4 +242,13 @@ void LibraryDialog::onAddFromFolder(const QString &path)
 {
     progress->setLabelText(QFileInfo(path).fileName());
     progress->setValue(progress->value() + 1);
+}
+
+void LibraryDialog::onSearch()
+{
+    int ret = searchDialog->exec();
+    if (ret != QDialog::Accepted) {
+        return;
+    }
+    Search::instance()->start(searchDialog->query());
 }

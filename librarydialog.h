@@ -15,6 +15,7 @@ class QProgressDialog;
 class Book;
 class InfoWindow;
 class SortedLibrary;
+class SearchDialog;
 
 /** Manage library. */
 class LibraryDialog: public ListWindow
@@ -37,6 +38,8 @@ public slots:
     void onCurrentBookChanged();
     void onAddFromFolder(const QString &path);
     void onAddFromFolderDone(int added);
+    void onSearch();
+
 private:
     QString createItemText(const Book *book);
     void setSelected(const QModelIndex &index);
@@ -44,6 +47,7 @@ private:
     ListView *list;
     SortedLibrary *sortedLibrary;
     QProgressDialog *progress;
+    SearchDialog *searchDialog;
 };
 
 #endif // LIBRARYDIALOG_H

@@ -1,9 +1,12 @@
 #include "sortedlibrary.h"
 #include "book.h"
+#include "trace.h"
 
-SortedLibrary::SortedLibrary(QObject *parent): QSortFilterProxyModel(parent)
+SortedLibrary::SortedLibrary(QObject *parent):
+        QSortFilterProxyModel(parent), mSortBy(SortByTitle)
 {
     setSourceModel(Library::instance());
+    sort(0);
 }
 
 void SortedLibrary::sortBy(SortBy key)
@@ -31,5 +34,5 @@ bool SortedLibrary::lessThan(const QModelIndex &left,
         break;
     }
 
-    return QString::localeAwareCompare(leftString, rightString);
+    return QString::localeAwareCompare(leftString, rightString) < 0;
 }

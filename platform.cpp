@@ -1,3 +1,7 @@
+#if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
+#include <unistd.h>
+#endif
+
 #include <QDir>
 
 #include "platform.h"
@@ -23,4 +27,14 @@ QString Platform::dbPath()
 QString Platform::icon(const QString &name)
 {
     return QString(DORIAN_ICON_PREFIX) + name + ".png";
+}
+
+void Platform::restart(char *argv[])
+{
+#if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
+    extern char **environ;
+    execve(argv[0], argv, environ);
+#else
+    Q_UNUSED(argv);
+#endif
 }

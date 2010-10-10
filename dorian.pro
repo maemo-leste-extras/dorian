@@ -32,7 +32,9 @@ SOURCES += \
     widgets/progress.cpp \
     widgets/adopterwindow.cpp \
     platform.cpp \
-    model/bookdb.cpp
+    model/bookdb.cpp \
+    searchdialog.cpp \
+    search.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -67,7 +69,9 @@ HEADERS += \
     widgets/listview.h \
     model/xmlhandler.h \
     platform.h \
-    model/bookdb.h
+    model/bookdb.h \
+    searchdialog.h \
+    search.h
 
 RESOURCES += \
     dorian.qrc

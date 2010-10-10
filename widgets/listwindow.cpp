@@ -3,6 +3,7 @@
 #include "listwindow.h"
 #include "trace.h"
 #include "listview.h"
+#include "platform.h"
 
 ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
 {
@@ -72,23 +73,25 @@ void ListWindow::addList(ListView *listView)
 }
 
 void ListWindow::addAction(const QString &title, QObject *receiver,
-                           const char *slot, const QString &iconPath,
+                           const char *slot, const QString &iconName,
                            QDialogButtonBox::ButtonRole role)
 {
     Trace t("ListWindow::addAction");
 #ifdef Q_WS_MAEMO_5
     Q_UNUSED(role);
-    QPushButton *button = new QPushButton(QIcon(iconPath), title, this);
+    QPushButton *button =
+            new QPushButton(QIcon(Platform::icon(iconName)), title, this);
     contentLayout->addWidget(button);
     connect(button, SIGNAL(clicked()), receiver, slot);
 #elif defined(Q_OS_SYMBIAN)
     Q_UNUSED(role);
+    Q_UNUSED(iconName);
     QAction *action = new QAction(title, this);
     connect(action, SIGNAL(triggered()), receiver, slot);
     action->setSoftKeyRole(QAction::PositiveSoftKey);
     menuBar()->addAction(action);
 #else
-    Q_UNUSED(iconPath);
+    Q_UNUSED(iconName);
     QPushButton *button = buttonBox->addButton(title, role);
     connect(button, SIGNAL(clicked()), receiver, slot);
 #endif // Q_WS_MAEMO_5

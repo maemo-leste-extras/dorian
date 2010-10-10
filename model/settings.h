@@ -17,6 +17,7 @@ class Settings: public QObject
 public:
     explicit Settings(QObject *parent = 0);
     static Settings *instance();
+    static void close();
     QVariant value(const QString &key, const QVariant &defaultValue = QVariant())
         const;
     void setValue(const QString &key, const QVariant &value);
