@@ -34,6 +34,7 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     addAction(tr("Add book"), this, SLOT(onAdd()), ":/icons/add.png");
     addAction(tr("Add books from folder"), this, SLOT(onAddFolder()),
               ":/icons/folder.png");
+    addAction(tr("Search the Web"), this, SLOT(onSearch()), ":/icons/search.png");
 
     // Create and add list view
     list = new ListView(this);

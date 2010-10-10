@@ -434,7 +434,7 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 
 void MainWindow::about()
 {
-    Dyalog *aboutDialog = new Dyalog(this);
+    Dyalog *aboutDialog = new Dyalog(this, false);
     aboutDialog->setWindowTitle(tr("About Dorian"));
     QLabel *label = new QLabel(aboutDialog);
     label->setTextFormat(Qt::RichText);

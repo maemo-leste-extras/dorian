@@ -1,17 +1,23 @@
+dorian (0.3.1-1) unstable; urgency=low
+
+  *
+
+ -- Akos Polster <akos@pipacs.com>  Sat, 10 Oct 2010 02:00:00 +0200
+
 dorian (0.3.0-1) unstable; urgency=low
 
   * Keep library data in database
   * Upgrade from old data format if needed
   * Show progress during library load and upgrade
 
- -- Akos Polster <akos@pipacs.com>  Thu,  8 Oct 2010 02:00:00 +0200
+ -- Akos Polster <akos@pipacs.com>  Fri,  8 Oct 2010 02:00:00 +0200
 
 dorian (0.2.2-1) unstable; urgency=low
 
   * Speed up book parsing
   * Improve default book
 
- -- Akos Polster <akos@pipacs.com>  Thu,  3 Oct 2010 02:00:00 +0200
+ -- Akos Polster <akos@pipacs.com>  Sun,  3 Oct 2010 02:00:00 +0200
 
 dorian (0.2.1-1) unstable; urgency=low
 

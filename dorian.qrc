@@ -42,5 +42,7 @@
         <file>icons/mac/info.png</file>
         <file>icons/mac/library.png</file>
         <file>books/2BR02B.epub</file>
+        <file>icons/search.png</file>
+        <file>icons/mac/about.png</file>
     </qresource>
 </RCC>
