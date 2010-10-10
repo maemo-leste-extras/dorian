@@ -8,7 +8,7 @@
 
 class QLineEdit;
 
-class SearchDialog : public Dyalog
+class SearchDialog: public Dyalog
 {
     Q_OBJECT
 

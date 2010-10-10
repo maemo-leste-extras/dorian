@@ -6,6 +6,7 @@
 class QString;
 class QButtonGroup;
 
+/** Frame with tool buttons. */
 class ToolButtonBox: public QFrame
 {
     Q_OBJECT

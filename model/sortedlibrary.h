@@ -4,6 +4,7 @@
 #include <QSortFilterProxyModel>
 #include "library.h"
 
+/** Sorted library model. */
 class SortedLibrary: public QSortFilterProxyModel
 {
     Q_OBJECT

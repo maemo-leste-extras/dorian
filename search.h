@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QList>
 
+/** Search for books, display and download results. */
 class Search: public QObject
 {
     Q_OBJECT

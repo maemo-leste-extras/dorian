@@ -3,6 +3,7 @@
 
 #include <QString>
 
+/** Platform abstractions. */
 class Platform
 {
 public:

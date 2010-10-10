@@ -6,6 +6,7 @@
 
 class QString;
 
+/** Persistent storage for book meta-data. */
 class BookDb
 {
 public:
