@@ -101,10 +101,12 @@ OTHER_FILES += \
     pkg/symbian/book.svg
 
 DEFINES += \
-    USE_FILE32API \
-    DORIAN_TEST_MODEL
+    USE_FILE32API
 
-include(model/modeltest/modeltest.pri)
+!symbian {
+    DEFINES += DORIAN_TEST_MODEL
+    include(model/modeltest/modeltest.pri)
+}
 
 unix {
     symbian {
@@ -120,10 +122,11 @@ win32 {
 symbian {
     ICON = $$PWD/pkg/symbian/book.svgt
     TARGET.UID3 = 0xEA633557
-    # TARGET.CAPABILITY = ...
-    # FIXME: Add OpenC ZLIB?
-    INCLUDEPATH += C:/NokiaQtSDK/Symbian/SDK/src/3rdparty/zlib \
-        c:/Qt/4.7.0/src/3rdparty/zlib
+    # FIXME: TARGET.CAPABILITY = ...
+    # FIXME: Include path to OpenC ZLIB?
+    INCLUDEPATH += c:/Qt/4.7.0/src/3rdparty/zlib
+    SOURCES += widgets/flickable.cpp
+    HEADERS += widgets/flickable.h
 }
 maemo5 {
     QT += maemo5 dbus
@@ -148,7 +151,4 @@ maemo5 {
 
     iconscalable.path = $$DATADIR/icons/hicolor/scalable/hildon
     iconscalable.files += pkg/maemo/icon-scalable/dorian.png
-}
-macx {
-    CONFIG += x86
 }
