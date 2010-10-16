@@ -39,12 +39,12 @@ BookView::BookView(QWidget *parent):
     settings()->setDefaultTextEncoding("utf-8");
     page()->setContentEditable(false);
 
-#if defined(Q_WS_MAEMO_5)
-    // Suppress unwanted text selections on Maemo
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+    // Suppress unwanted text selections on Maemo and Symbian
     installEventFilter(this);
 #endif
     QWebFrame *frame = page()->mainFrame();
-#if defined(Q_WS_MAEMO_5)
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     frame->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 #endif
     frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);

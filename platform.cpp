@@ -3,6 +3,7 @@
 #endif
 
 #include <QDir>
+#include <QtGui>
 
 #include "platform.h"
 

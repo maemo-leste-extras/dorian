@@ -19,6 +19,7 @@
 #include "trace.h"
 #include "bookfinder.h"
 #include "searchdialog.h"
+#include "platform.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
@@ -52,6 +53,10 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     progress->setMinimumDuration(0);
     progress->setWindowModality(Qt::WindowModal);
     progress->setCancelButton(0);
+#ifdef Q_WS_S60
+    progress->setFixedWidth(
+            QApplication::desktop()->availableGeometry().width());
+#endif
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
