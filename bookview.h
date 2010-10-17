@@ -16,9 +16,6 @@ class QAbstractKineticScroller;
 
 /** Visual representation of a book. */
 class BookView: public QWebView
-#ifdef Q_OS_SYMBIAN
-        , public Flickable
-#endif
 {
     Q_OBJECT
 
@@ -99,9 +96,10 @@ private:
     bool mousePressed;
     int contentsHeight; /**< Last know height of the frame. */
 
-#if def(Q_WS_MAEMO_5)
+#if defined(Q_WS_MAEMO_5)
     int scrollerMonitor;
     QAbstractKineticScroller *scroller;
+#endif
 };
 
 #endif // BOOKVIEW_H

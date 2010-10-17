@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the demonstration applications of the Qt Toolkit.
+** This file is part of the demos of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial Usage
@@ -39,42 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef FLICKABLE_H
-#define FLICKABLE_H
+#ifndef FLICKCHARM_H
+#define FLICKCHARM_H
 
-class QMouseEvent;
-class QPoint;
+#include <QObject>
+
+class FlickCharmPrivate;
 class QWidget;
 
-class FlickableTicker;
-class FlickablePrivate;
-
-class Flickable
+class FlickCharm: public QObject
 {
+    Q_OBJECT
 public:
-
-    Flickable();
-    virtual ~Flickable();
-
-    void setThreshold(int threshold);
-    int threshold() const;
-
-    void setAcceptMouseClick(QWidget *target);
-
-    void handleMousePress(QMouseEvent *event);
-    void handleMouseMove(QMouseEvent *event);
-    void handleMouseRelease(QMouseEvent *event);
+    FlickCharm(QObject *parent = 0);
+    ~FlickCharm();
+    void activateOn(QWidget *widget);
+    void deactivateFrom(QWidget *widget);
+    bool eventFilter(QObject *object, QEvent *event);
 
 protected:
-    virtual QPoint scrollOffset() const = 0;
-    virtual void setScrollOffset(const QPoint &offset) = 0;
+    void timerEvent(QTimerEvent *event);
 
 private:
-    void tick();
-
-private:
-    FlickablePrivate *d;
-    friend class FlickableTicker;
+    FlickCharmPrivate *d;
 };
 
-#endif // FLICKABLE_H
+#endif // FLICKCHARM_H

@@ -45,4 +45,5 @@ void Progress::timerEvent(QTimerEvent *e)
         killTimer(timer);
         hide();
     }
+    QLabel::timerEvent(e);
 }

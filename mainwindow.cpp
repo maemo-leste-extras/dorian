@@ -403,6 +403,7 @@ void MainWindow::timerEvent(QTimerEvent *event)
 #endif // Q_WS_MAEMO_5
         qDebug() << "MainWindow::timerEvent: Prevent display blanking";
     }
+    AdopterWindow::timerEvent(event);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)

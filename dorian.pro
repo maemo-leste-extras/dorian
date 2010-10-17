@@ -114,20 +114,23 @@ unix {
         LIBS += -lz
     }
 }
+
 win32 {
     DEFINES += ZLIB_WINAPI
     INCLUDEPATH += $$PWD/model/zlib
     LIBS += pkg/win32/zlibstat.lib
 }
+
 symbian {
     ICON = $$PWD/pkg/symbian/book.svgt
     TARGET.UID3 = 0xEA633557
     # FIXME: TARGET.CAPABILITY = ...
     # FIXME: Include path to OpenC ZLIB?
     INCLUDEPATH += c:/Qt/4.7.0/src/3rdparty/zlib
-    SOURCES += widgets/flickable.cpp
-    HEADERS += widgets/flickable.h
+    HEADERS += widgets/flickcharm.h
+    SOURCES += widgets/flickcharm.cpp
 }
+
 maemo5 {
     QT += maemo5 dbus
     isEmpty(PREFIX) {

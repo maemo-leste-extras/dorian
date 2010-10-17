@@ -5,8 +5,10 @@
 #include <QDir>
 #include <QTimer>
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
 #   include <QAbstractKineticScroller>
+#elif defined(Q_OS_SYMBIAN)
+#   include "flickcharm.h"
 #endif
 
 #include "book.h"
@@ -72,9 +74,12 @@ BookView::BookView(QWidget *parent):
     s->setValue("scheme", s->value("scheme", "default"));
     setBook(0);
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     scrollerMonitor = 0;
     scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
+#elif defined(Q_OS_SYMBIAN)
+    FlickCharm *charm = new FlickCharm(this);
+    charm->activateOn(this);
 #endif
 }
 
@@ -400,9 +405,8 @@ void BookView::timerEvent(QTimerEvent *e)
             killTimer(scrollerMonitor);
         }
     }
-#else
-    Q_UNUSED(e);
-#endif // Q_WS_MAEMO_5
+#endif
+    QWebView::timerEvent(e);
 }
 
 void BookView::keyPressEvent(QKeyEvent* event)
