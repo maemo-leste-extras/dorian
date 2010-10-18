@@ -5,9 +5,13 @@
 #include "listview.h"
 #include "platform.h"
 
+#ifdef Q_OS_SYMBIAN
+#include "flickcharm.h"
+#endif
+
 ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
 {
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
     popup = new QMenu(this);
 
@@ -32,16 +36,17 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
     setCentralWidget(frame);
     contentLayout = new QHBoxLayout();
     frame->setLayout(contentLayout);
-#   ifdef Q_OS_SYMBIAN
+    buttonBox = new QDialogButtonBox(Qt::Vertical, this);
+    contentLayout->addWidget(buttonBox);
+#endif // Q_WS_MAEMO_5
+
+#ifdef Q_OS_SYMBIAN
+    charm = 0;
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
     QMainWindow::addAction(closeAction);
-#   else
-    buttonBox = new QDialogButtonBox(Qt::Vertical, this);
-    contentLayout->addWidget(buttonBox);
-#   endif // Q_OS_SYMBIAN
-#endif // Q_WS_MAEMO_5
+#endif // Q_OS_SYMBIAN
 
 #ifdef Q_WS_MAC
     addAction(tr("Close"), this, SLOT(close()), QString(),
@@ -53,7 +58,7 @@ void ListWindow::addList(ListView *listView)
 {
     Trace t("ListWindow::addList");
     list = listView;
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     list->installEventFilter(this);
     list->setMinimumHeight(list->contentsHeight());
     contentLayout->addWidget(list);
@@ -65,7 +70,15 @@ void ListWindow::addList(ListView *listView)
             this, SLOT(onModelChanged()));
 #else
     contentLayout->insertWidget(0, list);
-#endif
+#endif // Q_WS_MAEMO5
+
+#ifdef Q_OS_SYMBIAN
+    if (!charm) {
+        charm = new FlickCharm(this);
+    }
+    charm->activateOn(list);
+#endif // Q_OS_SYMBIAN
+
     connect(list->selectionModel(),
       SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
       this,

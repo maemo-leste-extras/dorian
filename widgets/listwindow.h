@@ -13,6 +13,7 @@ class QModelIndex;
 class QItemSelection;
 class QEvent;
 class ListView;
+class FlickCharm;
 
 /** A window with a list and menu actions (Maemo) or buttons (non-Maemo). */
 class ListWindow: public QMainWindow
@@ -66,6 +67,9 @@ protected:
     QDialogButtonBox *buttonBox;
     QList<QPushButton *> itemButtons;
 #endif // Q_WS_MAEMO_5
+#ifdef Q_OS_SYMBIAN
+    FlickCharm *charm;
+#endif
     QBoxLayout *contentLayout;
     ListView *list;
 };

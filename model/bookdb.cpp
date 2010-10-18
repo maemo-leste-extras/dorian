@@ -29,13 +29,16 @@ BookDb::BookDb()
     QFileInfo info(Platform::dbPath());
     if (!info.exists()) {
         QDir dbDir;
-        dbDir.mkpath(info.absolutePath());
+        if (!dbDir.mkpath(info.absolutePath())) {
+            qCritical() << "Could not create" << info.absolutePath();
+        }
         shouldCreate = true;
     }
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(Platform::dbPath());
+    db.setDatabaseName(QDir::toNativeSeparators(Platform::dbPath()));
     if (!db.open()) {
-        qCritical() << "Could not open" << Platform::dbPath();
+        qCritical() << "Could not open" << Platform::dbPath() << ": Error"
+                << db.lastError().text();
     }
     if (shouldCreate) {
         create();
@@ -51,8 +54,10 @@ void BookDb::create()
 {
     Trace t("BookDb::create");
     QSqlQuery query;
-    if (!query.exec("create table book (name text primary key, content blob)")) {
-        qCritical() << "Failed to create database";
+    if (!query.exec("create table book "
+                    "(name text primary key, content blob)")) {
+        qCritical() << "Failed to create database:"
+                << query.lastError().text();
     }
 }
 
@@ -66,7 +71,7 @@ QVariantHash BookDb::load(const QString &book)
     query.bindValue(0, book);
     query.setForwardOnly(true);
     if (!query.exec()) {
-        qCritical() << "Query failed";
+        qCritical() << "Query failed:" << query.lastError().text();
         return ret;
     }
     while (query.next()) {
@@ -91,7 +96,7 @@ void BookDb::save(const QString &book, const QVariantHash &data)
     query.bindValue(0, book);
     query.bindValue(1, bytes);
     if (!query.exec()) {
-        qCritical() << "Query failed";
+        qCritical() << "Query failed:" << query.lastError().text();
     }
 }
 
@@ -108,7 +113,7 @@ QStringList BookDb::books()
     QSqlQuery query("select name from book");
     query.setForwardOnly(true);
     if (!query.exec()) {
-        qCritical() << "Query failed";
+        qCritical() << "Query failed:" << query.lastError().text();
         return ret;
     }
     while (query.next()) {

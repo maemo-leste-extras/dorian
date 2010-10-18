@@ -10,7 +10,9 @@ class ListView: public QListView
 
 public:
     explicit ListView(QWidget *parent = 0): QListView(parent) {
+#ifndef Q_OS_SYMBIAN
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#endif
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setUniformItemSizes(true);
         setEditTriggers(QAbstractItemView::NoEditTriggers);
