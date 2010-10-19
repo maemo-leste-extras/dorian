@@ -74,6 +74,11 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Tool bar actions
 
+#ifdef Q_OS_SYMBIAN
+    fullScreenAction = addToolBarAction(this, SLOT(showBig()),
+                                        "view-fullscreen", tr("Full screen"));
+#endif
+
     chaptersAction = addToolBarAction(this, SLOT(showChapters()),
                                       "chapters", tr("Chapters"));
     bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
@@ -98,9 +103,11 @@ MainWindow::MainWindow(QWidget *parent):
     addToolBarAction(this, SLOT(about()), "about", tr("About"));
 #endif // Q_WS_MAEMO_5
 
+#ifndef Q_OS_SYMBIAN
     addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
                                         "view-fullscreen", tr("Full screen"));
+#endif
 
     // Buttons on top of the book view
     previousButton = new TranslucentButton("back", this);

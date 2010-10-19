@@ -76,7 +76,7 @@ void ListWindow::addList(ListView *listView)
     if (!charm) {
         charm = new FlickCharm(this);
     }
-    charm->activateOn(list);
+    // FIXME: Charm's need more work...: charm->activateOn(list);
 #endif // Q_OS_SYMBIAN
 
     connect(list->selectionModel(),

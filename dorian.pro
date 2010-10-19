@@ -34,7 +34,9 @@ SOURCES += \
     platform.cpp \
     model/bookdb.cpp \
     searchdialog.cpp \
-    search.cpp
+    search.cpp \
+    widgets/flickable.cpp \
+    widgets/listview.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -71,7 +73,8 @@ HEADERS += \
     platform.h \
     model/bookdb.h \
     searchdialog.h \
-    search.h
+    search.h \
+    widgets/flickable.h
 
 RESOURCES += \
     dorian.qrc
