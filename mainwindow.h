@@ -34,7 +34,7 @@ public slots:
     void onSettingsChanged(const QString &key);
     void onPartLoadStart();
     void onPartLoadEnd(int index);
-    void onAddBookmark();
+    void onAddBookmark(const QString &note);
     void onGoToBookmark(int index);
     void showChapters();
     void onGoToChapter(int index);

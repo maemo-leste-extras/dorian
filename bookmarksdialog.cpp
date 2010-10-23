@@ -28,7 +28,10 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
         int chapterIndex = book_->chapterFromPart(bookmark.part);
         if (chapterIndex != -1) {
             QString chapterId = book_->chapters[chapterIndex];
-            label += "\nIn \"" + book_->content[chapterId].name + "\"";
+            label += ", in \"" + book_->content[chapterId].name + "\"";
+        }
+        if (!bookmark.note.isEmpty()) {
+            label += "\n" + bookmark.note;
         }
         data.append(label);
     }
@@ -69,8 +72,14 @@ void BookmarksDialog::onItemActivated(const QModelIndex &index)
 
 void BookmarksDialog::onAdd()
 {
-    emit addBookmark();
-    close();
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Add bookmark"),
+                                         tr("Note:"), QLineEdit::Normal,
+                                         QString(), &ok);
+    if (ok) {
+        emit addBookmark(text);
+        close();
+    }
 }
 
 void BookmarksDialog::onDelete(bool really)

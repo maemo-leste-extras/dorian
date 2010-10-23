@@ -290,7 +290,8 @@ void MainWindow::showBookmarks()
     if (book) {
         BookmarksDialog *bookmarks = new BookmarksDialog(book, this);
         bookmarks->setWindowModality(Qt::WindowModal);
-        connect(bookmarks, SIGNAL(addBookmark()), this, SLOT(onAddBookmark()));
+        connect(bookmarks, SIGNAL(addBookmark(const QString &)),
+                this, SLOT(onAddBookmark(const QString &)));
         connect(bookmarks, SIGNAL(goToBookmark(int)),
                 this, SLOT(onGoToBookmark(int)));
         bookmarks->show();
@@ -362,10 +363,10 @@ void MainWindow::onPartLoadEnd(int index)
 #endif // Q_WS_MAEMO_5
 }
 
-void MainWindow::onAddBookmark()
+void MainWindow::onAddBookmark(const QString &note)
 {
     Trace t("MainWindow:onAddBookmark");
-    view->addBookmark();
+    view->addBookmark(note);
 }
 
 void MainWindow::onGoToBookmark(int index)

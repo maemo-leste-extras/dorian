@@ -17,7 +17,10 @@ BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
     int chapterIndex = book->chapterFromPart(bookmark.part);
     if (chapterIndex != -1) {
         QString chapterId = book->chapters[chapterIndex];
-        label += ", in\n\"" + book->content[chapterId].name + "\"";
+        label += ", in\"" + book->content[chapterId].name + "\"";
+    }
+    if (!bookmark.note.isEmpty()) {
+        label += "\n" + bookmark.note;
     }
     QLabel *info = new QLabel(label, this);
     addWidget(info);

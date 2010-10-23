@@ -19,7 +19,7 @@ public:
 
 signals:
     void goToBookmark(int index);
-    void addBookmark();
+    void addBookmark(const QString &note);
 
 public slots:
     void onGo();

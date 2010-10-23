@@ -300,7 +300,8 @@ void Book::load()
     for (int i = 0; i < size; i++) {
         int part = data[QString("bookmark%1part").arg(i)].toInt();
         qreal pos = data[QString("bookmark%1pos").arg(i)].toReal();
-        mBookmarks.append(Bookmark(part, pos));
+        QString note = data[QString("bookmark%1note").arg(i)].toString();
+        mBookmarks.append(Bookmark(part, pos, note));
     }
 }
 
@@ -324,6 +325,7 @@ void Book::save()
     for (int i = 0; i < mBookmarks.size(); i++) {
         data[QString("bookmark%1part").arg(i)] = mBookmarks[i].part;
         data[QString("bookmark%1pos").arg(i)] = mBookmarks[i].pos;
+        data[QString("bookmark%1note").arg(i)] = mBookmarks[i].note;
     }
     BookDb::instance()->save(path(), data);
 }
@@ -342,9 +344,9 @@ Book::Bookmark Book::lastBookmark() const
     return Book::Bookmark(mLastBookmark);
 }
 
-void Book::addBookmark(int part, qreal position)
+void Book::addBookmark(int part, qreal position, const QString &note)
 {
-    mBookmarks.append(Bookmark(part, position));
+    mBookmarks.append(Bookmark(part, position, note));
     qSort(mBookmarks.begin(), mBookmarks.end());
     save();
 }

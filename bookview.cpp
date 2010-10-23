@@ -287,7 +287,7 @@ void BookView::wheelEvent(QWheelEvent *e)
     showProgress();
 }
 
-void BookView::addBookmark()
+void BookView::addBookmark(const QString &note)
 {
     Trace t("BookView::addBookmark");
     if (!mBook) {
@@ -296,7 +296,7 @@ void BookView::addBookmark()
     int y = page()->mainFrame()->scrollPosition().y();
     int height = page()->mainFrame()->contentsSize().height();
     qDebug() << ((qreal)y / (qreal)height);
-    mBook->addBookmark(contentIndex, (qreal)y / (qreal)height);
+    mBook->addBookmark(contentIndex, (qreal)y / (qreal)height, note);
     update();
 }
 

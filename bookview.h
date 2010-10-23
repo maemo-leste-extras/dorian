@@ -25,7 +25,7 @@ public:
     void setBook(Book *book);
     Book *book();
     void goToBookmark(const Book::Bookmark &bookmark);
-    void addBookmark();
+    void addBookmark(const QString &note);
     void setLastBookmark();
     void restoreLastBookmark();
 
