@@ -25,13 +25,14 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
         QString label("At ");
         label += QString::number((int)(100 * book_->
             getProgress(bookmark.part, bookmark.pos))) + "%";
+        if (!bookmark.note.isEmpty()) {
+            label += ": " + bookmark.note;
+        }
+        label += "\n";
         int chapterIndex = book_->chapterFromPart(bookmark.part);
         if (chapterIndex != -1) {
             QString chapterId = book_->chapters[chapterIndex];
-            label += ", in \"" + book_->content[chapterId].name + "\"";
-        }
-        if (!bookmark.note.isEmpty()) {
-            label += "\n" + bookmark.note;
+            label += "In \"" + book_->content[chapterId].name + "\"";
         }
         data.append(label);
     }
