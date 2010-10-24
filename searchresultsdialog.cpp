@@ -13,7 +13,7 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
         if (result.authors.length()) {
             author = result.authors[0];
         }
-        data.append(author + "\n" + result.title);
+        data.append(result.title + "\n" + author);
     }
 
     QStringListModel *model = new QStringListModel(data, this);
