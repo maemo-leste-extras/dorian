@@ -19,6 +19,10 @@
 #   define DORIAN_ICON_PREFIX ":/icons/"
 #endif
 
+static const char *DORIAN_VERSION =
+#include "pkg/version.txt"
+;
+
 QString Platform::dbPath()
 {
     QString base(QDir::home().absoluteFilePath(DORIAN_BASE));
@@ -38,4 +42,9 @@ void Platform::restart(char *argv[])
 #else
     Q_UNUSED(argv);
 #endif
+}
+
+QString Platform::version()
+{
+    return QString(DORIAN_VERSION);
 }

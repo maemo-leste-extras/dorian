@@ -1,4 +1,10 @@
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+
 #include "search.h"
+#include "platform.h"
+#include "trace.h"
 
 Search *inst = 0;
 
@@ -16,14 +22,28 @@ void Search::close()
     inst = 0;
 }
 
-Search::Search(): QObject(0)
+Search::Search(): QObject(0), reply(0)
 {
+    manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply *)),
+            this, SLOT(onFinished(QNetworkReply *)));
 }
 
 void Search::start(const Query &query)
 {
+    Trace t("Search::start");
+
     emit beginSearch();
-    emit endSearch();
+
+    QNetworkRequest request;
+    request.setUrl(QUrl("http://www.gutenberg.org/catalog/world/results"));
+    // request.setRawHeader("User-Agent", "Dorian " + Platform::version());
+    QByteArray data;
+    data = "title=" + QUrl::toPercentEncoding(query.title) + "&author=" +
+           QUrl::toPercentEncoding(query.author);
+    qDebug() << "Request:" << data;
+    reply = manager->post(request, data);
+    connect(reply, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 QList<Search::Result> Search::results()
@@ -39,4 +59,13 @@ bool Search::download(const Search::Result &result, const QString &fileName)
     emit beginDownload(0);
     emit endDownload();
     return false;
+}
+
+void Search::finished()
+{
+    Trace t("Search::finished");
+    QByteArray data = reply->readAll();
+    qDebug() << data;
+    reply->deleteLater();
+    emit endSearch();
 }

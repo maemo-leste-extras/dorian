@@ -2,10 +2,11 @@
 
 #include "searchdialog.h"
 #include "search.h"
+#include "trace.h"
 
 SearchDialog::SearchDialog(QWidget *parent): Dyalog(parent)
 {
-    setWindowTitle(tr("Search"));
+    setWindowTitle(tr("SearchDialog::SearchDialog"));
 
     QLabel *titleLabel = new QLabel(tr("Title:"), this);
     title = new QLineEdit(this);
@@ -22,8 +23,10 @@ SearchDialog::SearchDialog(QWidget *parent): Dyalog(parent)
 
 Search::Query SearchDialog::query()
 {
+    Trace t("SearchDialog::query");
     Search::Query ret;
     ret.title = title->text();
     ret.author = author->text();
+    qDebug() << ret.title << ret.author;
     return ret;
 }

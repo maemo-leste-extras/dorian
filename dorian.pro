@@ -1,4 +1,4 @@
-QT += webkit xml sql
+QT += webkit xml sql network
 
 INCLUDEPATH += $$PWD \
     $$PWD/model \
@@ -127,7 +127,7 @@ win32 {
 symbian {
     ICON = $$PWD/pkg/symbian/book.svgt
     TARGET.UID3 = 0xEA633557
-    # FIXME: TARGET.CAPABILITY = ...
+    TARGET.CAPABILITY = NetworkServices
     # FIXME: Include path to OpenC ZLIB?
     INCLUDEPATH += c:/Qt/4.7.0/src/3rdparty/zlib
     HEADERS += widgets/flickcharm.h

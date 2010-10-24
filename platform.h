@@ -10,6 +10,7 @@ public:
     static QString dbPath();
     static QString icon(const QString &name);
     static void restart(char *argv[]);
+    static QString version();
 };
 
 #endif // PLATFORM_H

@@ -34,15 +34,13 @@
 #include "progress.h"
 #include "dyalog.h"
 #include "translucentbutton.h"
+#include "platform.h"
 
 #ifdef DORIAN_TEST_MODEL
 #   include "modeltest.h"
 #endif
 
-const int PROGRESS_HEIGHT = 17;
-static const char *DORIAN_VERSION =
-#include "pkg/version.txt"
-;
+const int DORIAN_PROGRESS_HEIGHT = 17;
 
 MainWindow::MainWindow(QWidget *parent):
     AdopterWindow(parent), view(0), preventBlankingTimer(-1)
@@ -202,7 +200,7 @@ void MainWindow::showRegular()
     otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
     QRect geo = geometry();
-    progress->setGeometry(0, 0, geo.width(), PROGRESS_HEIGHT);
+    progress->setGeometry(0, 0, geo.width(), DORIAN_PROGRESS_HEIGHT);
 #if defined(Q_WS_MAEMO_5)
     previousButton->setGeometry(0,
         geo.height() - toolBar->height() - TranslucentButton::pixels,
@@ -235,7 +233,7 @@ void MainWindow::showBig()
     QList<QWidget *> otherChildren;
     otherChildren << progress << nextButton << previousButton;
     QRect screen = QApplication::desktop()->screenGeometry();
-    progress->setGeometry(0, 0, screen.width(), PROGRESS_HEIGHT);
+    progress->setGeometry(0, 0, screen.width(), DORIAN_PROGRESS_HEIGHT);
 #if defined(Q_WS_MAEMO_5)
     nextButton->setGeometry(screen.width() - TranslucentButton::pixels, 0,
         TranslucentButton::pixels, TranslucentButton::pixels);
@@ -417,7 +415,7 @@ void MainWindow::timerEvent(QTimerEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
     Trace t("MainWindow::resizeEvent");
-    progress->setGeometry(QRect(0, 0, e->size().width(), PROGRESS_HEIGHT));
+    progress->setGeometry(QRect(0, 0, e->size().width(), DORIAN_PROGRESS_HEIGHT));
 #if defined(Q_WS_MAEMO_5)
     previousButton->setGeometry(0,
         e->size().height() - toolBar->height() - TranslucentButton::pixels,
@@ -453,7 +451,7 @@ void MainWindow::about()
         "Akos Polster &lt;akos@pipacs.com&gt;<br>"
         "Licensed under GNU General Public License, Version 3<br>"
         "Source code: <a href='https://garage.maemo.org/projects/dorian/'>"
-        "garage.maemo.org/projects/dorian</a>").arg(DORIAN_VERSION));
+        "garage.maemo.org/projects/dorian</a>").arg(Platform::version()));
     aboutDialog->addWidget(label);
     aboutDialog->addStretch();
     aboutDialog->show();

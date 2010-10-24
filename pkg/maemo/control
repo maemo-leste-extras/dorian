@@ -8,7 +8,7 @@ XSBC-Bugtracker: https://garage.maemo.org/tracker/?atid=6138&group_id=1757
 
 Package: dorian
 Architecture: armel
-Depends: zlib1g, libqt4-core (>= 4.6.1), libqt4-gui (>= 4.6.1), libqt4-webkit (>= 4.6.1), libqt4-xml (>= 4.6.1), libqt4-dbus (>= 4.6.1), libqt4-sql (>= 4.6.1), libqt4-sql-sqlite (>= 4.6.1), mce
+Depends: zlib1g, libqt4-core (>= 4.6.1), libqt4-gui (>= 4.6.1), libqt4-webkit (>= 4.6.1), libqt4-xml (>= 4.6.1), libqt4-dbus (>= 4.6.1), libqt4-sql (>= 4.6.1), libqt4-sql-sqlite (>= 4.6.1), libqt4-network (>= 4.6.1), mce
 Description: E-book reader
  Read books published in DRM-free EPUB format
 XB-Maemo-Display-Name: Dorian

@@ -7,6 +7,9 @@
 #include <QImage>
 #include <QList>
 
+class QNetworkAccessManager;
+class QNetworkReply;
+
 /** Search for books, display and download results. */
 class Search: public QObject
 {
@@ -45,9 +48,12 @@ public slots:
     void start(const Query &query);
     QList<Result> results();
     bool download(const Result &result, const QString &fileName);
+    void finished();
 
 protected:
     explicit Search();
+    QNetworkAccessManager *manager;
+    QNetworkReply *reply;
 };
 
 #endif // SEARCH_H
