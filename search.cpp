@@ -25,8 +25,6 @@ void Search::close()
 Search::Search(): QObject(0), reply(0)
 {
     manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply *)),
-            this, SLOT(onFinished(QNetworkReply *)));
 }
 
 void Search::start(const Query &query)
