@@ -6,11 +6,11 @@
 
 SearchDialog::SearchDialog(QWidget *parent): Dyalog(parent)
 {
-    setWindowTitle(tr("SearchDialog::SearchDialog"));
+    setWindowTitle(tr("SearchDialog"));
 
     QLabel *titleLabel = new QLabel(tr("Title:"), this);
     title = new QLineEdit(this);
-    QLabel *authorLabel = new QLabel(tr("Author"), this);
+    QLabel *authorLabel = new QLabel(tr("Author:"), this);
     author = new QLineEdit(this);
 
     addWidget(titleLabel);

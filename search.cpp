@@ -1,6 +1,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QWebFrame>
+#include <QWebPage>
+#include <QWebElementCollection>
+#include <QWebElement>
 
 #include "search.h"
 #include "platform.h"
@@ -33,21 +37,25 @@ void Search::start(const Query &query)
 
     emit beginSearch();
 
+    searchResults.clear();
     QNetworkRequest request;
     request.setUrl(QUrl("http://www.gutenberg.org/catalog/world/results"));
     // request.setRawHeader("User-Agent", "Dorian " + Platform::version());
+    QString title = query.title;
+    if (title.isEmpty()) {
+        title = ".";
+    }
     QByteArray data;
-    data = "title=" + QUrl::toPercentEncoding(query.title) + "&author=" +
+    data = "title=" + QUrl::toPercentEncoding(title) + "&author=" +
            QUrl::toPercentEncoding(query.author);
-    qDebug() << "Request:" << data;
+    qDebug() << "Request:" << (request.url().toString() + "?" + data);
     reply = manager->post(request, data);
     connect(reply, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 QList<Search::Result> Search::results()
 {
-    QList<Search::Result> ret;
-    return ret;
+    return searchResults;
 }
 
 bool Search::download(const Search::Result &result, const QString &fileName)
@@ -64,6 +72,38 @@ void Search::finished()
     Trace t("Search::finished");
     QByteArray data = reply->readAll();
     qDebug() << data;
+
+    QWebPage page(this);
+    QWebFrame *frame = page.mainFrame();
+    frame->setHtml(QString(data));
+    QWebElementCollection tables = frame->findAllElements("table");
+    if (tables.count() == 1) {
+        qDebug() << "Found table";
+        QWebElement table = tables[0];
+        foreach (QWebElement row, table.findAll("tr")) {
+            QWebElementCollection cols = row.findAll("td");
+            QString id = cols[0].toPlainText().trimmed();
+            if (id.isEmpty()) {
+                continue;
+            }
+            QString author = cols[2].toPlainText().trimmed();
+            QStringList titles = cols[3].toPlainText().trimmed().
+                                 split("\n", QString::SkipEmptyParts);
+            Result r;
+            r.authors = author.split("\n", QString::SkipEmptyParts);
+            r.id = id;
+            if (titles.count()) {
+                r.title = titles[0];
+            }
+            r.language = cols[4].toPlainText().trimmed();
+            searchResults.append(r);
+            qDebug() << id;
+            qDebug() << " Authors:" << r.authors;
+            qDebug() << " Title:" << r.title;
+            qDebug() << " Language:" << r.language;
+        }
+    }
+
     reply->deleteLater();
     emit endSearch();
 }

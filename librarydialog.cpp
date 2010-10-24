@@ -20,6 +20,7 @@
 #include "bookfinder.h"
 #include "searchdialog.h"
 #include "platform.h"
+#include "searchresultsdialog.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
@@ -69,6 +70,8 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 
     // Create search dialog
     searchDialog = new SearchDialog(this);
+    connect(Search::instance(), SIGNAL(endSearch()),
+            this, SLOT(showSearchResults()));
 }
 
 void LibraryDialog::onAdd()
@@ -256,4 +259,18 @@ void LibraryDialog::onSearch()
         return;
     }
     Search::instance()->start(searchDialog->query());
+}
+
+void LibraryDialog::showSearchResults()
+{
+    QList<Search::Result> results = Search::instance()->results();
+    if (results.count() == 0) {
+        QMessageBox::information(this, tr("Search results"), tr("No books found"));
+        return;
+    }
+
+    SearchResultsDialog *dialog = new SearchResultsDialog(results, this);
+    connect(dialog, SIGNAL(add(const Search::Result &)),
+            this, SLOT(onAddSearchResult(const Search::Result &)));
+    dialog->show();
 }

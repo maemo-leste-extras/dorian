@@ -54,6 +54,7 @@ protected:
     explicit Search();
     QNetworkAccessManager *manager;
     QNetworkReply *reply;
+    QList<Result> searchResults;
 };
 
 #endif // SEARCH_H

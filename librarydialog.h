@@ -39,6 +39,7 @@ public slots:
     void onAddFromFolder(const QString &path);
     void onAddFromFolderDone(int added);
     void onSearch();
+    void showSearchResults();
 
 private:
     QString createItemText(const Book *book);
