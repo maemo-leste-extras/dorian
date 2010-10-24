@@ -70,18 +70,27 @@ bool Search::download(const Search::Result &result, const QString &fileName)
 void Search::finished()
 {
     Trace t("Search::finished");
+
+    if (!reply) {
+        return;
+    }
+
     QByteArray data = reply->readAll();
     qDebug() << data;
+
+    // Parse search results
 
     QWebPage page(this);
     QWebFrame *frame = page.mainFrame();
     frame->setHtml(QString(data));
     QWebElementCollection tables = frame->findAllElements("table");
     if (tables.count() == 1) {
-        qDebug() << "Found table";
         QWebElement table = tables[0];
         foreach (QWebElement row, table.findAll("tr")) {
             QWebElementCollection cols = row.findAll("td");
+            if (cols.count() < 5) {
+                continue;
+            }
             QString id = cols[0].toPlainText().trimmed();
             if (id.isEmpty()) {
                 continue;
@@ -105,5 +114,6 @@ void Search::finished()
     }
 
     reply->deleteLater();
+    reply = 0;
     emit endSearch();
 }
