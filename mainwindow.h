@@ -12,6 +12,7 @@ class BookView;
 class Book;
 class FullScreenWindow;
 class Progress;
+class ProgressDialog;
 class TranslucentButton;
 
 class MainWindow: public AdopterWindow
@@ -73,7 +74,7 @@ private:
     Progress *progress;
     TranslucentButton *previousButton;
     TranslucentButton *nextButton;
-    QProgressDialog *libraryProgress;
+    ProgressDialog *libraryProgress;
 };
 
 #endif // MAINWINDOW_H

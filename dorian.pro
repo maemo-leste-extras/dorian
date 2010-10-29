@@ -38,7 +38,8 @@ SOURCES += \
     widgets/flickable.cpp \
     widgets/listview.cpp \
     searchresultsdialog.cpp \
-    searchresultinfodialog.cpp
+    searchresultinfodialog.cpp \
+    widgets/progressdialog.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -78,7 +79,8 @@ HEADERS += \
     search.h \
     widgets/flickable.h \
     searchresultsdialog.h \
-    searchresultinfodialog.h
+    searchresultinfodialog.h \
+    widgets/progressdialog.h
 
 RESOURCES += \
     dorian.qrc

@@ -8,7 +8,7 @@ SearchResultInfoDialog::SearchResultInfoDialog(const Search::Result &result_,
                                                QWidget *parent):
     Dyalog(parent), result(result_)
 {
-    setWindowTitle(tr("Book Details"));
+    setWindowTitle(tr("Download Book?"));
 
     QLabel *title = new QLabel(result.title, this);
     addWidget(title);

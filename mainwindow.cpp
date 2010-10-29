@@ -35,6 +35,7 @@
 #include "dyalog.h"
 #include "translucentbutton.h"
 #include "platform.h"
+#include "progressdialog.h"
 
 #ifdef DORIAN_TEST_MODEL
 #   include "modeltest.h"
@@ -116,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent):
             this, SLOT(onCurrentBookChanged()));
 
     // Load library, upgrade it if needed
-    libraryProgress = new QProgressDialog(tr("Upgrading library"), "", 0, 0, this);
+    libraryProgress = new ProgressDialog(tr("Upgrading library"), this);
     libraryProgress->reset();
     libraryProgress->setMinimumDuration(0);
     libraryProgress->setWindowModality(Qt::WindowModal);

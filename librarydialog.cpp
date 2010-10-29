@@ -21,6 +21,7 @@
 #include "searchdialog.h"
 #include "platform.h"
 #include "searchresultsdialog.h"
+#include "progressdialog.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
@@ -49,7 +50,7 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     setSelected(current);
     addList(list);
 
-    progress = new QProgressDialog(tr("Adding books"), "", 0, 0, this);
+    progress = new ProgressDialog(tr("Adding books"), this);
     progress->reset();
     progress->setMinimumDuration(0);
     progress->setWindowModality(Qt::WindowModal);

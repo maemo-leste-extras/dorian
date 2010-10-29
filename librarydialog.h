@@ -11,7 +11,7 @@ class ListView;
 class QPushButton;
 class QModelIndex;
 class QCloseEvent;
-class QProgressDialog;
+class ProgressDialog;
 class Book;
 class InfoWindow;
 class SortedLibrary;
@@ -47,7 +47,7 @@ private:
     QModelIndex selected() const;
     ListView *list;
     SortedLibrary *sortedLibrary;
-    QProgressDialog *progress;
+    ProgressDialog *progress;
     SearchDialog *searchDialog;
 };
 
