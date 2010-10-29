@@ -8,12 +8,19 @@
 #include "search.h"
 
 class ListView;
+class QModelIndex;
 
 class SearchResultsDialog: public ListWindow
 {
+    Q_OBJECT
+
 public:
     explicit SearchResultsDialog(const QList<Search::Result> searchResults,
                                  QWidget *parent = 0);
+
+protected slots:
+    void onDownload();
+    void onItemActivated(const QModelIndex &index);
 
 protected:
     const QList<Search::Result> results;

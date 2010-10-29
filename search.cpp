@@ -105,6 +105,7 @@ void Search::finished()
                 r.title = titles[0];
             }
             r.language = cols[4].toPlainText().trimmed();
+            r.source = "Project Gutenberg";
             searchResults.append(r);
             qDebug() << id;
             qDebug() << " Authors:" << r.authors;
