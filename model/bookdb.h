@@ -15,6 +15,7 @@ public:
     QVariantHash load(const QString &book);
     void save(const QString &book, const QVariantHash &data);
     void remove(const QString &book);
+    void removeAll();
     QStringList books();
 
 private:

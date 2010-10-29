@@ -5,6 +5,7 @@
 #include "trace.h"
 #include "settings.h"
 #include "toolbuttonbox.h"
+#include "bookdb.h"
 
 DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
 {
@@ -36,6 +37,7 @@ void DevTools::onClear()
                                  "application will be restarted. Continue?"),
                               QMessageBox::Yes | QMessageBox::No)) {
         QSettings().clear();
+        BookDb::instance()->removeAll();
         QApplication::exit(1000);
     }
 }

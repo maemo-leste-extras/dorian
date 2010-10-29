@@ -102,8 +102,13 @@ void BookDb::save(const QString &book, const QVariantHash &data)
 
 void BookDb::remove(const QString &book)
 {
-    // FIXME
-    Q_UNUSED(book);
+    Trace t("BookDb::remove");
+    qDebug() << book;
+    QSqlQuery query("delete from book where name = ?");
+    query.bindValue(0, book);
+    if (!query.exec()) {
+        qCritical() << "Query failed:" << query.lastError().text();
+    }
 }
 
 QStringList BookDb::books()
@@ -121,4 +126,11 @@ QStringList BookDb::books()
     }
     qDebug() << ret;
     return ret;
+}
+
+void BookDb::removeAll()
+{
+    foreach (QString book, books()) {
+        remove(book);
+    }
 }
