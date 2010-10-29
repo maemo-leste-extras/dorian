@@ -26,5 +26,4 @@ SearchResultInfoDialog::SearchResultInfoDialog(const Search::Result &result_,
     addWidget(source);
     addStretch();
     addButton(tr("Download"), this, SLOT(accept()), QDialogButtonBox::ActionRole);
-    addButton(tr("Close"), this, SLOT(reject()), QDialogButtonBox::DestructiveRole);
 }

@@ -8,7 +8,7 @@
 SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     QWidget *parent): ListWindow(parent), results(results_)
 {
-    setWindowTitle(tr("Search results"));
+    setWindowTitle(tr("Search Results"));
 
     foreach (Search::Result result, results) {
         QString author;
