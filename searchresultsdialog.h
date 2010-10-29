@@ -21,8 +21,13 @@ public:
 protected slots:
     void onDownload();
     void onItemActivated(const QModelIndex &index);
+    void onBeginDownload(int size);
+    void onEndDownload();
 
 protected:
+    QString downloadName() const;
+
+private:
     const QList<Search::Result> results;
     ListView *list;
     QStringList data;

@@ -270,6 +270,7 @@ void LibraryDialog::showSearchResults()
     }
 
     SearchResultsDialog *dialog = new SearchResultsDialog(results, this);
+    // FIXME
     connect(dialog, SIGNAL(add(const Search::Result &)),
             this, SLOT(onAddSearchResult(const Search::Result &)));
     dialog->show();

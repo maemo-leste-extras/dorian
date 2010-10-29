@@ -49,11 +49,14 @@ public slots:
     QList<Result> results();
     bool download(const Result &result, const QString &fileName);
     void finished();
+    void downloadFinished();
 
-protected:
+private:
     explicit Search();
     QNetworkAccessManager *manager;
+    QNetworkAccessManager *downloadManager;
     QNetworkReply *reply;
+    QNetworkReply *downloadReply;
     QList<Result> searchResults;
 };
 

@@ -26,9 +26,10 @@ void Search::close()
     inst = 0;
 }
 
-Search::Search(): QObject(0), reply(0)
+Search::Search(): QObject(0), reply(0), downloadReply(0)
 {
     manager = new QNetworkAccessManager(this);
+    downloadManager = new QNetworkAccessManager(this);
 }
 
 void Search::start(const Query &query)
@@ -60,11 +61,17 @@ QList<Search::Result> Search::results()
 
 bool Search::download(const Search::Result &result, const QString &fileName)
 {
-    Q_UNUSED(result);
+    Trace t("Search::download");
+    qDebug() << "UID" << result.id;
     Q_UNUSED(fileName);
     emit beginDownload(0);
-    emit endDownload();
-    return false;
+    QUrl url("http://www.gutenberg.org/ebooks/" + result.id + ".epub");
+    qDebug() << "Requesting" << url;
+    QNetworkRequest request;
+    request.setUrl(url);
+    downloadReply = downloadManager->get(request);
+    connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
+    return true;
 }
 
 void Search::finished()
@@ -76,7 +83,6 @@ void Search::finished()
     }
 
     QByteArray data = reply->readAll();
-    qDebug() << data;
 
     // Parse search results
 
@@ -117,4 +123,29 @@ void Search::finished()
     reply->deleteLater();
     reply = 0;
     emit endSearch();
+}
+
+void Search::downloadFinished()
+{
+    Trace t("Search::downloadFinished");
+
+    if (!downloadReply) {
+        return;
+    }
+
+    QVariant header = downloadReply->header(QNetworkRequest::LocationHeader);
+    if (header.isValid()) {
+        qDebug() << "Redirected to" << header;
+        downloadReply->deleteLater();
+        QNetworkRequest request;
+        request.setUrl(header.toUrl());
+        downloadReply = downloadManager->get(request);
+        connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
+    } else {
+        QByteArray data = downloadReply->readAll();
+        qDebug() << "Got" << data.size() << "bytes";
+        downloadReply->deleteLater();
+        downloadReply = 0;
+        emit endDownload();
+    }
 }

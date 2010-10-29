@@ -27,6 +27,9 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     addItemAction(tr("Download book"), this, SLOT(onDownload()));
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
+    Search *search = Search::instance();
+    connect(search, SIGNAL(beginDownload(int)), this, SLOT(onBeginDownload(int)));
+    connect(search, SIGNAL(endDownload()), this, SLOT(onEndDownload()));
 }
 
 void SearchResultsDialog::onItemActivated(const QModelIndex &index)
@@ -39,10 +42,29 @@ void SearchResultsDialog::onItemActivated(const QModelIndex &index)
     int ret = d->exec();
     if (ret == QDialog::Accepted) {
         qDebug() << "Accepted -> Start download";
+        QString fileName = downloadName();
+        qDebug() << "Downloading to" << fileName;
+        Search::instance()->download(result, fileName);
     }
 }
 
 void SearchResultsDialog::onDownload()
 {
     onItemActivated(list->currentIndex());
+}
+
+QString SearchResultsDialog::downloadName() const
+{
+    // FIXME
+    return QString("/tmp/book.epub");
+}
+
+void SearchResultsDialog::onBeginDownload(int size)
+{
+    Trace t("SearchResultsDialog::onBeginDownload");
+}
+
+void SearchResultsDialog::onEndDownload()
+{
+    Trace t("SearchResultsDialog::onEndDownload");
 }
