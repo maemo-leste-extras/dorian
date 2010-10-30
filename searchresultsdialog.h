@@ -9,6 +9,7 @@
 
 class ListView;
 class QModelIndex;
+class ProgressDialog;
 
 class SearchResultsDialog: public ListWindow
 {
@@ -31,6 +32,7 @@ private:
     const QList<Search::Result> results;
     ListView *list;
     QStringList data;
+    ProgressDialog *progress;
 };
 
 #endif // SEARCHRESULTSDIALOG_H

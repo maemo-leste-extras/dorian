@@ -51,14 +51,6 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     addList(list);
 
     progress = new ProgressDialog(tr("Adding books"), this);
-    progress->reset();
-    progress->setMinimumDuration(0);
-    progress->setWindowModality(Qt::WindowModal);
-    progress->setCancelButton(0);
-#ifdef Q_WS_S60
-    progress->setFixedWidth(
-            QApplication::desktop()->availableGeometry().width());
-#endif
 
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
             this, SLOT(onCurrentBookChanged()));
@@ -259,11 +251,17 @@ void LibraryDialog::onSearch()
     if (ret != QDialog::Accepted) {
         return;
     }
+    progress->setLabelText(tr("Searching Project Gutenberg"));
+    progress->setMinimum(0);
+    progress->setMaximum(0);
+    progress->setValue(0);
+    progress->show();
     Search::instance()->start(searchDialog->query());
 }
 
 void LibraryDialog::showSearchResults()
 {
+    progress->reset();
     QList<Search::Result> results = Search::instance()->results();
     if (results.count() == 0) {
         QMessageBox::information(this, tr("Search results"), tr("No books found"));

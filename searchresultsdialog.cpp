@@ -4,6 +4,7 @@
 #include "searchresultsdialog.h"
 #include "searchresultinfodialog.h"
 #include "trace.h"
+#include "progressdialog.h"
 
 SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     QWidget *parent): ListWindow(parent), results(results_)
@@ -30,6 +31,8 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     Search *search = Search::instance();
     connect(search, SIGNAL(beginDownload(int)), this, SLOT(onBeginDownload(int)));
     connect(search, SIGNAL(endDownload()), this, SLOT(onEndDownload()));
+
+    progress = new ProgressDialog(tr("Downloading Book"), this);
 }
 
 void SearchResultsDialog::onItemActivated(const QModelIndex &index)
@@ -62,9 +65,14 @@ QString SearchResultsDialog::downloadName() const
 void SearchResultsDialog::onBeginDownload(int size)
 {
     Trace t("SearchResultsDialog::onBeginDownload");
+    progress->setMinimum(0);
+    progress->setMaximum(0);
+    progress->setValue(0);
+    progress->show();
 }
 
 void SearchResultsDialog::onEndDownload()
 {
     Trace t("SearchResultsDialog::onEndDownload");
+    progress->reset();
 }

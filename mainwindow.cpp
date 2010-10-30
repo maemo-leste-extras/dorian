@@ -118,10 +118,6 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Load library, upgrade it if needed
     libraryProgress = new ProgressDialog(tr("Upgrading library"), this);
-    libraryProgress->reset();
-    libraryProgress->setMinimumDuration(0);
-    libraryProgress->setWindowModality(Qt::WindowModal);
-    libraryProgress->setCancelButton(0);
     Library *library = Library::instance();
     connect(library, SIGNAL(beginUpgrade(int)), this, SLOT(onBeginUpgrade(int)));
     connect(library, SIGNAL(upgrading(const QString &)),
