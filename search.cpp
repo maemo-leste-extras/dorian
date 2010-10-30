@@ -160,7 +160,7 @@ void Search::downloadFinished()
 
     // Handle download success
     QByteArray data = downloadReply->readAll();
-    quint64 size = (quint64)data.size();
+    qint64 size = (qint64)data.size();
     qDebug() << "Got" << size << "bytes";
     downloadReply->deleteLater();
     downloadReply = 0;

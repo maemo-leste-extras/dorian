@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <QtGui>
 
+#ifdef Q_WS_MAEMO_5
+#include <QtMaemo5/QMaemo5InformationBox>
+#endif
+
 #include "listview.h"
 #include "searchresultsdialog.h"
 #include "searchresultinfodialog.h"
@@ -101,5 +105,10 @@ void SearchResultsDialog::onEndDownload(int status, const Search::Result &result
         if (-1 != row) {
             list->model()->removeRow(row);
         }
+#ifdef Q_WS_MAEMO_5
+        QMaemo5InformationBox::information(this,
+            tr("Downloaded \"%1\"\nand added to the library").arg(result.title),
+            QMaemo5InformationBox::DefaultTimeout);
+#endif
     }
 }
