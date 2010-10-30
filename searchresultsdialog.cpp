@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <QtGui>
 
 #include "listview.h"
@@ -5,6 +6,8 @@
 #include "searchresultinfodialog.h"
 #include "trace.h"
 #include "progressdialog.h"
+#include "library.h"
+#include "platform.h"
 
 SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     QWidget *parent): ListWindow(parent), results(results_)
@@ -30,7 +33,10 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
             this, SLOT(onItemActivated(const QModelIndex &)));
     Search *search = Search::instance();
     connect(search, SIGNAL(beginDownload(int)), this, SLOT(onBeginDownload(int)));
-    connect(search, SIGNAL(endDownload()), this, SLOT(onEndDownload()));
+    connect(search,
+            SIGNAL(endDownload(int, const Search::Result &, const QString &)),
+            this,
+            SLOT(onEndDownload(int, const Search::Result &, const QString &)));
 
     progress = new ProgressDialog(tr("Downloading Book"), this);
 }
@@ -58,12 +64,24 @@ void SearchResultsDialog::onDownload()
 
 QString SearchResultsDialog::downloadName() const
 {
-    // FIXME
-    return QString("/tmp/book.epub");
+    Trace t("SearchResultsDialog::downloadName");
+    QString dir = Platform::downloadDir();
+    QDir().mkpath(dir); // Not sure if this works. QDir API is quiet lame.
+    unsigned i = 0;
+    QString fileName;
+    do {
+        char tmp[9];
+        snprintf(tmp, 8, "%8.8x", i++);
+        tmp[8] = '\0';
+        fileName = QDir(dir).absoluteFilePath(QString(tmp) + ".epub");
+    } while (QFile(fileName).exists());
+    qDebug() << fileName;
+    return fileName;
 }
 
 void SearchResultsDialog::onBeginDownload(int size)
 {
+    Q_UNUSED(size);
     Trace t("SearchResultsDialog::onBeginDownload");
     progress->setMinimum(0);
     progress->setMaximum(0);
@@ -71,8 +89,17 @@ void SearchResultsDialog::onBeginDownload(int size)
     progress->show();
 }
 
-void SearchResultsDialog::onEndDownload()
+void SearchResultsDialog::onEndDownload(int status, const Search::Result &result,
+                                        const QString &fileName)
 {
+    Q_UNUSED(result);
     Trace t("SearchResultsDialog::onEndDownload");
     progress->reset();
+    if (Search::Ok == status) {
+        Library::instance()->add(fileName);
+        int row = results.indexOf(result);
+        if (-1 != row) {
+            list->model()->removeRow(row);
+        }
+    }
 }

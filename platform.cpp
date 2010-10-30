@@ -48,3 +48,8 @@ QString Platform::version()
 {
     return QString(DORIAN_VERSION);
 }
+
+QString Platform::downloadDir()
+{
+    return QDir::home().absoluteFilePath("Books");
+}

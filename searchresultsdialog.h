@@ -23,7 +23,8 @@ protected slots:
     void onDownload();
     void onItemActivated(const QModelIndex &index);
     void onBeginDownload(int size);
-    void onEndDownload();
+    void onEndDownload(int status, const Search::Result &result,
+                       const QString &fileName);
 
 protected:
     QString downloadName() const;

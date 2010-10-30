@@ -16,6 +16,7 @@ class Search: public QObject
     Q_OBJECT
 
 public:
+    /** Search query. */
     struct Query
     {
         QString title;
@@ -23,6 +24,7 @@ public:
         QStringList languages;
     };
 
+    /** Search result. */
     struct Result
     {
         QString id;
@@ -31,6 +33,17 @@ public:
         QStringList authors;
         QString language;
         QImage cover;
+        bool operator ==(const Result &other) const {
+            return (source == other.source) && (id == other.id);
+        }
+    };
+
+    /** Download status. */
+    enum
+    {
+        Ok,
+        DownloadError,
+        FileError,
     };
 
     static Search *instance();
@@ -42,12 +55,13 @@ signals:
     void endSearch();
     void beginDownload(int totalBlocks);
     void downloading(int blocks);
-    void endDownload();
+    void endDownload(int status, const Search::Result &result,
+                     const QString &fileName);
 
 public slots:
     void start(const Query &query);
     QList<Result> results();
-    bool download(const Result &result, const QString &fileName);
+    void download(const Result &result, const QString &fileName);
     void finished();
     void downloadFinished();
 
@@ -58,6 +72,8 @@ private:
     QNetworkReply *reply;
     QNetworkReply *downloadReply;
     QList<Result> searchResults;
+    Search::Result downloadResult;
+    QString downloadFileName;
 };
 
 #endif // SEARCH_H

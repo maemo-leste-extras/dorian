@@ -5,6 +5,7 @@
 #include <QWebPage>
 #include <QWebElementCollection>
 #include <QWebElement>
+#include <QFile>
 
 #include "search.h"
 #include "platform.h"
@@ -59,9 +60,11 @@ QList<Search::Result> Search::results()
     return searchResults;
 }
 
-bool Search::download(const Search::Result &result, const QString &fileName)
+void Search::download(const Search::Result &result, const QString &fileName)
 {
     Trace t("Search::download");
+    downloadResult = result;
+    downloadFileName = fileName;
     qDebug() << "UID" << result.id;
     Q_UNUSED(fileName);
     emit beginDownload(0);
@@ -71,7 +74,6 @@ bool Search::download(const Search::Result &result, const QString &fileName)
     request.setUrl(url);
     downloadReply = downloadManager->get(request);
     connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
-    return true;
 }
 
 void Search::finished()
@@ -133,19 +135,49 @@ void Search::downloadFinished()
         return;
     }
 
-    QVariant header = downloadReply->header(QNetworkRequest::LocationHeader);
-    if (header.isValid()) {
-        qDebug() << "Redirected to" << header;
-        downloadReply->deleteLater();
-        QNetworkRequest request;
-        request.setUrl(header.toUrl());
-        downloadReply = downloadManager->get(request);
-        connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
-    } else {
-        QByteArray data = downloadReply->readAll();
-        qDebug() << "Got" << data.size() << "bytes";
+    // Handle download errors
+    if (QNetworkReply::NoError != downloadReply->error()) {
+        qCritical() << "Search::downloadFinished: Network error"
+                << downloadReply->error();
         downloadReply->deleteLater();
         downloadReply = 0;
-        emit endDownload();
+        emit endDownload(Search::DownloadError, downloadResult, downloadFileName);
+        return;
     }
+
+    // Handle redirection
+    QVariant header = downloadReply->header(QNetworkRequest::LocationHeader);
+    if (header.isValid()) {
+        // Handle redirection: Download again with the new URL
+        qDebug() << "Redirected to" << header;
+        QNetworkRequest request;
+        request.setUrl(header.toUrl());
+        downloadReply->deleteLater();
+        downloadReply = downloadManager->get(request);
+        connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
+        return;
+    }
+
+    // Handle download success
+    QByteArray data = downloadReply->readAll();
+    quint64 size = (quint64)data.size();
+    qDebug() << "Got" << size << "bytes";
+    downloadReply->deleteLater();
+    downloadReply = 0;
+    QFile out(downloadFileName);
+    int status = Search::FileError;
+    if (out.open(QIODevice::WriteOnly)) {
+        if (size == out.write(data, size)) {
+            qDebug() << "Book saved to" << downloadFileName;
+            status = Search::Ok;
+        } else {
+            qCritical() << "Search::downloadFinished: Failed to write" << size
+                    << "bytes to" << downloadFileName;
+        }
+        out.close();
+    } else {
+        qCritical() << "Search::downloadFinished: Could not open"
+                << downloadFileName;
+    }
+    emit endDownload(status, downloadResult, downloadFileName);
 }

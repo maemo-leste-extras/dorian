@@ -11,6 +11,7 @@ public:
     static QString icon(const QString &name);
     static void restart(char *argv[]);
     static QString version();
+    static QString downloadDir();
 };
 
 #endif // PLATFORM_H
