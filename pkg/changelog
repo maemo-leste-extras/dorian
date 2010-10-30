@@ -5,6 +5,7 @@ dorian (0.3.1-1) unstable; urgency=low
   * Fix database creation on Symbian
   * Bookmarks to have notes
   * Actually delete books from database
+  * Search and download books from Project Gutenberg
 
  -- Akos Polster <akos@pipacs.com>  Sat, 10 Oct 2010 02:00:00 +0200
 
