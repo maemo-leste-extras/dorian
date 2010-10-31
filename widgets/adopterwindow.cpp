@@ -120,6 +120,7 @@ void AdopterWindow::show()
         w->setContextMenuPolicy(Qt::NoContextMenu);
     }
     showMaximized();
+    raise();
 #else
     QMainWindow::show();
 #endif

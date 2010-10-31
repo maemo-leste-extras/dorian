@@ -10,6 +10,7 @@ class ProgressDialog: public QProgressDialog
 
 public:
     explicit ProgressDialog(const QString &label, QWidget *parent = 0);
+    void showWait();
 
 signals:
 

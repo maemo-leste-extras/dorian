@@ -8,7 +8,7 @@ class QWidget;
 class QPushButton;
 class QScrollArea;
 class QVBoxLayout;
-class QMenu;
+class QMenuBar;
 
 /** Maemo- and Mac-friendly dialog box. */
 class Dyalog: public QDialog
@@ -34,14 +34,14 @@ public slots:
     int exec();
 #endif
 
-protected:
+private:
     QScrollArea *scroller;
     QWidget *content;
     QVBoxLayout *contentLayout;
     QDialogButtonBox *buttonBox;
     bool showButtons;
 #ifdef Q_OS_SYMBIAN
-    QMenu *menu;
+    QMenuBar *menuBar;
 #endif
 };
 

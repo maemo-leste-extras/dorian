@@ -190,12 +190,14 @@ void MainWindow::onCurrentBookChanged()
 void MainWindow::showRegular()
 {
     Trace t("MainWindow::showRegular");
-    fullScreenWindow->hide();
-    fullScreenWindow->leaveChildren();
 
+    // Re-parent children
+    fullScreenWindow->leaveChildren();
     QList<QWidget *> otherChildren;
     otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
+
+    // Adjust geometry of decorations
     QRect geo = geometry();
     progress->setGeometry(0, 0, geo.width(), DORIAN_PROGRESS_HEIGHT);
 #if defined(Q_WS_MAEMO_5)
@@ -213,12 +215,15 @@ void MainWindow::showRegular()
     previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
     nextButton->setGeometry(geo.width() - TranslucentButton::pixels - 25,
-        toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
+        toolBar->height(), TranslucentButton::pixels,
+        TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
     qDebug() << "previousButton geometry" << previousButton->geometry();
+
+    fullScreenWindow->hide();
+    show();
+    activateWindow();
     progress->flash();
-    nextButton->show();
-    previousButton->show();
     nextButton->flash(1500);
     previousButton->flash(1500);
 }
@@ -226,9 +231,14 @@ void MainWindow::showRegular()
 void MainWindow::showBig()
 {
     Trace t("MainWindow::showBig");
+
+    // Re-parent children
     leaveChildren();
     QList<QWidget *> otherChildren;
     otherChildren << progress << nextButton << previousButton;
+    fullScreenWindow->takeChildren(view, otherChildren);
+
+    // Adjust geometry of decorations
     QRect screen = QApplication::desktop()->screenGeometry();
     progress->setGeometry(0, 0, screen.width(), DORIAN_PROGRESS_HEIGHT);
 #if defined(Q_WS_MAEMO_5)
@@ -236,13 +246,14 @@ void MainWindow::showBig()
         TranslucentButton::pixels, TranslucentButton::pixels);
 #else
     nextButton->setGeometry(screen.width() - TranslucentButton::pixels - 25, 0,
-                            TranslucentButton::pixels, TranslucentButton::pixels);
+        TranslucentButton::pixels, TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
     previousButton->setGeometry(0, screen.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
 
-    fullScreenWindow->takeChildren(view, otherChildren);
+    hide();
     fullScreenWindow->showFullScreen();
+    fullScreenWindow->activateWindow();
     progress->flash();
     nextButton->flash(1500);
     previousButton->flash(1500);

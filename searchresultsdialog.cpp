@@ -87,10 +87,7 @@ void SearchResultsDialog::onBeginDownload(int size)
 {
     Q_UNUSED(size);
     Trace t("SearchResultsDialog::onBeginDownload");
-    progress->setMinimum(0);
-    progress->setMaximum(0);
-    progress->setValue(0);
-    progress->show();
+    progress->showWait();
 }
 
 void SearchResultsDialog::onEndDownload(int status, const Search::Result &result,

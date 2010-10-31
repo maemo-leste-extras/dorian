@@ -235,7 +235,7 @@ void LibraryDialog::onAddFromFolderDone(int added)
 #ifdef Q_WS_MAEMO_5
     QMaemo5InformationBox::information(this, msg);
 #else
-    // FIXME
+    QMessageBox::information(this, tr("Done adding books"), msg);
 #endif
 }
 
@@ -252,10 +252,7 @@ void LibraryDialog::onSearch()
         return;
     }
     progress->setLabelText(tr("Searching Project Gutenberg"));
-    progress->setMinimum(0);
-    progress->setMaximum(0);
-    progress->setValue(0);
-    progress->show();
+    progress->showWait();
     Search::instance()->start(searchDialog->query());
 }
 
@@ -264,12 +261,12 @@ void LibraryDialog::showSearchResults()
     progress->reset();
     QList<Search::Result> results = Search::instance()->results();
     if (results.count() == 0) {
-        QMessageBox::information(this, tr("Search results"), tr("No books found"));
+        QMessageBox::information(this, tr("Search results"),
+                                 tr("No books found"));
         return;
     }
 
     SearchResultsDialog *dialog = new SearchResultsDialog(results, this);
-    // FIXME
     connect(dialog, SIGNAL(add(const Search::Result &)),
             this, SLOT(onAddSearchResult(const Search::Result &)));
     dialog->show();

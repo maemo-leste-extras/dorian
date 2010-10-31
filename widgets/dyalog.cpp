@@ -57,7 +57,7 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(reject()));
     addAction(closeAction);
-    menu = 0;
+    menuBar = 0;
 #endif // Q_OS_SYMBIAN
 }
 
@@ -79,15 +79,12 @@ void Dyalog::addButton(const QString &label, QObject *receiver,
     }
 #ifdef Q_OS_SYMBIAN
     Q_UNUSED(role);
-    if (!menu) {
-        QAction *menuAction = new QAction(tr("Options"), this);
-        menuAction->setSoftKeyRole(QAction::PositiveSoftKey);
-        menu = new QMenu(this);
-        menuAction->setMenu(menu);
+    if (!menuBar) {
+        menuBar = new QMenuBar(this);
     }
     QAction *action = new QAction(label, this);
     connect(action, SIGNAL(triggered()), receiver, slot);
-    menu->addAction(action);
+    menuBar->addAction(action);
 #else
     QPushButton *button = new QPushButton(label, this);
     connect(button, SIGNAL(clicked()), receiver, slot);

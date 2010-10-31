@@ -31,6 +31,7 @@ void TranslucentButton::paintEvent(QPaintEvent *)
 
 void TranslucentButton::flash(int duration)
 {
+    show();
     raise();
     transparent = false;
     update();
