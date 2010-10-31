@@ -47,7 +47,7 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
 
 void SearchResultsDialog::onItemActivated(const QModelIndex &index)
 {
-    Trace t("SearchResultsDialog::onItemActivated");
+    TRACE;
     Search::Result result = results[index.row()];
     qDebug() << "Book" << index.row() << ":" << result.title;
     SearchResultInfoDialog *d = new SearchResultInfoDialog(result, this);
@@ -68,7 +68,7 @@ void SearchResultsDialog::onDownload()
 
 QString SearchResultsDialog::downloadName() const
 {
-    Trace t("SearchResultsDialog::downloadName");
+    TRACE;
     QString dir = Platform::downloadDir();
     QDir().mkpath(dir); // Not sure if this works. QDir API is quiet lame.
     unsigned i = 0;
@@ -86,7 +86,7 @@ QString SearchResultsDialog::downloadName() const
 void SearchResultsDialog::onBeginDownload(int size)
 {
     Q_UNUSED(size);
-    Trace t("SearchResultsDialog::onBeginDownload");
+    TRACE;
     progress->showWait();
 }
 
@@ -94,7 +94,7 @@ void SearchResultsDialog::onEndDownload(int status, const Search::Result &result
                                         const QString &fileName)
 {
     Q_UNUSED(result);
-    Trace t("SearchResultsDialog::onEndDownload");
+    TRACE;
     progress->reset();
     if (Search::Ok == status) {
         Library::instance()->add(fileName);

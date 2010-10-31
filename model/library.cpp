@@ -75,7 +75,7 @@ void Library::close()
 
 void Library::load()
 {
-    Trace t("Library::load");
+    TRACE;
 
     clear();
     QStringList books = BookDb::instance()->books();
@@ -98,7 +98,7 @@ void Library::load()
 
 void Library::save()
 {
-    Trace t("Library::save");
+    TRACE;
     QSettings settings;
     Book *currentBook = book(mNowReading);
     settings.setValue("lib/nowreading",
@@ -107,7 +107,7 @@ void Library::save()
 
 bool Library::add(const QString &path)
 {
-    Trace t("Library::add " + path);
+    TRACE;
     if (path == "") {
         qCritical() << "Library::add: Empty path";
         return false;
@@ -128,7 +128,7 @@ bool Library::add(const QString &path)
 
 void Library::remove(const QModelIndex &index)
 {
-    Trace t("Library::remove");
+    TRACE;
     Book *toRemove = book(index);
     if (!toRemove) {
         return;
@@ -199,7 +199,7 @@ QModelIndex Library::find(const Book *book) const
 
 void Library::onBookOpened(const QString &path)
 {
-    Trace t("Library::onBookOpened " + path);
+    TRACE;
     QModelIndex index = find(path);
     if (index.isValid()) {
         emit dataChanged(index, index);
@@ -217,7 +217,7 @@ QStringList Library::bookPaths()
 
 void Library::upgrade()
 {
-    Trace t("Library::upgrade");
+    TRACE;
     QSettings settings;
     QString oldVersion = settings.value("lib/version").toString();
     if (/* true */ oldVersion.isEmpty()) {

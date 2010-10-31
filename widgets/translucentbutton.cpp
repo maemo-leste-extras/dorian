@@ -2,7 +2,6 @@
 
 #include "translucentbutton.h"
 #include "platform.h"
-#include "trace.h"
 
 const int TranslucentButton::pixels = 95;
 

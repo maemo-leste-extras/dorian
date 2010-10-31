@@ -46,7 +46,7 @@ const int DORIAN_PROGRESS_HEIGHT = 17;
 MainWindow::MainWindow(QWidget *parent):
     AdopterWindow(parent), view(0), preventBlankingTimer(-1)
 {
-    Trace t("MainWindow::MainWindow");
+    TRACE;
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
@@ -189,7 +189,7 @@ void MainWindow::onCurrentBookChanged()
 
 void MainWindow::showRegular()
 {
-    Trace t("MainWindow::showRegular");
+    TRACE;
 
     // Re-parent children
     fullScreenWindow->leaveChildren();
@@ -222,7 +222,12 @@ void MainWindow::showRegular()
 
     fullScreenWindow->hide();
     show();
+#if defined(Q_OS_SYMBIAN)
     activateWindow();
+#elif defined(Q_WS_MAEMO_5)
+    // FIXME: This is ugly.
+    view->restoreLastBookmark();
+#endif
     progress->flash();
     nextButton->flash(1500);
     previousButton->flash(1500);
@@ -230,7 +235,7 @@ void MainWindow::showRegular()
 
 void MainWindow::showBig()
 {
-    Trace t("MainWindow::showBig");
+    TRACE;
 
     // Re-parent children
     leaveChildren();
@@ -251,9 +256,13 @@ void MainWindow::showBig()
     previousButton->setGeometry(0, screen.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
 
+#ifdef Q_OS_SYMBIAN
     hide();
+#endif
     fullScreenWindow->showFullScreen();
+#ifdef Q_OS_SYMBIAN
     fullScreenWindow->activateWindow();
+#endif
     progress->flash();
     nextButton->flash(1500);
     previousButton->flash(1500);
@@ -306,7 +315,7 @@ void MainWindow::showBookmarks()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    Trace t("MainWindow::closeEvent");
+    TRACE;
     view->setLastBookmark();
     event->accept();
 }
@@ -344,7 +353,7 @@ void MainWindow::onSettingsChanged(const QString &key)
 
 void MainWindow::onPartLoadStart()
 {
-    Trace t("MainWindow::onPartLoadStart");
+    TRACE;
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
 #endif
@@ -352,7 +361,7 @@ void MainWindow::onPartLoadStart()
 
 void MainWindow::onPartLoadEnd(int index)
 {
-    Trace t("MainWindow::onPartLoadEnd");
+    TRACE;
     bool enablePrevious = false;
     bool enableNext = false;
     Book *book = Library::instance()->book(mCurrent);
@@ -371,13 +380,13 @@ void MainWindow::onPartLoadEnd(int index)
 
 void MainWindow::onAddBookmark(const QString &note)
 {
-    Trace t("MainWindow:onAddBookmark");
+    TRACE;
     view->addBookmark(note);
 }
 
 void MainWindow::onGoToBookmark(int index)
 {
-    Trace t("MainWindow::onGoToBookmark");
+    TRACE;
     Book *book = Library::instance()->book(mCurrent);
     view->goToBookmark(book->bookmarks()[index]);
 }
@@ -396,7 +405,7 @@ void MainWindow::showChapters()
 
 void MainWindow::onGoToChapter(int index)
 {
-    Trace t("MainWindow::onGoToChapter");
+    TRACE;
 
     Book *book = Library::instance()->book(mCurrent);
     if (book) {
@@ -422,7 +431,7 @@ void MainWindow::timerEvent(QTimerEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    Trace t("MainWindow::resizeEvent");
+    TRACE;
     progress->setGeometry(QRect(0, 0, e->size().width(), DORIAN_PROGRESS_HEIGHT));
 #if defined(Q_WS_MAEMO_5)
     previousButton->setGeometry(0,

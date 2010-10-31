@@ -10,7 +10,7 @@ Progress::Progress(QWidget *parent): QLabel(parent), progress(-1.0), timer(-1)
 
 void Progress::setProgress(qreal p)
 {
-    Trace t("Progress::setProgress");
+    TRACE;
     qDebug() << p;
     if (progress != p) {
         progress = p;

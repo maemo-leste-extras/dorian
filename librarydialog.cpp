@@ -131,7 +131,6 @@ void LibraryDialog::onRemove()
 
 void LibraryDialog::onRead()
 {
-    qDebug() << "LibraryDialog::onRead";
     QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
     if (current.isValid()) {
         Library::instance()->setNowReading(current);
@@ -147,7 +146,7 @@ void LibraryDialog::onDetails()
 
 void LibraryDialog::onItemActivated(const QModelIndex &index)
 {
-    qDebug() << "LibraryDialog::onItemActivated";
+    TRACE;
     QModelIndex libraryIndex = sortedLibrary->mapToSource(index);
     Book *book = Library::instance()->book(libraryIndex);
     (new InfoDialog(book, this))->exec();
@@ -192,7 +191,7 @@ QModelIndex LibraryDialog::selected() const
 
 void LibraryDialog::onAddFolder()
 {
-    Trace t("LibraryDialog::onAddFolder");
+    TRACE;
 
     // Get folder name
     Settings *settings = Settings::instance();

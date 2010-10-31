@@ -24,7 +24,7 @@ void BookDb::close()
 
 BookDb::BookDb()
 {
-    Trace t("BookDb::BookDb");
+    TRACE;
     bool shouldCreate = false;
     QFileInfo info(Platform::dbPath());
     if (!info.exists()) {
@@ -52,7 +52,7 @@ BookDb::~BookDb()
 
 void BookDb::create()
 {
-    Trace t("BookDb::create");
+    TRACE;
     QSqlQuery query;
     if (!query.exec("create table book "
                     "(name text primary key, content blob)")) {
@@ -63,7 +63,7 @@ void BookDb::create()
 
 QVariantHash BookDb::load(const QString &book)
 {
-    Trace t("BookDb::load");
+    TRACE;
     qDebug() << book;
     QVariantHash ret;
     QByteArray bytes;
@@ -80,15 +80,13 @@ QVariantHash BookDb::load(const QString &book)
         in >> ret;
         break;
     }
-    qDebug() << ret;
     return ret;
 }
 
 void BookDb::save(const QString &book, const QVariantHash &data)
 {
-    Trace t("BookDb::save");
+    TRACE;
     qDebug() << book;
-    qDebug() << data;
     QByteArray bytes;
     QDataStream out(&bytes, QIODevice::WriteOnly);
     out << data;
@@ -102,7 +100,7 @@ void BookDb::save(const QString &book, const QVariantHash &data)
 
 void BookDb::remove(const QString &book)
 {
-    Trace t("BookDb::remove");
+    TRACE;
     qDebug() << book;
     QSqlQuery query("delete from book where name = ?");
     query.bindValue(0, book);
@@ -113,7 +111,7 @@ void BookDb::remove(const QString &book)
 
 QStringList BookDb::books()
 {
-    Trace t("BookDb::books");
+    TRACE;
     QStringList ret;
     QSqlQuery query("select name from book");
     query.setForwardOnly(true);

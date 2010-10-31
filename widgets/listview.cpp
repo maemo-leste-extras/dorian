@@ -26,14 +26,14 @@ int ListView::contentsHeight() const
 
 QPoint ListView::scrollOffset() const
 {
-    Trace t("ListView::scrollOffset");
+    TRACE;
     qDebug() << "0," << offset;
     return QPoint(0, offset);
 }
 
 void ListView::setScrollOffset(const QPoint &o)
 {
-    Trace t("ListView::setScrollOffset");
+    TRACE;
     qDebug() << o;
     offset = o.y();
     QListView::scrollContentsBy(0, offset)

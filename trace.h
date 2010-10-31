@@ -1,10 +1,13 @@
 #ifndef TRACE_H
 #define TRACE_H
 
+#include <QtGlobal>
 #include <QtDebug>
 #include <QString>
 #include <QTime>
 #include <QEvent>
+
+#define TRACE Trace _(Q_FUNC_INFO)
 
 /** Trace helper. */
 class Trace

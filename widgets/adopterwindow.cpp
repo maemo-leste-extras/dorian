@@ -13,7 +13,7 @@
 AdopterWindow::AdopterWindow(QWidget *parent):
         QMainWindow(parent), grabbingZoomKeys(false), mainChild(0)
 {
-    Trace t("AdopterWindow::AdopterWindow");
+    TRACE;
 
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -45,7 +45,7 @@ AdopterWindow::AdopterWindow(QWidget *parent):
 
 void AdopterWindow::takeChildren(QWidget *main, const QList<QWidget *> &others)
 {
-    Trace t("AdopterWindow::takeChildren");
+    TRACE;
     leaveChildren();
     if (main) {
         mainChild = main;
@@ -62,7 +62,7 @@ void AdopterWindow::takeChildren(QWidget *main, const QList<QWidget *> &others)
 
 void AdopterWindow::leaveChildren()
 {
-    Trace t("AdopterWindow::leaveChildren");
+    TRACE;
     if (mainChild) {
         centralWidget()->layout()->removeWidget(mainChild);
         mainChild = 0;
@@ -71,21 +71,21 @@ void AdopterWindow::leaveChildren()
 
 void AdopterWindow::grabZoomKeys(bool grab)
 {
-    Trace t("AdopterWindow::grabZoomKeys");
+    TRACE;
     grabbingZoomKeys = grab;
     doGrabZoomKeys(grab);
 }
 
 void AdopterWindow::showEvent(QShowEvent *e)
 {
-    Trace t("AdopterWindow::showEvent");
+    TRACE;
     doGrabZoomKeys(grabbingZoomKeys);
     QMainWindow::showEvent(e);
 }
 
 void AdopterWindow::doGrabZoomKeys(bool grab)
 {
-    Trace t("AdopterWindow::doGrabZoomKeys");
+    TRACE;
 #ifdef Q_WS_MAEMO_5
     if (!isVisible()) {
         qDebug() << "Not visible - skipping";
@@ -131,7 +131,7 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
                                          const QString &iconName,
                                          const QString &text)
 {
-    Trace t("AdopterWindow::addToolBarAction");
+    TRACE;
     qDebug() << "icon" << iconName << "text" << text;
 #ifndef Q_OS_SYMBIAN
     return toolBar->addAction(QIcon(Platform::icon(iconName)),

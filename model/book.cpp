@@ -47,7 +47,7 @@ QString Book::path() const
 
 bool Book::open()
 {
-    Trace t("Book::open");
+    TRACE;
     qDebug() << path();
     close();
     clear();
@@ -68,7 +68,7 @@ bool Book::open()
 
 void Book::peek()
 {
-    Trace t("Book::peek");
+    TRACE;
     qDebug() << path();
     close();
     clear();
@@ -88,7 +88,7 @@ void Book::peek()
 
 void Book::close()
 {
-    Trace t("Book::close");
+    TRACE;
     content.clear();
     parts.clear();
     QDir::setCurrent(QDir::rootPath());
@@ -104,7 +104,7 @@ QString Book::tmpDir() const
 
 bool Book::extract(const QStringList &excludedExtensions)
 {
-    Trace t("Book::extract");
+    TRACE;
     bool ret = false;
     QString tmp = tmpDir();
     qDebug() << "Extracting" << mPath << "to" << tmp;
@@ -150,7 +150,7 @@ bool Book::extract(const QStringList &excludedExtensions)
 
 bool Book::parse()
 {
-    Trace t("Book::parse");
+    TRACE;
 
     // Parse OPS file
     bool ret = false;
@@ -276,7 +276,7 @@ void Book::clear()
 
 void Book::load()
 {
-    Trace t("Book::load");
+    TRACE;
     qDebug() << "path" << path();
 
     QVariantHash data = BookDb::instance()->load(path());
@@ -307,7 +307,7 @@ void Book::load()
 
 void Book::save()
 {
-    Trace t("Book::save");
+    TRACE;
 
     QVariantHash data;
     data["title"] = title;
@@ -332,7 +332,7 @@ void Book::save()
 
 void Book::setLastBookmark(int part, qreal position)
 {
-    Trace t("Book:setLastBookmark");
+    TRACE;
     qDebug() << "part" << part << "position" << position;
     mLastBookmark.part = part;
     mLastBookmark.pos = position;
@@ -364,7 +364,7 @@ QList<Book::Bookmark> Book::bookmarks() const
 
 QString Book::opsPath()
 {
-    Trace t("Book::opsPath");
+    TRACE;
     QString ret;
 
     QFile container(tmpDir() + "/META-INF/container.xml");
@@ -487,7 +487,7 @@ bool Book::extractMetaData()
 
 void Book::upgrade()
 {
-    Trace t("Book::upgrade");
+    TRACE;
 
     qDebug() << path();
 
@@ -529,6 +529,6 @@ void Book::upgrade()
 
 void Book::remove()
 {
-    Trace t("Book::remove");
+    TRACE;
     BookDb::instance()->remove(path());
 }

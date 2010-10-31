@@ -23,7 +23,7 @@ BookView::BookView(QWidget *parent):
     restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
     contentsHeight(0)
 {
-    Trace t("BookView::BookView");
+    TRACE;
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
     settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     settings()->setAttribute(QWebSettings::JavaEnabled, false);
@@ -85,12 +85,12 @@ BookView::BookView(QWidget *parent):
 
 BookView::~BookView()
 {
-    Trace t("BookView::~BookView");
+    TRACE;
 }
 
 void BookView::loadContent(int index)
 {
-    Trace t("BookView::loadContent");
+    TRACE;
     if (!mBook) {
         return;
     }
@@ -115,7 +115,7 @@ void BookView::loadContent(int index)
 
 void BookView::setBook(Book *book)
 {
-    Trace t("BookView::setBook");
+    TRACE;
 
     // Save position in current book
     setLastBookmark();
@@ -147,7 +147,7 @@ Book *BookView::book()
 
 void BookView::goPrevious()
 {
-    Trace t("BookView::goPrevious");
+    TRACE;
     if (mBook && (contentIndex > 0)) {
         mBook->setLastBookmark(contentIndex - 1, 0);
         loadContent(contentIndex - 1);
@@ -156,7 +156,7 @@ void BookView::goPrevious()
 
 void BookView::goNext()
 {
-    Trace t("BookView::goNext");
+    TRACE;
     if (mBook && (contentIndex < (mBook->parts.size() - 1))) {
         mBook->setLastBookmark(contentIndex + 1, 0);
         loadContent(contentIndex + 1);
@@ -165,7 +165,7 @@ void BookView::goNext()
 
 void BookView::setLastBookmark()
 {
-    Trace t("BookView::setLastBookmark");
+    TRACE;
     if (mBook) {
         int height = contentsHeight;
         int pos = page()->mainFrame()->scrollPosition().y();
@@ -177,7 +177,7 @@ void BookView::setLastBookmark()
 
 void BookView::restoreLastBookmark()
 {
-    Trace t("BookView::restoreLastBookmark");
+    TRACE;
     if (mBook) {
         goToBookmark(mBook->lastBookmark());
     }
@@ -185,7 +185,7 @@ void BookView::restoreLastBookmark()
 
 void BookView::goToBookmark(const Book::Bookmark &bookmark)
 {
-    Trace t("BookView::goToBookmark");
+    TRACE;
     if (mBook) {
         if (bookmark.part != contentIndex) {
             qDebug () << "Loading new part" << bookmark.part;
@@ -201,7 +201,7 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
 
 void BookView::onLoadFinished(bool ok)
 {
-    Trace t("BookView::onLoadFinished");
+    TRACE;
     if (!ok) {
         qDebug() << "Not OK";
         return;
@@ -214,7 +214,7 @@ void BookView::onLoadFinished(bool ok)
 
 void BookView::onSettingsChanged(const QString &key)
 {
-    Trace t("BookView::onSettingsChanged " + key);
+    TRACE;
     if (key == "zoom") {
         setZoomFactor(Settings::instance()->value(key).toFloat() / 100.);
     }
@@ -289,7 +289,7 @@ void BookView::wheelEvent(QWheelEvent *e)
 
 void BookView::addBookmark(const QString &note)
 {
-    Trace t("BookView::addBookmark");
+    TRACE;
     if (!mBook) {
         return;
     }
@@ -360,7 +360,7 @@ void BookView::onContentsSizeChanged(const QSize &size)
 
 void BookView::leaveEvent(QEvent *e)
 {
-    Trace t("BookView::leaveEvent");
+    TRACE;
     // Save current position, to be restored later
     setLastBookmark();
     QWebView::leaveEvent(e);
@@ -368,7 +368,7 @@ void BookView::leaveEvent(QEvent *e)
 
 void BookView::enterEvent(QEvent *e)
 {
-    Trace t("BookView::enterEvent");
+    TRACE;
     // Restore position saved at Leave event. This seems to be required,
     // after temporarily switching from portrait to landscape and back
     restoreLastBookmark();
@@ -444,7 +444,7 @@ void BookView::goPreviousPage()
 
 void BookView::goNextPage()
 {
-    Trace t("BookView::goNextPage");
+    TRACE;
     QWebFrame *frame = page()->mainFrame();
     int pos = frame->scrollPosition().y();
     frame->scroll(0, height());

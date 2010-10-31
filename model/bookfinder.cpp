@@ -11,7 +11,7 @@ BookFinder::BookFinder(QObject *parent): QObject(parent)
 
 void BookFinder::find(const QString &path, const QStringList &books)
 {
-    Trace t("BookFinder::find");
+    TRACE;
     QStringList booksFound;
     int toAdd = 0;
     int added = 0;

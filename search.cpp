@@ -35,7 +35,7 @@ Search::Search(): QObject(0), reply(0), downloadReply(0)
 
 void Search::start(const Query &query)
 {
-    Trace t("Search::start");
+    TRACE;
 
     emit beginSearch();
 
@@ -62,7 +62,7 @@ QList<Search::Result> Search::results()
 
 void Search::download(const Search::Result &result, const QString &fileName)
 {
-    Trace t("Search::download");
+    TRACE;
     downloadResult = result;
     downloadFileName = fileName;
     qDebug() << "UID" << result.id;
@@ -78,7 +78,7 @@ void Search::download(const Search::Result &result, const QString &fileName)
 
 void Search::finished()
 {
-    Trace t("Search::finished");
+    TRACE;
 
     if (!reply) {
         return;
@@ -129,7 +129,7 @@ void Search::finished()
 
 void Search::downloadFinished()
 {
-    Trace t("Search::downloadFinished");
+    TRACE;
 
     if (!downloadReply) {
         return;

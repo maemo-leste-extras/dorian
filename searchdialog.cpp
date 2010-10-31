@@ -23,7 +23,7 @@ SearchDialog::SearchDialog(QWidget *parent): Dyalog(parent)
 
 Search::Query SearchDialog::query()
 {
-    Trace t("SearchDialog::query");
+    TRACE;
     Search::Query ret;
     ret.title = title->text();
     ret.author = author->text();

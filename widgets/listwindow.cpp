@@ -56,7 +56,7 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), list(0)
 
 void ListWindow::addList(ListView *listView)
 {
-    Trace t("ListWindow::addList");
+    TRACE;
     list = listView;
 #if defined(Q_WS_MAEMO_5)
     list->installEventFilter(this);
@@ -89,7 +89,7 @@ void ListWindow::addAction(const QString &title, QObject *receiver,
                            const char *slot, const QString &iconName,
                            QDialogButtonBox::ButtonRole role)
 {
-    Trace t("ListWindow::addAction");
+    TRACE;
 #ifdef Q_WS_MAEMO_5
     Q_UNUSED(role);
     QPushButton *button =
@@ -113,7 +113,7 @@ void ListWindow::addAction(const QString &title, QObject *receiver,
 void ListWindow::addItemAction(const QString &title, QObject *receiver,
                                const char *slot)
 {
-    Trace t("ListWindow::addItemAction");
+    TRACE;
 #ifdef Q_WS_MAEMO_5
     popup->addAction(title, receiver, slot);
 #elif defined Q_OS_SYMBIAN
@@ -190,7 +190,6 @@ bool ListWindow::eventFilter(QObject *obj, QEvent *event)
 
 void ListWindow::onModelChanged()
 {
-    qDebug() << "ListWindow::onModelChanged";
     list->setMinimumHeight(list->contentsHeight());
 }
 

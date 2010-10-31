@@ -7,7 +7,7 @@
 ProgressDialog::ProgressDialog(const QString &label, QWidget *parent):
     QProgressDialog(label, "", 0, 0, parent)
 {
-    Trace t("ProgressDialog::ProgressDialog");
+    TRACE;
     setMinimumDuration(0);
     setWindowModality(Qt::WindowModal);
     setCancelButton(0);
