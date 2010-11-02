@@ -13,6 +13,7 @@
 class QModelIndex;
 class Progress;
 class QAbstractKineticScroller;
+class ProgressDialog;
 
 /** Visual representation of a book. */
 class BookView: public QWebView
@@ -81,13 +82,13 @@ private:
     /** Go to a given (relative) position in current part. */
     void goToPosition(qreal position);
 
-    /** Show progress. */
+    /** Show reading progress. */
     void showProgress();
 
     int contentIndex;   /**< Current part in book. */
     Book *mBook;        /**< Book to show. */
     bool restorePositionAfterLoad;
-                        /**< If true, restoring position after load is needed. */
+                        /**< If true, restore current position after load. */
     qreal positionAfterLoad;
                         /**< Position to be restored after load. */
     QImage bookmarkImage;

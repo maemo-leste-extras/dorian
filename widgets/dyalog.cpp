@@ -2,6 +2,10 @@
 
 #include "dyalog.h"
 
+#ifdef Q_OS_SYMBIAN
+#include "flickcharm.h"
+#endif
+
 Dyalog::Dyalog(QWidget *parent, bool showButtons_):
     QDialog(parent, Qt::Dialog | Qt::WindowTitleHint |
                     Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint),
@@ -9,9 +13,12 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
 {
     scroller = new QScrollArea(this);
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     scroller->setProperty("FingerScrollable", true);
     scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#elif defined(Q_OS_SYMBIAN)
+    FlickCharm *charm = new FlickCharm(this);
+    charm->activateOn(scroller);
 #else
     scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 #endif

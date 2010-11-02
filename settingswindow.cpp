@@ -3,6 +3,11 @@
 #include "settingswindow.h"
 #include "settings.h"
 #include "toolbuttonbox.h"
+#include "platform.h"
+
+#ifdef Q_OS_SYMBIAN
+#include "flickcharm.h"
+#endif
 
 #ifdef Q_OS_SYMBIAN
 const char *DEFAULT_ORIENTATION = "portrait";
@@ -14,7 +19,7 @@ const int ZOOM_MIN = 75;
 const int ZOOM_MAX = 250;
 const int ZOOM_STEP = 25;
 
-SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
+SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 {
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -24,9 +29,12 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
     Settings *settings = Settings::instance();
     QScrollArea *scroller = new QScrollArea(this);
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     scroller->setProperty("FingerScrollable", true);
     scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#elif defined(Q_OS_SYMBIAN)
+    FlickCharm *charm = new FlickCharm(this);
+    charm->activateOn(scroller);
 #else
     scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 #endif
@@ -37,9 +45,11 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     QVBoxLayout *layout = new QVBoxLayout(contents);
     contents->setLayout(layout);
 
+#ifndef Q_OS_SYMBIAN
     QCheckBox *backlight = new QCheckBox(tr("Keep backlight on"), contents);
     layout->addWidget(backlight);
     backlight->setChecked(settings->value("lightson", false).toBool());
+#endif
 
 #ifndef Q_OS_SYMBIAN
     QCheckBox *grabVolume =
@@ -78,10 +88,11 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     layout->addWidget(colorLabel);
     ToolButtonBox *box = new ToolButtonBox(this);
     layout->addWidget(box);
-    box->addButton(SchemeDefault, tr("Default"), ":/icons/style-default.png");
-    box->addButton(SchemeNight, tr("Night"), ":/icons/style-night.png");
-    box->addButton(SchemeDay, tr("Day"), ":/icons/style-day.png");
-    box->addButton(SchemeSand, tr("Sand"), ":/icons/style-sand.png");
+    box->addButton(SchemeDefault, tr("Default"),
+                   Platform::icon("style-default"));
+    box->addButton(SchemeNight, tr("Night"), Platform::icon("style-night"));
+    box->addButton(SchemeDay, tr("Day"), Platform::icon("style-day"));
+    box->addButton(SchemeSand, tr("Sand"), Platform::icon("style-sand"));
     box->addStretch();
     QString scheme = settings->value("scheme", "default").toString();
     if (scheme == "night") {
@@ -94,6 +105,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
         box->toggle(SchemeDefault);
     }
 
+#ifndef Q_OS_SYMBIAN
     QLabel *orientationLabel = new QLabel(tr("Orientation:"), contents);
     layout->addWidget(orientationLabel);
     orientationBox = new ToolButtonBox(this);
@@ -110,6 +122,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
     } else {
         orientationBox->toggle(OrientationLandscape);
     }
+#endif // !Q_OS_SYMBIAN
 
     layout->addStretch();
     scroller->setWidget(contents);
@@ -118,9 +131,9 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
 
     setCentralWidget(scroller);
 
+#ifndef Q_OS_SYMBIAN
     connect(backlight, SIGNAL(toggled(bool)),
             this, SLOT(onLightsToggled(bool)));
-#ifndef Q_OS_SYMBIAN
     connect(grabVolume, SIGNAL(toggled(bool)),
             this, SLOT(onGrabVolumeToggled(bool)));
 #endif
@@ -130,8 +143,10 @@ SettingsWindow::SettingsWindow(QWidget *parent):  QMainWindow(parent)
             this, SLOT(onCurrentFontChanged(const QFont &)));
     connect(box, SIGNAL(buttonClicked(int)),
             this, SLOT(onSchemeButtonClicked(int)));
+#ifndef Q_OS_SYMBIAN
     connect(orientationBox, SIGNAL(buttonClicked(int)),
             this, SLOT(onOrientationButtonClicked(int)));
+#endif
 
 #ifdef Q_OS_SYMBIAN
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);

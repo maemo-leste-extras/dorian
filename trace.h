@@ -7,7 +7,15 @@
 #include <QTime>
 #include <QEvent>
 
-#define TRACE Trace _(Q_FUNC_INFO)
+#ifdef Q_OS_SYMBIAN
+#   ifdef __PRETTY_FUNCTION__
+#       define TRACE Trace _(__PRETTY_FUNCTION__)
+#   else
+#       define TRACE Trace _(__FUNCTION__)
+#   endif
+#else
+#   define TRACE Trace _(Q_FUNC_INFO)
+#endif
 
 /** Trace helper. */
 class Trace

@@ -44,5 +44,9 @@
         <file>books/2BR02B.epub</file>
         <file>icons/search.png</file>
         <file>icons/mac/about.png</file>
+        <file>icons/symbian/style-sand.png</file>
+        <file>icons/symbian/style-day.png</file>
+        <file>icons/symbian/style-default.png</file>
+        <file>icons/symbian/style-night.png</file>
     </qresource>
 </RCC>

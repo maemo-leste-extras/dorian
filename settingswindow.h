@@ -1,9 +1,10 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
-#include <QMainWindow>
 #include <QLabel>
 #include <QSlider>
+
+#include "adopterwindow.h"
 
 class QPushButton;
 class QFontComboBox;
@@ -14,7 +15,7 @@ class QLabel;
 class ToolButtonBox;
 
 /** Display settings. */
-class SettingsWindow: public QMainWindow
+class SettingsWindow: public AdopterWindow
 {
     Q_OBJECT
 

@@ -9,7 +9,8 @@ ToolButtonBox::ToolButtonBox(QWidget *parent): QFrame(parent)
     setLayout(layout);
     group = new QButtonGroup(this);
     group->setExclusive(true);
-    connect(group, SIGNAL(buttonClicked(int)), this, SIGNAL(buttonClicked(int)));
+    connect(group, SIGNAL(buttonClicked(int)), this,
+            SIGNAL(buttonClicked(int)));
 }
 
 void ToolButtonBox::addButton(int id, const QString &title, const QString &icon)
@@ -19,7 +20,13 @@ void ToolButtonBox::addButton(int id, const QString &title, const QString &icon)
         button->setToolButtonStyle(Qt::ToolButtonTextOnly);
     } else {
         button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+#ifdef Q_OS_SYMBIAN
+        button->setIconSize(QSize(71, 81));
+        button->setFixedWidth(77);
+        qDebug() << button->palette();
+#else
         button->setIconSize(QSize(81, 81));
+#endif
         button->setIcon(QIcon(icon));
     }
     button->setText(title);

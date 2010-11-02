@@ -13,8 +13,10 @@
 #   define DORIAN_BASE ".dorian"
 #endif
 
-#ifdef Q_WS_MAC
+#if defined(Q_WS_MAC)
 #   define DORIAN_ICON_PREFIX ":/icons/mac/"
+#elif defined(Q_OS_SYMBIAN)
+#   define DORIAN_ICON_PREFIX ":/icons/symbian/"
 #else
 #   define DORIAN_ICON_PREFIX ":/icons/"
 #endif
@@ -31,7 +33,12 @@ QString Platform::dbPath()
 
 QString Platform::icon(const QString &name)
 {
-    return QString(DORIAN_ICON_PREFIX) + name + ".png";
+    QString iconName = QString(DORIAN_ICON_PREFIX) + name + ".png";
+    if (QFile(iconName).exists()) {
+        return iconName;
+    } else {
+        return QString(":/icons/") + name + ".png";
+    }
 }
 
 void Platform::restart(char *argv[])

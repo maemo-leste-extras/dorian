@@ -14,6 +14,7 @@
 #include "settings.h"
 #include "trace.h"
 #include "progress.h"
+#include "progressdialog.h"
 
 BookView::BookView(QWidget *parent):
     QWebView(parent), contentIndex(-1), mBook(0),
