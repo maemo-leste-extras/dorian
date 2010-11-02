@@ -1,6 +1,6 @@
+#include <QFileInfoList>
 #include <QStringList>
 #include <QDir>
-#include <QFileInfoList>
 
 #include "bookfinder.h"
 #include "trace.h"

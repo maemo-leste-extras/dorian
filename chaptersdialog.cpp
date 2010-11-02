@@ -1,4 +1,4 @@
-#include <QtGui>
+#include <QStringListModel>
 
 #include "chaptersdialog.h"
 #include "book.h"

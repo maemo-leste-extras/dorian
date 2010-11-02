@@ -1,5 +1,3 @@
-#include <QFileInfo>
-
 #include "bookdb.h"
 #include "platform.h"
 #include "trace.h"

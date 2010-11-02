@@ -2,6 +2,8 @@
 #define SETTINGSWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
+#include <QSlider>
 
 class QPushButton;
 class QFontComboBox;

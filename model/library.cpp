@@ -1,7 +1,3 @@
-#include <QSettings>
-#include <QDebug>
-#include <QFileInfo>
-
 #include "library.h"
 #include "book.h"
 #include "trace.h"
@@ -220,7 +216,7 @@ void Library::upgrade()
     TRACE;
     QSettings settings;
     QString oldVersion = settings.value("lib/version").toString();
-    if (/* true */ oldVersion.isEmpty()) {
+    if (oldVersion.isEmpty()) {
         int size = settings.value("lib/size").toInt();
         emit beginUpgrade(size);
         for (int i = 0; i < size; i++) {

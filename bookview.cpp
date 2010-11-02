@@ -1,9 +1,6 @@
-#include <QDebug>
-#include <QWebFrame>
-#include <QMouseEvent>
-#include <QFile>
 #include <QDir>
-#include <QTimer>
+#include <QtGui>
+#include <QWebFrame>
 
 #if defined(Q_WS_MAEMO_5)
 #   include <QAbstractKineticScroller>

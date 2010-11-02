@@ -1,9 +1,9 @@
+#include <QtGlobal>
+#include <QDir>
+
 #if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
 #include <unistd.h>
 #endif
-
-#include <QDir>
-#include <QtGui>
 
 #include "platform.h"
 

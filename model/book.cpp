@@ -1,12 +1,4 @@
-#include <QDir>
-#include <QString>
-#include <QDebug>
-#include <QtXml>
 #include <qtextdocument.h>  // Qt::escape is currently defined here...
-#include <QDirIterator>
-#include <QFileInfo>
-#include <QtAlgorithms>
-#include <QVariantHash>
 
 #include "book.h"
 #include "opshandler.h"

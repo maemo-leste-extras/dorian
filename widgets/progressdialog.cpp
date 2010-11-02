@@ -1,4 +1,3 @@
-#include <QString>
 #include <QtGui>
 
 #include "progressdialog.h"

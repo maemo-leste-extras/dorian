@@ -6,9 +6,9 @@
 #   include <X11/Xatom.h>
 #endif // Q_WS_MAEMO_5
 
+#include "trace.h"
 #include "adopterwindow.h"
 #include "platform.h"
-#include "trace.h"
 
 AdopterWindow::AdopterWindow(QWidget *parent):
         QMainWindow(parent), grabbingZoomKeys(false), mainChild(0)

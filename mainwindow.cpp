@@ -1,11 +1,4 @@
 #include <QtGui>
-#include <QtDebug>
-#include <QDir>
-#include <QApplication>
-#include <QFileInfo>
-#include <QStringList>
-#include <QWebView>
-#include <QWebFrame>
 
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>

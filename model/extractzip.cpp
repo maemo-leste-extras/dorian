@@ -1,8 +1,6 @@
-#include <QDebug>
 #include <QFile>
 #include <QDir>
-#include <QString>
-#include <QStringList>
+#include <QDebug>
 
 #include "extractzip.h"
 #include "unzip/unzip.h"

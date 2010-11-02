@@ -1,11 +1,11 @@
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QWebFrame>
+#include <QNetworkReply>
+#include <QtGui>
+#include <QFile>
+#include <QNetworkAccessManager>
 #include <QWebPage>
 #include <QWebElementCollection>
-#include <QWebElement>
-#include <QFile>
+#include <QWebFrame>
 
 #include "search.h"
 #include "platform.h"

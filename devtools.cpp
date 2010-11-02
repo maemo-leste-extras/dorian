@@ -1,5 +1,4 @@
 #include <QtGui>
-#include <QDebug>
 
 #include "devtools.h"
 #include "trace.h"

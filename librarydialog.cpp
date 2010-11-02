@@ -1,8 +1,5 @@
-#include <QtGui>
-#include <QDebug>
-#include <QFileInfo>
 #include <QDir>
-#include <QModelIndex>
+#include <QtGui>
 
 #ifdef Q_WS_MAEMO_5
 #include <QtMaemo5/QMaemo5InformationBox>
