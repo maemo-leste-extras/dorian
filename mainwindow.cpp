@@ -99,6 +99,8 @@ MainWindow::MainWindow(QWidget *parent):
     addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
                                         "view-fullscreen", tr("Full screen"));
+#else
+    (void)addToolBarAction(this, SLOT(close()), "", tr("Exit"));
 #endif
 
     // Buttons on top of the book view

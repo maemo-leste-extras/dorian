@@ -131,12 +131,12 @@ win32 {
 }
 
 symbian {
-    ICON = $$PWD/pkg/symbian/book.svgt
+    ICON = $$PWD/pkg/symbian/book.svg
     TARGET.UID3 = 0xEA633557
     TARGET.CAPABILITY = NetworkServices
     TARGET.EPOCHEAPSIZE = 0x080000 0x4000000
     # FIXME: Include path to OpenC ZLIB?
-    INCLUDEPATH += c:/Qt/4.7.0/src/3rdparty/zlib
+    INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
     HEADERS += widgets/flickcharm.h
     SOURCES += widgets/flickcharm.cpp
 }

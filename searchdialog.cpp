@@ -6,7 +6,7 @@
 
 SearchDialog::SearchDialog(QWidget *parent): Dyalog(parent)
 {
-    setWindowTitle(tr("SearchDialog"));
+    setWindowTitle(tr("Search the Web"));
 
     QLabel *titleLabel = new QLabel(tr("Title:"), this);
     title = new QLineEdit(this);
