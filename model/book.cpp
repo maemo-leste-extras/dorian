@@ -429,19 +429,22 @@ int Book::chapterFromPart(int index)
     return ret;
 }
 
-int Book::partFromChapter(int index)
+int Book::partFromChapter(int index, QString &fragment)
 {
     Trace t("Book::partFromChapter");
+    fragment.clear();
     QString id = chapters[index];
     QString href = content[id].href;
     int hashPos = href.indexOf("#");
     if (hashPos != -1) {
+        fragment = href.mid(hashPos);
         href = href.left(hashPos);
     }
 
     qDebug() << "Chapter" << index;
     qDebug() << " id" << id;
     qDebug() << " href" << href;
+    qDebug() << " fragment" << fragment;
 
     for (int i = 0; i < parts.size(); i++) {
         QString partId = parts[i];

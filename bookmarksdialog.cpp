@@ -75,8 +75,7 @@ void BookmarksDialog::onAdd()
 {
     bool ok;
     QString text = QInputDialog::getText(this, tr("Add bookmark"),
-                                         tr("Note:"), QLineEdit::Normal,
-                                         QString(), &ok);
+        tr("Note (optional):"), QLineEdit::Normal, QString(), &ok);
     if (ok) {
         emit addBookmark(text);
         close();

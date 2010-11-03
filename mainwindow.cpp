@@ -377,6 +377,13 @@ void MainWindow::onAddBookmark(const QString &note)
 {
     TRACE;
     view->addBookmark(note);
+#ifdef Q_WS_MAEMO_5
+    QMaemo5InformationBox::information(this,
+        tr("Bookmarked current position"), QMaemo5InformationBox::DefaultTimeout);
+#else
+    (void)QMessageBox::information(this, tr("Dorian"),
+        tr("Bookmarked current position"), QMessageBox::Ok);
+#endif // Q_WS_MAEMO_5}
 }
 
 void MainWindow::onGoToBookmark(int index)
@@ -404,9 +411,10 @@ void MainWindow::onGoToChapter(int index)
 
     Book *book = Library::instance()->book(mCurrent);
     if (book) {
-        int partIndex = book->partFromChapter(index);
+        QString fragment;
+        int partIndex = book->partFromChapter(index, fragment);
         if (partIndex != -1) {
-            view->goToBookmark(Book::Bookmark(partIndex, 0));
+            view->goToPart(partIndex, fragment);
         }
     }
 }
@@ -462,7 +470,7 @@ void MainWindow::about()
     label->setText(tr("<b>Dorian %1</b><br><br>Copyright &copy; 2010 "
         "Akos Polster &lt;akos@pipacs.com&gt;<br>"
         "Licensed under GNU General Public License, Version 3<br>"
-        "Source code: <a href='https://garage.maemo.org/projects/dorian/'>"
+        "Source code:<br><a href='https://garage.maemo.org/projects/dorian/'>"
         "garage.maemo.org/projects/dorian</a>").arg(Platform::version()));
     aboutDialog->addWidget(label);
     aboutDialog->addStretch();

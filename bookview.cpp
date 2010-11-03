@@ -93,8 +93,7 @@ void BookView::loadContent(int index)
     QString contentFile(mBook->content[mBook->parts[index]].href);
     if (mBook->parts[index] == "error") {
         setHtml(contentFile);
-    }
-    else {
+    } else {
         loaded = false;
         emit partLoadStart(index);
         QUrl u = QUrl::fromLocalFile(QDir(mBook->rootPath()).
@@ -188,6 +187,33 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
         } else {
             goToPosition(bookmark.pos);
         }
+    }
+}
+
+void BookView::goToPart(int part, const QString &fragment)
+{
+    TRACE;
+    if (mBook) {
+        if (part != contentIndex) {
+            qDebug() << "Loading new part" << part;
+            restoreFragmentAfterLoad = true;
+            fragmentAfterLoad = fragment;
+            loadContent(part);
+        } else {
+            goToFragment(fragment);
+            showProgress();
+        }
+    }
+}
+
+void BookView::goToFragment(const QString &fragment)
+{
+    TRACE;
+    if (!fragment.isEmpty()) {
+        QVariant ret = page()->mainFrame()->evaluateJavaScript(
+                QString("window.location='") + fragment + "'");
+        qDebug() << ret;
+        setLastBookmark();
     }
 }
 
@@ -344,13 +370,20 @@ void BookView::addJavaScriptObjects()
 
 void BookView::onContentsSizeChanged(const QSize &size)
 {
+    TRACE;
     contentsHeight = size.height();
-    if (restorePositionAfterLoad) {
-        qDebug() << "BookView::onContentSizeChanged: Time to restore";
-        restorePositionAfterLoad = false;
+    if (restoreFragmentAfterLoad) {
+        qDebug() << "Restorint to fragment" << fragmentAfterLoad;
+        goToFragment(fragmentAfterLoad);
+    } else if (restorePositionAfterLoad) {
+        qDebug() << "Restoring to position";
         goToPosition(positionAfterLoad);
     }
+    restorePositionAfterLoad = false;
+    restoreFragmentAfterLoad = false;
 }
+
+#ifdef Q_WS_MAEMO_5
 
 void BookView::leaveEvent(QEvent *e)
 {
@@ -368,6 +401,8 @@ void BookView::enterEvent(QEvent *e)
     restoreLastBookmark();
     QWebView::enterEvent(e);
 }
+
+#endif // Q_WS_MAEMO_5
 
 void BookView::goToPosition(qreal position)
 {

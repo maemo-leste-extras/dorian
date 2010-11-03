@@ -107,8 +107,8 @@ public:
     /** Get chapter index from part index. */
     int chapterFromPart(int index);
 
-    /** Get part index from chapter index. */
-    int partFromChapter(int index);
+    /** Get part index and URL fragment from chapter index. */
+    int partFromChapter(int index, QString &fragment);
 
     /** Get progress (0..1) corresponding to part index and part position. */
     qreal getProgress(int part, qreal position);

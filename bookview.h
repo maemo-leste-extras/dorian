@@ -29,12 +29,14 @@ public:
     void addBookmark(const QString &note);
     void setLastBookmark();
     void restoreLastBookmark();
+    void goToPart(int part, const QString &fragment);
+    void goToFragment(const QString &fragment);
 
 signals:
     void partLoadStart(int index);
     void partLoadEnd(int index);
 
-    /** Signal button press when the real event has been suppressed. */
+    /** Signal button press, when the real event has been suppressed. */
     void suppressedMouseButtonPress();
 
     /** Signal progress in reading the book. */
@@ -67,8 +69,10 @@ protected:
     void mousePressEvent(QMouseEvent *e);
     void wheelEvent(QWheelEvent *);
     bool eventFilter(QObject *o, QEvent *e);
+#ifdef Q_WS_MAEMO_5
     void leaveEvent(QEvent *e);
     void enterEvent(QEvent *e);
+#endif // Q_WS_MAEMO_5
     void timerEvent(QTimerEvent *e);
     void keyPressEvent(QKeyEvent *e);
 
@@ -91,6 +95,10 @@ private:
                         /**< If true, restore current position after load. */
     qreal positionAfterLoad;
                         /**< Position to be restored after load. */
+    bool restoreFragmentAfterLoad;
+                        /**< If true, restore fragment location after load. */
+    QString fragmentAfterLoad;
+                        /**< Fragment location to be restored after load. */
     QImage bookmarkImage;
                         /**< Bookmark icon pre-loaded. */
     bool loaded;        /**< True if content has been loaded. */
