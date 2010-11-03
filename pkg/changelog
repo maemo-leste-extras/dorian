@@ -2,6 +2,7 @@ dorian (0.3.3-1) unstable; urgency=low
 
   * Fix font scaling on Symbian
   * Jump to the exact position on page, as described in TOC
+  * Confirm bookmark creation
 
  -- Akos Polster <akos@pipacs.com>  Wed,  3 Nov 2010 02:00:00 +0100
 
