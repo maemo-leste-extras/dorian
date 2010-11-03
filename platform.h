@@ -12,6 +12,7 @@ public:
     static void restart(char *argv[]);
     static QString version();
     static QString downloadDir();
+    static QString defaultFont();
 };
 
 #endif // PLATFORM_H

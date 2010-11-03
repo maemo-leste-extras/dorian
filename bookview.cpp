@@ -15,6 +15,7 @@
 #include "trace.h"
 #include "progress.h"
 #include "progressdialog.h"
+#include "platform.h"
 
 BookView::BookView(QWidget *parent):
     QWebView(parent), contentIndex(-1), mBook(0),
@@ -29,7 +30,8 @@ BookView::BookView(QWidget *parent):
     settings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, true);
     settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, false);
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
-    settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, false);
+    settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled,
+                             false);
     settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled,
                              false);
     settings()->setAttribute(QWebSettings::LocalStorageEnabled, false);
@@ -60,15 +62,7 @@ BookView::BookView(QWidget *parent):
             this, SLOT(onSettingsChanged(const QString &)));
     Settings *s = Settings::instance();
     s->setValue("zoom", s->value("zoom", 160));
-    s->setValue("font", s->value("font",
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_X11)
-                                 "Serif"
-#elif defined(Q_WS_MAC)
-                                 "Hoefler Text"
-#else
-                                 "Times New Roman"
-#endif
-                                 ));
+    s->setValue("font", s->value("font", Platform::defaultFont()));
     s->setValue("scheme", s->value("scheme", "default"));
     setBook(0);
 
@@ -213,11 +207,13 @@ void BookView::onLoadFinished(bool ok)
 void BookView::onSettingsChanged(const QString &key)
 {
     TRACE;
+    qDebug() << key << Settings::instance()->value(key);
+
     if (key == "zoom") {
         setZoomFactor(Settings::instance()->value(key).toFloat() / 100.);
     }
     else if (key == "font") {
-        QString face = Settings::instance()->value("font").toString();
+        QString face = Settings::instance()->value(key).toString();
         settings()->setFontFamily(QWebSettings::StandardFont, face);
     }
     else if (key == "scheme") {

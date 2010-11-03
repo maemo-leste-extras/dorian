@@ -4,6 +4,7 @@
 #include "settings.h"
 #include "toolbuttonbox.h"
 #include "platform.h"
+#include "trace.h"
 
 #ifdef Q_OS_SYMBIAN
 #include "flickcharm.h"
@@ -210,20 +211,23 @@ void SettingsWindow::onOrientationButtonClicked(int id)
 #endif // Q_WS_MAEMO_5
 }
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
 
 void SettingsWindow::closeEvent(QCloseEvent *e)
 {
+    TRACE;
     Settings *settings = Settings::instance();
     settings->setValue("zoom", zoomSlider->value());
     settings->setValue("font", fontButton->currentFont().family());
+#ifndef Q_OS_SYMBIAN
     settings->setValue("orientation",
         (orientationBox->checkedId() == OrientationLandscape)?
         "landscape": "portrait");
+#endif // Q_OS_SYMBIAN
     e->accept();
 }
 
-#endif // Q_WS_MAEMO_5
+#endif // Q_WS_MAEMO_5 || Q_OS_SYMBIAN
 
 void SettingsWindow::onLightsToggled(bool value)
 {

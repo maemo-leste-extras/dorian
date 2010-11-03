@@ -35,7 +35,7 @@ public slots:
     void onGrabVolumeToggled(bool enable);
 
 protected:
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     void closeEvent(QCloseEvent *e);
 #endif
 

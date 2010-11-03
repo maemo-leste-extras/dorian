@@ -2,7 +2,7 @@
 #include <QDir>
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
-#include <unistd.h>
+#   include <unistd.h>
 #endif
 
 #include "platform.h"
@@ -59,4 +59,17 @@ QString Platform::version()
 QString Platform::downloadDir()
 {
     return QDir::home().absoluteFilePath("Books");
+}
+
+QString Platform::defaultFont()
+{
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_X11)
+    return QString("Serif");
+#elif defined(Q_WS_MAC)
+    return QString("Hoefler Text");
+#elif defined Q_WS_S60
+    return QString("Nokia Sans S60");
+#else
+    return QString("Times New Roman");
+#endif
 }

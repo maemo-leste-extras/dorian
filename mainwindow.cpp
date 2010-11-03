@@ -317,7 +317,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     if (key == "orientation") {
         QString value = Settings::instance()->value(key).toString();
         qDebug() << "MainWindow::onSettingsChanged: orientation" << value;
