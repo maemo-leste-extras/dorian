@@ -9,8 +9,45 @@
 class NcxHandler: public XmlHandler
 {
 public:
-    NcxHandler(Book &b): book(b) {
+    struct TreeItem
+    {
+        TreeItem(const QString &i, TreeItem *p = 0): id(i), parent(p) {
+            if (parent) {
+                parent->children.append(this);
+                depth = parent->depth + 1;
+            } else {
+                depth = 0;
+            }
+        }
+        ~TreeItem() {
+            qDeleteAll(children);
+        }
+        void addToBook(Book &book) {
+            Book::ContentItem contentItem;
+            contentItem.href = href;
+            contentItem.name = QString(" ").repeated(depth) + name;
+            contentItem.size = 0;
+            book.content[id] = contentItem;
+            book.chapters.append(id);
+            qDebug() << "" << id << "name" << name << "href" << href;
+            foreach (TreeItem *child, children) {
+                child->addToBook(book);
+            }
+        }
+        QList<TreeItem *> children;
+        QString id;
+        QString href;
+        QString name;
+        TreeItem *parent;
+        int depth;
+    };
+
+    NcxHandler(Book &b): book(b), rootItem(0), currentItem(0) {
         book.chapters.clear();
+    }
+
+    ~NcxHandler() {
+        delete rootItem;
     }
 
     bool endElement(const QString &namespaceUri, const QString &name,
@@ -18,15 +55,22 @@ public:
         (void)namespaceUri;
         (void)qName;
         if (name == "text") {
-            contentTitle = currentText;
+            if (currentItem) {
+                if (currentItem) {
+                    currentItem->name = currentText;
+                }
+            }
         } else if (name == "navPoint") {
-            qDebug() << "NcxHander::endElement: url" << contentUrl << "title"
-                    << contentTitle << "id" << contentId;
-            Book::ContentItem item;
-            item.href = contentUrl;
-            item.name = contentTitle;
-            book.content[contentId] = item;
-            book.chapters.append(contentId);
+            if (currentItem) {
+                qDebug() << "NcxHandler::endElement  " << currentItem->id;
+                currentItem = currentItem->parent;
+                if (currentItem == 0) {
+                    qDebug() << " Root item reached, dumping tree";
+                    rootItem->addToBook(book);
+                    delete rootItem;
+                    rootItem = 0;
+                }
+            }
         }
         return true;
     }
@@ -37,9 +81,16 @@ public:
         (void)qName;
         currentText = "";
         if (name == "navPoint") {
-            contentId = attrs.value("id");
+            TreeItem *item = new TreeItem(attrs.value("id"), currentItem);
+            qDebug() << "NcxHandler::startElement" << attrs.value("id");
+            if (!rootItem) {
+                rootItem = item;
+            }
+            currentItem = item;
         } else if (name == "content") {
-            contentUrl = attrs.value("src");
+            if (currentItem) {
+                currentItem->href = attrs.value("src");
+            }
         }
         return true;
     }
@@ -49,6 +100,8 @@ private:
     QString contentId;
     QString contentUrl;
     QString contentTitle;
+    TreeItem *rootItem;
+    TreeItem *currentItem;
 };
 
 #endif // NCXHANDLER_H

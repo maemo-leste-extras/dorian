@@ -2,6 +2,9 @@ dorian (0.3.2-1) unstable; urgency=low
 
   * Fix dialog softkeys on Symbian
   * Fix full screen mode on Symbian
+  * Fix TOC in O'Reilly books (and handle TOC properly in general)
+  * Fix icon on Symbian^3
+  * Improve settings on Symbian
 
  -- Akos Polster <akos@pipacs.com>  Sun, 31 Oct 2010 02:00:00 +0200
 
