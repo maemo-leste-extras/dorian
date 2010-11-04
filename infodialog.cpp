@@ -3,10 +3,13 @@
 #include "infodialog.h"
 #include "book.h"
 #include "library.h"
+#include "trace.h"
 
 InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
         Dyalog(parent, showButtons), book(b)
 {
+    TRACE;
+
     setWindowTitle(tr("Book Details"));
 
     if (book) {

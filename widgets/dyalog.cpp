@@ -1,6 +1,7 @@
 #include <QtGui>
 
 #include "dyalog.h"
+#include "trace.h"
 
 #ifdef Q_OS_SYMBIAN
 #include "flickcharm.h"
@@ -64,6 +65,7 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(reject()));
     addAction(closeAction);
+    leftSoftKey = 0;
     menuBar = 0;
 #endif // Q_OS_SYMBIAN
 }
@@ -81,17 +83,34 @@ void Dyalog::addStretch(int stretch)
 void Dyalog::addButton(const QString &label, QObject *receiver,
                        const char *slot, QDialogButtonBox::ButtonRole role)
 {
+    TRACE;
     if (!showButtons) {
+        qDebug() << "Ignored: showButtons is false";
         return;
     }
 #ifdef Q_OS_SYMBIAN
     Q_UNUSED(role);
-    if (!menuBar) {
-        menuBar = new QMenuBar(this);
+#if 0
+    if (!leftSoftKey) {
+        qDebug() << "Adding left soft key";
+        leftSoftKey = new QAction(label, this);
+        leftSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+        connect(leftSoftKey, SIGNAL(triggered()), receiver, slot);
+        addAction(leftSoftKey);
+    } else {
+#endif
+        if (!menuBar) {
+            qDebug() << "Creating menu bar";
+            menuBar = new QMenuBar(this);
+            menuBar->addAction(leftSoftKey);
+        }
+        qDebug() << "Adding to menu bar";
+        QAction *action = new QAction(label, this);
+        connect(action, SIGNAL(triggered()), receiver, slot);
+        menuBar->addAction(action);
+#if 0
     }
-    QAction *action = new QAction(label, this);
-    connect(action, SIGNAL(triggered()), receiver, slot);
-    menuBar->addAction(action);
+#endif
 #else
     QPushButton *button = new QPushButton(label, this);
     connect(button, SIGNAL(clicked()), receiver, slot);

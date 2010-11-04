@@ -14,6 +14,7 @@ class QModelIndex;
 class Progress;
 class QAbstractKineticScroller;
 class ProgressDialog;
+class FlickCharm;
 
 /** Visual representation of a book. */
 class BookView: public QWebView
@@ -105,9 +106,13 @@ private:
     bool mousePressed;
     int contentsHeight; /**< Last know height of the frame. */
 
-#if defined(Q_WS_MAEMO_5)
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     int scrollerMonitor;
+#endif
+#if defined(Q_WS_MAEMO_5)
     QAbstractKineticScroller *scroller;
+#elif defined(Q_OS_SYMBIAN)
+    FlickCharm *charm;
 #endif
 };
 

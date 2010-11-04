@@ -70,7 +70,8 @@ BookView::BookView(QWidget *parent):
     scrollerMonitor = 0;
     scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
 #elif defined(Q_OS_SYMBIAN)
-    FlickCharm *charm = new FlickCharm(this);
+    scrollerMonitor = 0;
+    charm = new FlickCharm(this);
     charm->activateOn(this);
 #endif
 }
@@ -226,6 +227,8 @@ void BookView::onLoadFinished(bool ok)
     }
     loaded = true;
     onSettingsChanged("scheme");
+    onSettingsChanged("zoom");
+    onSettingsChanged("font");
     emit partLoadEnd(contentIndex);
     showProgress();
 }
@@ -281,7 +284,7 @@ void BookView::paintEvent(QPaintEvent *e)
 void BookView::mousePressEvent(QMouseEvent *e)
 {
     QWebView::mousePressEvent(e);
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     // Start monitoring kinetic scroll
     if (scrollerMonitor) {
         killTimer(scrollerMonitor);
@@ -327,6 +330,7 @@ QString BookView::tmpPath()
 
 bool BookView::eventFilter(QObject *o, QEvent *e)
 {
+#if 0
     if (e->type() != QEvent::Paint && e->type() != QEvent::MouseMove) {
         if (e->type() == QEvent::Resize) {
             qDebug() << "BookView::eventFilter QEvent::Resize to"
@@ -338,6 +342,7 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
             qDebug() << "BookView::eventFilter" << Trace::event(e->type());
         }
     }
+#endif
 
     // Work around Qt bug that sometimes selects web view contents during swipe
     switch (e->type()) {
@@ -424,7 +429,7 @@ void BookView::showProgress()
 
 void BookView::timerEvent(QTimerEvent *e)
 {
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     if (e->timerId() == scrollerMonitor) {
         if (scroller &&
             ((scroller->state() == QAbstractKineticScroller::AutoScrolling) ||
@@ -432,7 +437,12 @@ void BookView::timerEvent(QTimerEvent *e)
             showProgress();
         } else {
             killTimer(scrollerMonitor);
+            scrollerMonitor = -1;
         }
+    }
+#elif defined(Q_OS_SYMBIAN)
+    if (e->timerId() == scrollerMonitor) {
+        if (charm && charm->)
     }
 #endif
     QWebView::timerEvent(e);

@@ -31,10 +31,6 @@ public:
     /** Add space. */
     void addToolBarSpace();
 
-    /** Add action that is visible on the menu. */
-    QAction *addAction(QObject *receiver, const char *slot,
-                       const QString &text);
-
     /** Show window. */
     void show();
 

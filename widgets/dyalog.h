@@ -9,9 +9,11 @@ class QPushButton;
 class QScrollArea;
 class QVBoxLayout;
 class QMenuBar;
+class QAction;
 
 /** Maemo- and Mac-friendly dialog box. */
-class Dyalog: public QDialog
+class Dyalog:
+        public QDialog
 {
     Q_OBJECT
 
@@ -41,6 +43,7 @@ private:
     QDialogButtonBox *buttonBox;
     bool showButtons;
 #ifdef Q_OS_SYMBIAN
+    QAction *leftSoftKey;
     QMenuBar *menuBar;
 #endif
 };
