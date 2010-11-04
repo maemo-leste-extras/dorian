@@ -43,6 +43,7 @@ void Progress::timerEvent(QTimerEvent *e)
 {
     if (e->timerId() == timer) {
         killTimer(timer);
+        timer = -1;
         hide();
     }
     QLabel::timerEvent(e);

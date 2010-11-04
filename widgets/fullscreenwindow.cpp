@@ -36,7 +36,7 @@ void FullScreenWindow::showFullScreen()
                  testAttribute(Qt::WA_Maemo5LandscapeOrientation));
 #endif // Q_WS_MAEMO_5
     QWidget::showFullScreen();
-    restoreButton->flash();
+    restoreButton->flash(3000);
 }
 
 void FullScreenWindow::resizeEvent(QResizeEvent *e)

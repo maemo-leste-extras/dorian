@@ -17,11 +17,13 @@ class TranslucentButton: public QLabel
     Q_OBJECT
 
 public:
-    static const int pixels;
     explicit TranslucentButton(const QString &iconName, QWidget *parent);
+    ~TranslucentButton();
+    static const int pixels;
+    static const int elevatorInterval;
 
 public slots:
-    void flash(int duration = 3000);
+    void flash(int duration = 700);
     void stopFlash();
 
 signals:
@@ -30,9 +32,13 @@ signals:
 protected:
     void paintEvent(QPaintEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+    void timerEvent(QTimerEvent *e);
+
+private:
     QString name;
     bool transparent;
     QTimer *timer;
+    int elevatorTimer;
 };
 
 #endif // TRANSLUCENTBUTTON_H

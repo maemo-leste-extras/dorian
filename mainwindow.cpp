@@ -224,8 +224,8 @@ void MainWindow::showRegular()
     view->restoreLastBookmark();
 #endif
     progress->flash();
-    nextButton->flash(1500);
-    previousButton->flash(1500);
+    nextButton->flash();
+    previousButton->flash();
 }
 
 void MainWindow::showBig()
@@ -259,8 +259,8 @@ void MainWindow::showBig()
     fullScreenWindow->activateWindow();
 #endif
     progress->flash();
-    nextButton->flash(1500);
-    previousButton->flash(1500);
+    nextButton->flash();
+    previousButton->flash();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -454,8 +454,8 @@ void MainWindow::resizeEvent(QResizeEvent *e)
         toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
     qDebug() << "previousButton geometry" << previousButton->geometry();
-    previousButton->flash(1500);
-    nextButton->flash(1500);
+    previousButton->flash();
+    nextButton->flash();
     QMainWindow::resizeEvent(e);
 }
 
@@ -480,15 +480,15 @@ void MainWindow::about()
 
 void MainWindow::goToNextPage()
 {
-    nextButton->flash(1500);
-    previousButton->flash(1500);
+    nextButton->flash();
+    previousButton->flash();
     view->goNextPage();
 }
 
 void MainWindow::goToPreviousPage()
 {
-    nextButton->flash(1500);
-    previousButton->flash(1500);
+    nextButton->flash();
+    previousButton->flash();
     view->goPreviousPage();
 }
 
