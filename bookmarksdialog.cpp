@@ -13,7 +13,7 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
         return;
     }
 
-    addAction(tr("Add bookmark"), this, SLOT(onAdd()), ":/icons/add.png");
+    addAction(tr("Add bookmark"), this, SLOT(onAdd()), "add");
 #ifndef Q_WS_MAEMO_5
     addItemAction(tr("Go to"), this, SLOT(onGo()));
     addItemAction(tr("Delete"), this, SLOT(onDelete()));
