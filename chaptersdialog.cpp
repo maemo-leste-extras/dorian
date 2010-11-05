@@ -18,7 +18,6 @@ ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
     list = new ListView;
     list->setSelectionMode(QAbstractItemView::SingleSelection);
     list->setModel(model);
-    list->setUniformItemSizes(true);
     addList(list);
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
