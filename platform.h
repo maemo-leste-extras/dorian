@@ -3,6 +3,8 @@
 
 #include <QString>
 
+class QWidget;
+
 /** Platform abstractions. */
 class Platform
 {
@@ -13,6 +15,7 @@ public:
     static QString version();
     static QString downloadDir();
     static QString defaultFont();
+    static void information(const QString &label, QWidget *parent = 0);
 };
 
 #endif // PLATFORM_H

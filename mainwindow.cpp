@@ -1,7 +1,6 @@
 #include <QtGui>
 
 #ifdef Q_WS_MAEMO_5
-#   include <QtMaemo5/QMaemo5InformationBox>
 #   include <QtDBus>
 #   include <QtGui/QX11Info>
 #   include <X11/Xlib.h>
@@ -377,13 +376,7 @@ void MainWindow::onAddBookmark(const QString &note)
 {
     TRACE;
     view->addBookmark(note);
-#ifdef Q_WS_MAEMO_5
-    QMaemo5InformationBox::information(this,
-        tr("Bookmarked current position"), QMaemo5InformationBox::DefaultTimeout);
-#else
-    (void)QMessageBox::information(this, tr("Dorian"),
-        tr("Bookmarked current position"), QMessageBox::Ok);
-#endif // Q_WS_MAEMO_5}
+    Platform::information(tr("Bookmarked current position"), this);
 }
 
 void MainWindow::onGoToBookmark(int index)

@@ -1,10 +1,6 @@
 #include <QDir>
 #include <QtGui>
 
-#ifdef Q_WS_MAEMO_5
-#include <QtMaemo5/QMaemo5InformationBox>
-#endif
-
 #include "librarydialog.h"
 #include "library.h"
 #include "sortedlibrary.h"
@@ -87,14 +83,7 @@ void LibraryDialog::onAdd()
     // Add book to library
     QModelIndex index = library->find(path);
     if (index.isValid()) {
-#ifdef Q_WS_MAEMO_5
-        QMaemo5InformationBox::information(this,
-            tr("This book is already in the library"),
-            QMaemo5InformationBox::DefaultTimeout);
-#else
-        (void)QMessageBox::information(this, tr("Dorian"),
-            tr("This book is already in the library"), QMessageBox::Ok);
-#endif // Q_WS_MAEMO_5
+        Platform::information(tr("This book is already in the library"), this);
         setSelected(index);
     }
     else {
@@ -228,11 +217,7 @@ void LibraryDialog::onAddFromFolderDone(int added)
 
     progress->reset();
     qDebug() << "LibraryDialog::onRefreshDone:" << msg;
-#ifdef Q_WS_MAEMO_5
-    QMaemo5InformationBox::information(this, msg);
-#else
-    QMessageBox::information(this, tr("Done adding books"), msg);
-#endif
+    Platform::information(msg, this);
 }
 
 void LibraryDialog::onAddFromFolder(const QString &path)

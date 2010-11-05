@@ -25,6 +25,12 @@ static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
 ;
 
+#ifdef Q_WS_MAEMO_5
+#   include <QtMaemo5/QMaemo5InformationBox>
+#else
+#   include <QMessageBox>
+#endif
+
 QString Platform::dbPath()
 {
     QString base(QDir::home().absoluteFilePath(DORIAN_BASE));
@@ -71,5 +77,16 @@ QString Platform::defaultFont()
     return QString("Nokia Sans S60");
 #else
     return QString("Times New Roman");
+#endif
+}
+
+void Platform::information(const QString &label, QWidget *parent)
+{
+#ifdef Q_WS_MAEMO_5
+    QMaemo5InformationBox::information(parent, label,
+                                       QMaemo5InformationBox::DefaultTimeout);
+#else
+    (void)QMessageBox::information(parent, QObject::tr("Dorian"), label,
+                                   QMessageBox::Ok);
 #endif
 }

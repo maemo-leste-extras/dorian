@@ -284,7 +284,7 @@ void BookView::paintEvent(QPaintEvent *e)
 void BookView::mousePressEvent(QMouseEvent *e)
 {
     QWebView::mousePressEvent(e);
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5)
     // Start monitoring kinetic scroll
     if (scrollerMonitor) {
         killTimer(scrollerMonitor);
@@ -439,10 +439,6 @@ void BookView::timerEvent(QTimerEvent *e)
             killTimer(scrollerMonitor);
             scrollerMonitor = -1;
         }
-    }
-#elif defined(Q_OS_SYMBIAN)
-    if (e->timerId() == scrollerMonitor) {
-        if (charm && charm->)
     }
 #endif
     QWebView::timerEvent(e);

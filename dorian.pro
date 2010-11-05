@@ -131,10 +131,18 @@ win32 {
 }
 
 symbian {
-    ICON = $$PWD/pkg/symbian/book.svg
+    TARGET = Dorian
     TARGET.UID3 = 0xEA633557
     TARGET.CAPABILITY = NetworkServices ReadUserData WriteUserData
     TARGET.EPOCHEAPSIZE = 0x080000 0x4000000
+    ICON = $$PWD/pkg/symbian/book.svg
+    packageheader = "$${LITERAL_HASH}{\"Dorian\"}, (0xEA633557), 0, 3, 4"
+    vendorinfo = \
+        "%{\"Nokia Betalabs \"}" \
+        ":\"Nokia Betalabs \""
+    my_deployment.pkg_prerules = packageheader vendorinfo
+    DEPLOYMENT += my_deployment
+
     INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
     HEADERS += widgets/flickcharm.h
     SOURCES += widgets/flickcharm.cpp
