@@ -499,10 +499,10 @@ void BookView::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
     if (grabbingVolumeKeys) {
         if (key == MediaKeysObserver::EVolIncKey) {
             qDebug() << "Volume up";
-            goNextPage();
+            goPreviousPage();
         } else if (key == MediaKeysObserver::EVolDecKey){
             qDebug() << "Volume down";
-            goPreviousPage();
+            goNextPage();
         }
     }
 }
