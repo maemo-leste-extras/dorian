@@ -16,6 +16,7 @@ public:
     static QString downloadDir();
     static QString defaultFont();
     static void information(const QString &label, QWidget *parent = 0);
+    static void showBusy(QWidget *w, bool isBusy);
 };
 
 #endif // PLATFORM_H

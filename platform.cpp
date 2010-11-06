@@ -90,3 +90,13 @@ void Platform::information(const QString &label, QWidget *parent)
                                    QMessageBox::Ok);
 #endif
 }
+
+void Platform::showBusy(QWidget *w, bool isBusy)
+{
+#ifdef Q_WS_MAEMO_5
+    w->setAttribute(Qt::WA_Maemo5ShowProgressIndicator, isBusy);
+#else
+    Q_UNUSED(w);
+    Q_UNUSED(isBusy);
+#endif
+}

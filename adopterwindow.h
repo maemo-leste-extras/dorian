@@ -4,29 +4,24 @@
 #include <QMainWindow>
 #include <QList>
 
-#ifdef Q_OS_SYMBIAN
-#   include "mediakeysobserver.h"
-#endif
-
 class QWidget;
 class QToolBar;
 class QAction;
+class BookView;
 
 /**
-  * A main window that can adopt other windows' children, and grabs the
-  * zoom (volume) keys on Maemo.
-  */
+ * A toplevel window that can adopt a BookView and other children.
+ * On Maemo, it can also grab the volume keys.
+ */
 class AdopterWindow: public QMainWindow
 {
     Q_OBJECT
+
 public:
     explicit AdopterWindow(QWidget *parent = 0);
 
-    /* If true, zoom (volume) keys will generate Key_F7 and Key_F8 events. */
-    void grabZoomKeys(bool grab);
-
-    /** Adopt children "main" and "others". */
-    void takeChildren(QWidget *main, const QList<QWidget *> &others);
+    /** Adopt children "bookView" and "others". */
+    void takeChildren(BookView *bookView, const QList<QWidget *> &others);
 
     /** Release current children (adopted in @see takeChildren). */
     void leaveChildren();
@@ -38,24 +33,27 @@ public:
     QAction *addToolBarAction(QObject *receiver, const char *slot,
                               const QString &iconName, const QString &text);
 
-    /** Add space. */
+    /** Add spacing to tool bar. */
     void addToolBarSpace();
 
     /** Show window. */
     void show();
 
-signals:
+    /** If grab is true, volume keys will generate pageUp/Down keys. */
+    void grabVolumeKeys(bool grab);
 
-protected slots:
-#ifdef Q_OS_SYMBIAN
-    void onMediaKeysPressed(MediaKeysObserver::MediaKeys key);
-#endif
+public slots:
+    /** Handle settings changes. */
+    void onSettingsChanged(const QString &key);
 
 protected:
-    void showEvent(QShowEvent *e);
-    void doGrabZoomKeys(bool grab);
-    bool grabbingZoomKeys;
-    QWidget *mainChild;
+    void keyPressEvent(QKeyEvent *event);
+#ifdef Q_WS_MAEMO_5
+    void showEvent(QShowEvent *event);
+    void doGrabVolumeKeys(bool grab);
+#endif
+    BookView *bookView;
+    bool grabbingVolumeKeys;/**< True, if volume keys should be grabbed. */
 #ifndef Q_OS_SYMBIAN
     QToolBar *toolBar;
 #endif

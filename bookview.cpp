@@ -2,9 +2,8 @@
 #include <QtGui>
 #include <QWebFrame>
 
-#if defined(Q_WS_MAEMO_5)
-#   include <QAbstractKineticScroller>
-#elif defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN)
+#   include "mediakeysobserver.h"
 #   include "flickcharm.h"
 #endif
 
@@ -17,12 +16,13 @@
 #include "progressdialog.h"
 #include "platform.h"
 
-BookView::BookView(QWidget *parent):
-    QWebView(parent), contentIndex(-1), mBook(0),
+BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1), mBook(0),
     restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
-    contentsHeight(0)
+    contentsHeight(0), grabbingVolumeKeys(false)
 {
     TRACE;
+
+    // Set up web view defaults
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
     settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     settings()->setAttribute(QWebSettings::JavaEnabled, false);
@@ -40,32 +40,36 @@ BookView::BookView(QWidget *parent):
                              false);
     settings()->setDefaultTextEncoding("utf-8");
     page()->setContentEditable(false);
-
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    // Suppress unwanted text selections on Maemo and Symbian
-    installEventFilter(this);
-#endif
     QWebFrame *frame = page()->mainFrame();
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     frame->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 #endif
     frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
-
-    bookmarkImage = QImage(":/icons/bookmark.png");
-
     connect(this, SIGNAL(loadFinished(bool)), this, SLOT(onLoadFinished(bool)));
     connect(frame, SIGNAL(javaScriptWindowObjectCleared()),
             this, SLOT(addJavaScriptObjects()));
     connect(frame, SIGNAL(contentsSizeChanged(const QSize &)),
             this, SLOT(onContentsSizeChanged(const QSize &)));
-    connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
-            this, SLOT(onSettingsChanged(const QString &)));
+
+    // Suppress unwanted text selections on Maemo and Symbian
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+    installEventFilter(this);
+#endif
+
+    // Pre-load bookmark icon
+    bookmarkImage = QImage(":/icons/bookmark.png");
+
+    // Handle settings changes, force handling initial settings
     Settings *s = Settings::instance();
+    connect(s, SIGNAL(valueChanged(const QString &)),
+            this, SLOT(onSettingsChanged(const QString &)));
     s->setValue("zoom", s->value("zoom", 160));
     s->setValue("font", s->value("font", Platform::defaultFont()));
     s->setValue("scheme", s->value("scheme", "default"));
+    s->setValue("usevolumekeys", s->value("usevolumekeys", false));
     setBook(0);
 
+    // Enable kinetic scrolling
 #if defined(Q_WS_MAEMO_5)
     scrollerMonitor = 0;
     scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
@@ -74,16 +78,19 @@ BookView::BookView(QWidget *parent):
     charm = new FlickCharm(this);
     charm->activateOn(this);
 #endif
-}
 
-BookView::~BookView()
-{
-    TRACE;
+    // Observe media keys on Symbian
+#ifdef Q_OS_SYMBIAN
+    MediaKeysObserver *observer = MediaKeysObserver::instance();
+    connect(observer, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)),
+            this, SLOT(onMediaKeysPressed(MediaKeysObserver::MediaKeys)));
+#endif
 }
 
 void BookView::loadContent(int index)
 {
     TRACE;
+
     if (!mBook) {
         return;
     }
@@ -257,6 +264,9 @@ void BookView::onSettingsChanged(const QString &key)
         QString scriptText = script.readAll();
         script.close();
         QVariant ret = frame->evaluateJavaScript(scriptText);
+    }
+    else if (key == "usevolumekeys") {
+        grabVolumeKeys(Settings::instance()->value(key).toBool());
     }
 }
 
@@ -444,23 +454,6 @@ void BookView::timerEvent(QTimerEvent *e)
     QWebView::timerEvent(e);
 }
 
-void BookView::keyPressEvent(QKeyEvent *event)
-{
-    switch (event->key()) {
-    case Qt::Key_F7:
-        goNextPage();
-        event->accept();
-        break;
-    case Qt::Key_F8:
-        goPreviousPage();
-        event->accept();
-        break;
-    default:
-        ;
-    }
-    QWebView::keyPressEvent(event);
-}
-
 void BookView::goPreviousPage()
 {
     QWebFrame *frame = page()->mainFrame();
@@ -490,3 +483,28 @@ void BookView::goNextPage()
         showProgress();
     }
 }
+
+void BookView::grabVolumeKeys(bool grab)
+{
+    TRACE;
+    grabbingVolumeKeys = grab;
+}
+
+#ifdef Q_OS_SYMBIAN
+
+void BookView::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
+{
+    TRACE;
+    qDebug() << "Key" << (int)key;
+    if (grabbingVolumeKeys) {
+        if (key == MediaKeysObserver::EVolIncKey) {
+            qDebug() << "Volume up";
+            goNextPage();
+        } else if (key == MediaKeysObserver::EVolDecKey){
+            qDebug() << "Volume down";
+            goPreviousPage();
+        }
+    }
+}
+
+#endif // Q_OS_SYMBIAN

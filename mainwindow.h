@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QModelIndex>
+#include <QEvent>
 
 #include "adopterwindow.h"
 
@@ -21,7 +22,6 @@ class MainWindow: public AdopterWindow
 
 public:
     MainWindow(QWidget *parent = 0);
-    ~MainWindow();
 
 public slots:
     void showLibrary();

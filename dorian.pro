@@ -24,13 +24,13 @@ SOURCES += \
     bookmarkinfodialog.cpp \
     widgets/dyalog.cpp \
     chaptersdialog.cpp \
-    widgets/fullscreenwindow.cpp \
+    fullscreenwindow.cpp \
     trace.cpp \
     widgets/toolbuttonbox.cpp \
     model/bookfinder.cpp \
     widgets/listwindow.cpp \
     widgets/progress.cpp \
-    widgets/adopterwindow.cpp \
+    adopterwindow.cpp \
     platform.cpp \
     model/bookdb.cpp \
     searchdialog.cpp \
@@ -64,13 +64,13 @@ HEADERS += \
     bookmarkinfodialog.h \
     widgets/dyalog.h \
     chaptersdialog.h \
-    widgets/fullscreenwindow.h \
+    fullscreenwindow.h \
     trace.h \
     widgets/toolbuttonbox.h \
     model/bookfinder.h \
     widgets/listwindow.h \
     widgets/progress.h \
-    widgets/adopterwindow.h \
+    adopterwindow.h \
     widgets/listview.h \
     model/xmlhandler.h \
     platform.h \

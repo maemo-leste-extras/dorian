@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <QEvent>
 
 #ifdef Q_WS_MAEMO_5
 #   include <QtDBus>
@@ -161,19 +162,17 @@ MainWindow::MainWindow(QWidget *parent):
             this, SLOT(onSettingsChanged(const QString &)));
     settings->setValue("orientation", settings->value("orientation"));
     settings->setValue("lightson", settings->value("lightson"));
-    settings->setValue("usevolumekeys", settings->value("usevolumekeys"));
 
     // Handle book view buttons
     connect(nextButton, SIGNAL(triggered()), this, SLOT(goToNextPage()));
     connect(previousButton, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
 
+    // Adopt view, show window
+    showRegular();
+
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
 #endif
-}
-
-MainWindow::~MainWindow()
-{
 }
 
 void MainWindow::onCurrentBookChanged()
@@ -316,10 +315,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
+    TRACE;
+    qDebug() << key;
 #if defined(Q_WS_MAEMO_5)
     if (key == "orientation") {
         QString value = Settings::instance()->value(key).toString();
-        qDebug() << "MainWindow::onSettingsChanged: orientation" << value;
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
@@ -329,35 +329,18 @@ void MainWindow::onSettingsChanged(const QString &key)
         }
     } else if (key == "lightson") {
         bool enable = Settings::instance()->value(key, false).toBool();
-        qDebug() << "MainWindow::onSettingsChanged: lightson:" << enable;
         killTimer(preventBlankingTimer);
         if (enable) {
             preventBlankingTimer = startTimer(29 * 1000);
         }
-    } else if (key == "usevolumekeys") {
-        bool value = Settings::instance()->value(key).toBool();
-        qDebug() << "MainWindow::onSettingsChanged: usevolumekeys" << value;
-        grabZoomKeys(value);
-        fullScreenWindow->grabZoomKeys(value);
     }
-#elif defined Q_OS_SYMBIAN
-    if (key == "usevolumekeys") {
-        bool value = Settings::instance()->value(key).toBool();
-        qDebug() << "MainWindow::onSettingsChanged: usevolumekeys" << value;
-        grabZoomKeys(value);
-        fullScreenWindow->grabZoomKeys(value);
-    }
-#else
-    Q_UNUSED(key);
 #endif // Q_WS_MAEMO_5
 }
 
 void MainWindow::onPartLoadStart()
 {
     TRACE;
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, true);
-#endif
+    Platform::showBusy(this, true);
 }
 
 void MainWindow::onPartLoadEnd(int index)
@@ -374,9 +357,7 @@ void MainWindow::onPartLoadEnd(int index)
             enableNext = true;
         }
     }
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5ShowProgressIndicator, false);
-#endif // Q_WS_MAEMO_5
+    Platform::showBusy(this, false);
 }
 
 void MainWindow::onAddBookmark(const QString &note)
@@ -477,7 +458,6 @@ void MainWindow::about()
     aboutDialog->show();
 }
 
-
 void MainWindow::goToNextPage()
 {
     nextButton->flash();
@@ -512,7 +492,6 @@ void MainWindow::onEndUpgrade()
     libraryProgress->reset();
 }
 
-
 void MainWindow::onBeginLoad(int total)
 {
     libraryProgress->setVisible(total > 0);
@@ -532,4 +511,3 @@ void MainWindow::onEndLoad()
     libraryProgress->hide();
     libraryProgress->reset();
 }
-
