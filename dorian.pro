@@ -133,7 +133,7 @@ win32 {
 symbian {
     TARGET = Dorian
     TARGET.UID3 = 0xEA633557
-    TARGET.CAPABILITY = NetworkServices ReadUserData WriteUserData
+    TARGET.CAPABILITY = UserEnvironment NetworkServices ReadUserData WriteUserData SwEvent
     TARGET.EPOCHEAPSIZE = 0x080000 0x4000000
     ICON = $$PWD/pkg/symbian/book.svg
     packageheader = "$${LITERAL_HASH}{\"Dorian\"}, (0xEA633557), 0, 3, 4"
@@ -144,8 +144,13 @@ symbian {
     DEPLOYMENT += my_deployment
 
     INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
-    HEADERS += widgets/flickcharm.h
-    SOURCES += widgets/flickcharm.cpp
+    HEADERS += \
+        widgets/flickcharm.h \
+        widgets/mediakeysobserver.h
+    SOURCES += \
+        widgets/flickcharm.cpp \
+        widgets/mediakeysobserver.cpp
+    LIBS += -lremconinterfacebase -lremconcoreapi
 }
 
 maemo5 {

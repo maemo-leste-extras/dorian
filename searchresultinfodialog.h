@@ -4,6 +4,7 @@
 #include "dyalog.h"
 #include "search.h"
 
+/** Details of a single search result. */
 class SearchResultInfoDialog: public Dyalog
 {
     Q_OBJECT

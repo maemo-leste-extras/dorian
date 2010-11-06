@@ -1,10 +1,12 @@
 #include <QtGui>
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
 #   include <QtGui/QX11Info>
 #   include <X11/Xlib.h>
 #   include <X11/Xatom.h>
-#endif // Q_WS_MAEMO_5
+#elif defined(Q_OS_SYMBIAN)
+#   include "mediakeysobserver.h"
+#endif
 
 #include "trace.h"
 #include "adopterwindow.h"
@@ -30,6 +32,9 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
     QMainWindow::addAction(closeAction);
+    MediaKeysObserver *observer = MediaKeysObserver::instance();
+    connect(observer, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)),
+            this, SLOT(onMediaKeysPressed(MediaKeysObserver::MediaKeys)));
 #else
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
@@ -153,3 +158,25 @@ void AdopterWindow::addToolBarSpace()
     toolBar->addWidget(frame);
 #endif
 }
+
+#ifdef Q_OS_SYMBIAN
+
+void AdopterWindow::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
+{
+    qDebug() << "AdopterWindow::onMediaKeysPressed:" << (int)key;
+
+    if ((key != MediaKeysObserver::EVolIncKey) &&
+        (key != MediaKeysObserver::EVolDecKey)) {
+        return;
+    }
+
+    if (grabbingZoomKeys) {
+        qDebug() << "Posting"
+                << ((key == MediaKeysObserver::EVolIncKey)? "Key_F7": "Key_F8");
+        QKeyEvent *event = new QKeyEvent(QEvent::KeyPress,
+            (key == MediaKeysObserver::EVolIncKey)? Qt::Key_F7: Qt::Key_F8, 0);
+        QCoreApplication::sendEvent(this, event);
+    }
+}
+
+#endif // Q_OS_SYMBIAN

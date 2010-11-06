@@ -444,7 +444,7 @@ void BookView::timerEvent(QTimerEvent *e)
     QWebView::timerEvent(e);
 }
 
-void BookView::keyPressEvent(QKeyEvent* event)
+void BookView::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_F7:

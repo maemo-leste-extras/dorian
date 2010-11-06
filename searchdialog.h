@@ -8,6 +8,7 @@
 
 class QLineEdit;
 
+/** Request author and title for searching books. */
 class SearchDialog: public Dyalog
 {
     Q_OBJECT

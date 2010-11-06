@@ -21,6 +21,8 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *e);
     void timerEvent(QTimerEvent *e);
+
+private:
     qreal progress;
     int timer;
 };

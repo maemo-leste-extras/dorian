@@ -11,6 +11,7 @@ class ListView;
 class QModelIndex;
 class ProgressDialog;
 
+/** Search result list. */
 class SearchResultsDialog: public ListWindow
 {
     Q_OBJECT

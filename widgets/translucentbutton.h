@@ -10,7 +10,8 @@ class QMouseEvent;
 class QTimer;
 
 /**
- * A button that is transparent, but can temporarily made opaque by flashing it.
+ * A button that is transparent, but can temporarily be made opaque by
+ * flashing it.
  */
 class TranslucentButton: public QLabel
 {

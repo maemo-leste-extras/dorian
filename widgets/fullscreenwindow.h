@@ -26,6 +26,8 @@ signals:
 
 protected:
     void resizeEvent(QResizeEvent *e);
+
+private:
     TranslucentButton *restoreButton;
 };
 

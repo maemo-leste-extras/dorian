@@ -52,12 +52,10 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     backlight->setChecked(settings->value("lightson", false).toBool());
 #endif
 
-#ifndef Q_OS_SYMBIAN
     QCheckBox *grabVolume =
             new QCheckBox(tr("Navigate with volume keys"), contents);
     layout->addWidget(grabVolume);
     grabVolume->setChecked(settings->value("usevolumekeys", false).toBool());
-#endif
 
     int zoom = Settings::instance()->value("zoom").toInt();
     if (zoom < ZOOM_MIN) {
@@ -135,9 +133,9 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 #ifndef Q_OS_SYMBIAN
     connect(backlight, SIGNAL(toggled(bool)),
             this, SLOT(onLightsToggled(bool)));
+#endif
     connect(grabVolume, SIGNAL(toggled(bool)),
             this, SLOT(onGrabVolumeToggled(bool)));
-#endif
     connect(zoomSlider, SIGNAL(valueChanged(int)),
             this, SLOT(onSliderValueChanged(int)));
     connect(fontButton, SIGNAL(currentFontChanged(const QFont &)),

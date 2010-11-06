@@ -9,6 +9,10 @@
 #include "search.h"
 #include "platform.h"
 
+#ifdef Q_OS_SYMBIAN
+#   include "mediakeysobserver.h"
+#endif
+
 static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
 ;
@@ -46,6 +50,9 @@ int main(int argc, char *argv[])
     BookDb::close();
     Settings::close();
     Search::close();
+#ifdef Q_OS_SYMBIAN
+    MediaKeysObserver::close();
+#endif
 
     // Re-start application if event loop exit code was 1000
     if (ret == 1000) {

@@ -340,6 +340,13 @@ void MainWindow::onSettingsChanged(const QString &key)
         grabZoomKeys(value);
         fullScreenWindow->grabZoomKeys(value);
     }
+#elif defined Q_OS_SYMBIAN
+    if (key == "usevolumekeys") {
+        bool value = Settings::instance()->value(key).toBool();
+        qDebug() << "MainWindow::onSettingsChanged: usevolumekeys" << value;
+        grabZoomKeys(value);
+        fullScreenWindow->grabZoomKeys(value);
+    }
 #else
     Q_UNUSED(key);
 #endif // Q_WS_MAEMO_5
