@@ -51,11 +51,12 @@ int doExtractCurrentFile(unzFile uf, const QStringList &excludedExtensions)
         QString name(fileNameInZip);
         for (int i = 0; i < excludedExtensions.length(); i++) {
             if (name.endsWith(excludedExtensions[i], Qt::CaseInsensitive)) {
-                qDebug() << "Skipping" << name;
+                qDebug() << "extractCurrentFile: Skipping" << name;
                 free(buf);
                 return UNZ_OK;
             }
         }
+        qDebug() << "extractCurrentFile: Extracting" << name;
 
         const char *writeFileName;
         int skip = 0;

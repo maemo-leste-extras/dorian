@@ -47,11 +47,7 @@ public:
             QString key = attrs.value("id");
             book.content[key] = item;
             partCount++;
-            qDebug() << "OpsHandler::startElement: name" << item.name << "href"
-                    << attrs.value("href") << "id" << key;
         } else if (name == "itemref") {
-            qDebug() << "OpsHandler::startElement: parts[" << book.parts.size()
-                    << "]" << attrs.value("idref");
             book.parts.append(attrs.value("idref"));
         }
         return true;

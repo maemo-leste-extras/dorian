@@ -29,7 +29,6 @@ public:
             contentItem.size = 0;
             book.content[id] = contentItem;
             book.chapters.append(id);
-            qDebug() << "" << id << "name" << name << "href" << href;
             foreach (TreeItem *child, children) {
                 child->addToBook(book);
             }
@@ -62,10 +61,9 @@ public:
             }
         } else if (name == "navPoint") {
             if (currentItem) {
-                qDebug() << "NcxHandler::endElement  " << currentItem->id;
                 currentItem = currentItem->parent;
                 if (currentItem == 0) {
-                    qDebug() << " Root item reached, dumping tree";
+                    // Root navigation point reached, dump TOC tree
                     rootItem->addToBook(book);
                     delete rootItem;
                     rootItem = 0;
@@ -82,7 +80,6 @@ public:
         currentText = "";
         if (name == "navPoint") {
             TreeItem *item = new TreeItem(attrs.value("id"), currentItem);
-            qDebug() << "NcxHandler::startElement" << attrs.value("id");
             if (!rootItem) {
                 rootItem = item;
             }

@@ -23,3 +23,9 @@ void ProgressDialog::showWait()
     setValue(0);
     show();
 }
+
+void ProgressDialog::show()
+{
+    TRACE;
+    QProgressDialog::show();
+}

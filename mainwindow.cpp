@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent):
     layout->addWidget(view);
 
     // Progress
-    progress = new Progress(central);
+    progress = new Progress(this);
 
     // Settings dialog
     settings = new QDialog(this);
