@@ -274,7 +274,8 @@ void Trace::messageHandler(QtMsgType type, const char *msg)
         }
         qInstallMsgHandler(oldHandler);
         if (Trace::file.isOpen()) {
-            Trace::file.write((prefix() + msg).toUtf8());
+            Trace::file.write((prefix() + msg + "\n").toUtf8());
+            Trace::file.flush();
         }
     }
 }

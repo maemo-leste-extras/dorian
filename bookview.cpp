@@ -18,7 +18,7 @@
 
 BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
     mBook(0), restorePositionAfterLoad(false), positionAfterLoad(0),
-    loaded(false), grabbingVolumeKeys(false)
+    restoreFragmentAfterLoad(false), loaded(false), grabbingVolumeKeys(false)
 {
     TRACE;
 
@@ -241,6 +241,7 @@ void BookView::onLoadFinished(bool ok)
 
 void BookView::restoreAfterLoad()
 {
+    TRACE;
     if (restoreFragmentAfterLoad) {
         qDebug() << "Restorint to fragment" << fragmentAfterLoad;
         goToFragment(fragmentAfterLoad);
