@@ -499,7 +499,8 @@ qreal Book::getProgress(int part, qreal position)
 bool Book::extractMetaData()
 {
     QStringList excludedExtensions;
-    excludedExtensions << ".html" << ".xhtml" << ".xht" << ".htm";
+    excludedExtensions << ".html" << ".xhtml" << ".xht" << ".htm" << ".gif"
+            << ".png" << ".css";
     return extract(excludedExtensions);
 }
 
