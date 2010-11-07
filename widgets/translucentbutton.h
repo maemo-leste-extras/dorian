@@ -38,7 +38,6 @@ protected:
 private:
     QString name;
     bool transparent;
-    QTimer *timer;
     int elevatorTimer;
 };
 

@@ -16,9 +16,9 @@
 #include "progressdialog.h"
 #include "platform.h"
 
-BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1), mBook(0),
-    restorePositionAfterLoad(false), positionAfterLoad(0), loaded(false),
-    contentsHeight(0), grabbingVolumeKeys(false)
+BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
+    mBook(0), restorePositionAfterLoad(false), positionAfterLoad(0),
+    loaded(false), grabbingVolumeKeys(false)
 {
     TRACE;
 
@@ -48,8 +48,6 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1), mBook(0
     connect(this, SIGNAL(loadFinished(bool)), this, SLOT(onLoadFinished(bool)));
     connect(frame, SIGNAL(javaScriptWindowObjectCleared()),
             this, SLOT(addJavaScriptObjects()));
-    connect(frame, SIGNAL(contentsSizeChanged(const QSize &)),
-            this, SLOT(onContentsSizeChanged(const QSize &)));
 
     // Suppress unwanted text selections on Maemo and Symbian
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
@@ -166,8 +164,9 @@ void BookView::setLastBookmark()
 {
     TRACE;
     if (mBook) {
-        int height = contentsHeight;
-        int pos = page()->mainFrame()->scrollPosition().y();
+        QWebFrame *frame = page()->mainFrame();
+        int height = frame->contentsSize().height();
+        int pos = frame->scrollPosition().y();
         qDebug() << QString("At %1 (%2%, height %3)").
                 arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height);
         mBook->setLastBookmark(contentIndex, (qreal)pos / (qreal)height);
@@ -236,6 +235,22 @@ void BookView::onLoadFinished(bool ok)
     onSettingsChanged("scheme");
     onSettingsChanged("zoom");
     onSettingsChanged("font");
+
+    QTimer::singleShot(210, this, SLOT(restoreAfterLoad()));
+}
+
+void BookView::restoreAfterLoad()
+{
+    if (restoreFragmentAfterLoad) {
+        qDebug() << "Restorint to fragment" << fragmentAfterLoad;
+        goToFragment(fragmentAfterLoad);
+        restoreFragmentAfterLoad = false;
+    } else if (restorePositionAfterLoad) {
+        qDebug() << "Restoring to position" << positionAfterLoad;
+        goToPosition(positionAfterLoad);
+        restorePositionAfterLoad = false;
+    }
+
     emit partLoadEnd(contentIndex);
     showProgress();
 }
@@ -278,7 +293,9 @@ void BookView::paintEvent(QPaintEvent *e)
     }
 
     // Paint bookmarks
-    QPoint scrollPos = page()->mainFrame()->scrollPosition();
+    QWebFrame *frame = page()->mainFrame();
+    int contentsHeight = frame->contentsSize().height();
+    QPoint scrollPos = frame->scrollPosition();
     QPixmap bookmarkPixmap = QPixmap::fromImage(bookmarkImage);
     QPainter painter(this);
     foreach (Book::Bookmark b, mBook->bookmarks()) {
@@ -383,21 +400,6 @@ void BookView::addJavaScriptObjects()
     page()->mainFrame()->addToJavaScriptWindowObject("bv", this);
 }
 
-void BookView::onContentsSizeChanged(const QSize &size)
-{
-    TRACE;
-    contentsHeight = size.height();
-    if (restoreFragmentAfterLoad) {
-        qDebug() << "Restorint to fragment" << fragmentAfterLoad;
-        goToFragment(fragmentAfterLoad);
-    } else if (restorePositionAfterLoad) {
-        qDebug() << "Restoring to position";
-        goToPosition(positionAfterLoad);
-    }
-    restorePositionAfterLoad = false;
-    restoreFragmentAfterLoad = false;
-}
-
 #ifdef Q_WS_MAEMO_5
 
 void BookView::leaveEvent(QEvent *e)
@@ -421,6 +423,7 @@ void BookView::enterEvent(QEvent *e)
 
 void BookView::goToPosition(qreal position)
 {
+    int contentsHeight = page()->mainFrame()->contentsSize().height();
     int scrollPos = (int)((qreal)contentsHeight * position);
     page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));
     // FIXME: update();
@@ -431,6 +434,7 @@ void BookView::goToPosition(qreal position)
 void BookView::showProgress()
 {
     if (mBook) {
+        int contentsHeight = page()->mainFrame()->contentsSize().height();
         qreal pos = (qreal)(page()->mainFrame()->scrollPosition().y()) /
                     (qreal)contentsHeight;
         emit progress(mBook->getProgress(contentIndex, pos));

@@ -40,7 +40,10 @@ public:
     void grabVolumeKeys(bool grab);
 
 signals:
+    /** Part loading started. */
     void partLoadStart(int index);
+
+    /** Part loading finished. */
     void partLoadEnd(int index);
 
     /** Signal button press, when the real event has been suppressed. */
@@ -56,20 +59,23 @@ public slots:
     /** Go to previous part. */
     void goNext();
 
+    /** Actions to perform after URL loading finished. */
     void onLoadFinished(bool ok);
+
+    /** Handle settings changes. */
     void onSettingsChanged(const QString &key);
 
     /** Add QObjects to the main frame. */
     void addJavaScriptObjects();
-
-    /** Handle main frame contents size changes. */
-    void onContentsSizeChanged(const QSize &size);
 
     /** Go to previous page. */
     void goPreviousPage();
 
     /** Go to next page. */
     void goNextPage();
+
+    /** Restore saved position after URL loading finished. */
+    void restoreAfterLoad();
 
 protected slots:
 #ifdef Q_OS_SYMBIAN
@@ -112,7 +118,6 @@ protected:
     QImage bookmarkImage;   /**< Bookmark icon pre-loaded. */
     bool loaded;            /**< True, if content has been loaded. */
     bool mousePressed;      /**< Event filter's mouse button state. */
-    int contentsHeight;     /**< Last know height of the frame. */
     bool grabbingVolumeKeys;/**< True, if volume keys should be grabbed. */
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)

@@ -25,6 +25,8 @@ static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
 ;
 
+#define DORIAN_LOG "dorian.txt"
+
 #ifdef Q_WS_MAEMO_5
 #   include <QtMaemo5/QMaemo5InformationBox>
 #else
@@ -99,4 +101,9 @@ void Platform::showBusy(QWidget *w, bool isBusy)
     Q_UNUSED(w);
     Q_UNUSED(isBusy);
 #endif
+}
+
+QString Platform::traceFileName()
+{
+    return QDir::home().absoluteFilePath(DORIAN_LOG);
 }

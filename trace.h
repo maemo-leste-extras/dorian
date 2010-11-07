@@ -6,6 +6,7 @@
 #include <QString>
 #include <QTime>
 #include <QEvent>
+#include <QFile>
 
 #ifdef Q_OS_SYMBIAN
 #   ifdef __PRETTY_FUNCTION__
@@ -26,6 +27,8 @@ public:
     static QString event(QEvent::Type t);
     static void messageHandler(QtMsgType type, const char *msg);
     static QtMsgType level;
+    static void setFileName(const QString &fileName);
+    static QString fileName();
 
 protected:
     static QString prefix();
@@ -33,6 +36,7 @@ protected:
     static int indent;
     typedef struct {int type; const char *name;} EventName;
     static EventName eventTab[];
+    static QFile file;
 };
 
 #endif // TRACE_H

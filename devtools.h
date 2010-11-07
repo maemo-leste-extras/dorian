@@ -16,6 +16,7 @@ public:
 public slots:
     void onClear();
     void onLevelButtonClicked(int level);
+    void onTraceToFileToggled(bool enable);
 };
 
 #endif // DEVTOOLS_H

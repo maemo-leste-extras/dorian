@@ -28,24 +28,30 @@ static const QtMsgType DORIAN_DEFAULT_TRACE_LEVEL =
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
     int ret;
 
+    // Set up application
+    QApplication a(argc, argv);
     a.setApplicationName("Dorian");
     a.setApplicationVersion(DORIAN_VERSION);
     a.setOrganizationDomain("pipacs.com");
     a.setOrganizationName("Pipacs");
 
-    Trace::level = (QtMsgType)Settings::instance()->
+    // Initialize tracing
+    Settings *settings = Settings::instance();
+    Trace::level = (QtMsgType)settings->
         value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
+    Trace::setFileName(settings->value("tracefilename").toString());
     qInstallMsgHandler(Trace::messageHandler);
 
 #ifdef Q_OS_SYMBIAN
+    // Show splash screen
     Splash *splash = new Splash();
     splash->showFullScreen();
     a.processEvents();
 #endif
 
+    // Create main window, run event loop
     {
         MainWindow w;
 #ifdef Q_OS_SYMBIAN

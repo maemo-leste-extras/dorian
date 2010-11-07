@@ -134,11 +134,12 @@ win32 {
 
 symbian {
     TARGET = Dorian
-    TARGET.UID3 = 0xEA633557
-    TARGET.CAPABILITY = UserEnvironment NetworkServices ReadUserData WriteUserData SwEvent
+    TARGET.UID3 = 0xA89FC85B
+    TARGET.CAPABILITY = UserEnvironment NetworkServices ReadUserData \
+        WriteUserData SwEvent
     TARGET.EPOCHEAPSIZE = 0x080000 0x4000000
     ICON = $$PWD/pkg/symbian/book.svg
-    packageheader = "$${LITERAL_HASH}{\"Dorian\"}, (0xEA633557), 0, 3, 4"
+    packageheader = "$${LITERAL_HASH}{\"Dorian\"}, (0xA89FC85B), 0, 3, 4"
     vendorinfo = \
         "%{\"Nokia Betalabs \"}" \
         ":\"Nokia Betalabs \""

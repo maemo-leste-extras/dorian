@@ -4,6 +4,8 @@ dorian (0.3.4-1) unstable; urgency=low
   * Navigate with volume keys on Symbian, too
   * Speed up startup, load books on demand
   * Show splash screen on Symbian
+  * Fix restoring last position on Symbian
+  * Use proper UID on Symbian
 
  -- Akos Polster <akos@pipacs.com>  Fri,  5 Nov 2010 02:00:00 +0100
 

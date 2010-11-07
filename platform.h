@@ -17,6 +17,7 @@ public:
     static QString defaultFont();
     static void information(const QString &label, QWidget *parent = 0);
     static void showBusy(QWidget *w, bool isBusy);
+    static QString traceFileName();
 };
 
 #endif // PLATFORM_H

@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "toolbuttonbox.h"
 #include "bookdb.h"
+#include "platform.h"
 
 DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
 {
@@ -25,6 +26,13 @@ DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
     box->toggle(Trace::level);
     connect(box, SIGNAL(buttonClicked(int)),
             this, SLOT(onLevelButtonClicked(int)));
+
+    QCheckBox *traceToFile = new QCheckBox(tr("Trace to file"), this);
+    addWidget(traceToFile);
+    traceToFile->setChecked(!Trace::fileName().isEmpty());
+    connect(traceToFile, SIGNAL(toggled(bool)),
+            this, SLOT(onTraceToFileToggled(bool)));
+
     addStretch();
 }
 
@@ -41,7 +49,15 @@ void DevTools::onClear()
     }
 }
 
-void DevTools::onLevelButtonClicked(int level) {
+void DevTools::onLevelButtonClicked(int level)
+{
     Trace::level = (QtMsgType)level;
     Settings::instance()->setValue("tracelevel", level);
+}
+
+void DevTools::onTraceToFileToggled(bool enable)
+{
+    QString name = enable? Platform::traceFileName(): QString();
+    Trace::setFileName(name);
+    Settings::instance()->setValue("tracefilename", name);
 }

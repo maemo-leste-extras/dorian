@@ -1,11 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <QEvent>
+#include <QFile>
 
 #include "trace.h"
 
 int Trace::indent;
 QtMsgType Trace::level = QtDebugMsg;
+QFile Trace::file;
 
 Trace::EventName Trace::eventTab[] = {
     {QEvent::None, "QEvent::None"},
@@ -273,5 +273,22 @@ void Trace::messageHandler(QtMsgType type, const char *msg)
             qt_message_output(type, msg);
         }
         qInstallMsgHandler(oldHandler);
+        if (Trace::file.isOpen()) {
+            Trace::file.write((prefix() + msg).toUtf8());
+        }
     }
+}
+
+void Trace::setFileName(const QString &fileName)
+{
+    Trace::file.close();
+    Trace::file.setFileName(fileName);
+    if (!fileName.isEmpty()) {
+        (void)Trace::file.open(QIODevice::WriteOnly);
+    }
+}
+
+QString Trace::fileName()
+{
+    return Trace::file.fileName();
 }
