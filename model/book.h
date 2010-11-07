@@ -66,13 +66,13 @@ public:
     void close();
 
     /** Return path to EPUB. */
-    QString path() const;
+    QString path();
 
     /**
      * Return path to root directory of extracted EPUB.
      * Only valid after parsing Book::opsPath().
      */
-    QString rootPath() const;
+    QString rootPath();
 
     /** Return temporary directory path for extracting EPUB file. */
     QString tmpDir() const;
@@ -84,7 +84,7 @@ public:
     void setLastBookmark(int part, qreal position);
 
     /** Get last bookmark. */
-    Bookmark lastBookmark() const;
+    Bookmark lastBookmark();
 
     /** Add bookmark. */
     void addBookmark(int part, qreal position, const QString &note);
@@ -93,16 +93,16 @@ public:
     void deleteBookmark(int index);
 
     /** List bookmarks. */
-    QList<Bookmark> bookmarks() const;
+    QList<Bookmark> bookmarks();
 
     /**
      * Get friendly name.
      * @return @see title or path name combined with author(s) name.
      */
-    QString name() const;
+    QString name();
 
     /** Get short friendly name: title or file name. */
-    QString shortName() const;
+    QString shortName();
 
     /** Get chapter index from part index. */
     int chapterFromPart(int index);
@@ -154,6 +154,7 @@ protected:
     QList<Bookmark> mBookmarks;             //< List of bookmarks.
     QString mRootPath;                      //< Path to root item in EPUB dir.
     QTemporaryFile mTempFile;               //< Guards extracting books.
+    bool loaded;                            //< True, if loaded from database.
 };
 
 #endif // BOOK_H

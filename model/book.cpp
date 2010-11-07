@@ -20,7 +20,7 @@ static QImage makeCover(const QString &path)
         scaled(COVER_WIDTH, COVER_HEIGHT, Qt::KeepAspectRatio);
 }
 
-Book::Book(const QString &p, QObject *parent): QObject(parent)
+Book::Book(const QString &p, QObject *parent): QObject(parent), loaded(false)
 {
     mPath = "";
     if (p.size()) {
@@ -32,7 +32,7 @@ Book::Book(const QString &p, QObject *parent): QObject(parent)
     }
 }
 
-QString Book::path() const
+QString Book::path()
 {
     return mPath;
 }
@@ -43,6 +43,7 @@ bool Book::open()
     qDebug() << path();
     close();
     clear();
+    load();
     if (path().isEmpty()) {
         title = "No book";
         return false;
@@ -64,6 +65,7 @@ void Book::peek()
     qDebug() << path();
     close();
     clear();
+    load();
     if (path().isEmpty()) {
         title = "No book";
         return;
@@ -101,6 +103,7 @@ bool Book::extract(const QStringList &excludedExtensions)
     QString tmp = tmpDir();
     qDebug() << "Extracting" << mPath << "to" << tmp;
 
+    load();
     QDir::setCurrent(QDir::rootPath());
     if (!clearDir(tmp)) {
         qCritical() << "Book::extract: Failed to remove" << tmp;
@@ -143,6 +146,8 @@ bool Book::extract(const QStringList &excludedExtensions)
 bool Book::parse()
 {
     TRACE;
+
+    load();
 
     // Parse OPS file
     bool ret = false;
@@ -268,7 +273,12 @@ void Book::clear()
 
 void Book::load()
 {
+    if (loaded) {
+        return;
+    }
+
     TRACE;
+    loaded = true;
     qDebug() << "path" << path();
 
     QVariantHash data = BookDb::instance()->load(path());
@@ -301,6 +311,7 @@ void Book::save()
 {
     TRACE;
 
+    load();
     QVariantHash data;
     data["title"] = title;
     data["creators"] = creators;
@@ -325,19 +336,21 @@ void Book::save()
 void Book::setLastBookmark(int part, qreal position)
 {
     TRACE;
-    qDebug() << "part" << part << "position" << position;
+    load();
     mLastBookmark.part = part;
     mLastBookmark.pos = position;
     save();
 }
 
-Book::Bookmark Book::lastBookmark() const
+Book::Bookmark Book::lastBookmark()
 {
+    load();
     return Book::Bookmark(mLastBookmark);
 }
 
 void Book::addBookmark(int part, qreal position, const QString &note)
 {
+    load();
     mBookmarks.append(Bookmark(part, position, note));
     qSort(mBookmarks.begin(), mBookmarks.end());
     save();
@@ -345,18 +358,21 @@ void Book::addBookmark(int part, qreal position, const QString &note)
 
 void Book::deleteBookmark(int index)
 {
+    load();
     mBookmarks.removeAt(index);
     save();
 }
 
-QList<Book::Bookmark> Book::bookmarks() const
+QList<Book::Bookmark> Book::bookmarks()
 {
+    load();
     return mBookmarks;
 }
 
 QString Book::opsPath()
 {
     TRACE;
+    load();
     QString ret;
 
     QFile container(tmpDir() + "/META-INF/container.xml");
@@ -378,13 +394,15 @@ QString Book::opsPath()
     return ret;
 }
 
-QString Book::rootPath() const
+QString Book::rootPath()
 {
+    load();
     return mRootPath;
 }
 
-QString Book::name() const
+QString Book::name()
 {
+    load();
     if (title.size()) {
         QString ret = title;
         if (creators.length()) {
@@ -399,13 +417,16 @@ QString Book::name() const
     }
 }
 
-QString Book::shortName() const
+QString Book::shortName()
 {
+    load();
     return (title.isEmpty())? QFileInfo(path()).baseName(): title;
 }
 
 int Book::chapterFromPart(int index)
 {
+    TRACE;
+    load();
     int ret = -1;
 
     QString partId = parts[index];
@@ -431,7 +452,8 @@ int Book::chapterFromPart(int index)
 
 int Book::partFromChapter(int index, QString &fragment)
 {
-    Trace t("Book::partFromChapter");
+    TRACE;
+    load();
     fragment.clear();
     QString id = chapters[index];
     QString href = content[id].href;
@@ -461,6 +483,7 @@ int Book::partFromChapter(int index, QString &fragment)
 
 qreal Book::getProgress(int part, qreal position)
 {
+    load();
     Q_ASSERT(part < parts.size());
     QString key;
     qreal partSize = 0;
@@ -483,8 +506,6 @@ bool Book::extractMetaData()
 void Book::upgrade()
 {
     TRACE;
-
-    qDebug() << path();
 
     // Load book from old database (QSettings)
 
@@ -525,5 +546,6 @@ void Book::upgrade()
 void Book::remove()
 {
     TRACE;
+    load();
     BookDb::instance()->remove(path());
 }

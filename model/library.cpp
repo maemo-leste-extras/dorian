@@ -82,7 +82,7 @@ void Library::load()
         Book *book = new Book(path);
         connect(book, SIGNAL(opened(const QString &)),
                 this, SLOT(onBookOpened(const QString &)));
-        book->load();
+        // book->load();
         mBooks.append(book);
     }
 
