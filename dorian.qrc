@@ -48,5 +48,6 @@
         <file>icons/symbian/style-day.png</file>
         <file>icons/symbian/style-default.png</file>
         <file>icons/symbian/style-night.png</file>
+        <file>icons/splash.jpg</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@
 #include "bookdb.h"
 #include "search.h"
 #include "platform.h"
+#include "splash.h"
 
 #ifdef Q_OS_SYMBIAN
 #   include "mediakeysobserver.h"
@@ -39,8 +40,17 @@ int main(int argc, char *argv[])
         value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
     qInstallMsgHandler(Trace::messageHandler);
 
+#ifdef Q_OS_SYMBIAN
+    Splash *splash = new Splash();
+    splash->showFullScreen();
+    a.processEvents();
+#endif
+
     {
         MainWindow w;
+#ifdef Q_OS_SYMBIAN
+        splash->close();
+#endif
         ret = a.exec();
     }
 

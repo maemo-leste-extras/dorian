@@ -118,10 +118,12 @@ MainWindow::MainWindow(QWidget *parent):
     connect(library, SIGNAL(upgrading(const QString &)),
             this, SLOT(onUpgrading(const QString &)));
     connect(library, SIGNAL(endUpgrade()), this, SLOT(onEndUpgrade()));
+#ifndef Q_OS_SYMBIAN
     connect(library, SIGNAL(beginLoad(int)), this, SLOT(onBeginLoad(int)));
     connect(library, SIGNAL(loading(const QString &)),
             this, SLOT(onLoading(const QString &)));
     connect(library, SIGNAL(endLoad()), this, SLOT(onEndLoad()));
+#endif
     library->upgrade();
     library->load();
 
