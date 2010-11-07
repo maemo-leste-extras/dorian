@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
         MainWindow w;
 #ifdef Q_OS_SYMBIAN
         splash->close();
+        splash->deleteLater();
 #endif
         ret = a.exec();
     }
