@@ -13,7 +13,8 @@
 #include "platform.h"
 #include "settings.h"
 
-AdopterWindow::AdopterWindow(QWidget *parent): QMainWindow(parent), bookView(0)
+AdopterWindow::AdopterWindow(QWidget *parent):
+    QMainWindow(parent), bookView(0), grabbingVolumeKeys(false)
 {
     TRACE;
 
@@ -45,10 +46,8 @@ AdopterWindow::AdopterWindow(QWidget *parent): QMainWindow(parent), bookView(0)
 #endif // Q_OS_SYMBIAN
 
     // Monitor settings
-    Settings *settings = Settings::instance();
-    connect(settings, SIGNAL(valueChanged(const QString &)),
+    connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
             this, SLOT(onSettingsChanged(const QString &)));
-    settings->setValue("usevolumekeys", settings->value("usevolumekeys"));
 }
 
 void AdopterWindow::takeChildren(BookView *view, const QList<QWidget *> &others)
@@ -204,10 +203,10 @@ void AdopterWindow::keyPressEvent(QKeyEvent *event)
 
 void AdopterWindow::onSettingsChanged(const QString &key)
 {
-    TRACE;
     if (key == "usevolumekeys") {
-        qDebug() << key;
-        grabVolumeKeys(Settings::instance()->value(key).toBool());
+        bool grab = Settings::instance()->value(key, false).toBool();
+        qDebug() << "AdopterWindow::onSettingsChanged: usevolumekeys" << grab;
+        grabVolumeKeys(grab);
     }
 }
 

@@ -7,13 +7,7 @@
 #include "trace.h"
 
 #ifdef Q_OS_SYMBIAN
-#include "flickcharm.h"
-#endif
-
-#ifdef Q_OS_SYMBIAN
-const char *DEFAULT_ORIENTATION = "portrait";
-#else
-const char *DEFAULT_ORIENTATION = "landscape";
+#   include "flickcharm.h"
 #endif
 
 const int ZOOM_MIN = 75;
@@ -29,6 +23,8 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     setWindowTitle("Settings");
 
     Settings *settings = Settings::instance();
+    Platform *platform = Platform::instance();
+
     QScrollArea *scroller = new QScrollArea(this);
 #if defined(Q_WS_MAEMO_5)
     scroller->setProperty("FingerScrollable", true);
@@ -57,7 +53,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     layout->addWidget(grabVolume);
     grabVolume->setChecked(settings->value("usevolumekeys", false).toBool());
 
-    int zoom = Settings::instance()->value("zoom").toInt();
+    int zoom = settings->value("zoom", platform->defaultZoom()).toInt();
     if (zoom < ZOOM_MIN) {
         zoom = ZOOM_MIN;
     } else if (zoom > ZOOM_MAX) {
@@ -75,9 +71,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 
     QLabel *fontLabel = new QLabel(tr("Font:"), contents);
     layout->addWidget(fontLabel);
-    QString defaultFamily = fontLabel->fontInfo().family();
-    QString family =
-            Settings::instance()->value("font", defaultFamily).toString();
+    QString family = settings->value("font", platform->defaultFont()).toString();
     fontButton = new QFontComboBox(contents);
     fontButton->setCurrentFont(QFont(family));
     fontButton->setEditable(false);
@@ -117,7 +111,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
                               ":/icons/settings-landscape.png");
     orientationBox->addStretch();
     QString orientation =
-        settings->value("orientation", DEFAULT_ORIENTATION).toString();
+        settings->value("orientation", platform->defaultOrientation()).toString();
     if (orientation == "portrait") {
         orientationBox->toggle(OrientationPortrait);
     } else {
@@ -165,20 +159,11 @@ void SettingsWindow::onSliderValueChanged(int value)
         return;
     }
     zoomLabel->setText(tr("Zoom level: %1%").arg(value));
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    // Constant re-scaling of the book view is too much for mobiles
-#else
-    Settings::instance()->setValue("zoom", value);
-#endif // Q_WS_MAEMO_5
 }
 
 void SettingsWindow::onCurrentFontChanged(const QFont &font)
 {
-#ifdef Q_WS_MAEMO_5
     Q_UNUSED(font);
-#else
-    Settings::instance()->setValue("font", font.family());
-#endif // Q_WS_MAEMO_5
 }
 
 void SettingsWindow::onSchemeButtonClicked(int id)
@@ -211,8 +196,6 @@ void SettingsWindow::onOrientationButtonClicked(int id)
 #endif // Q_WS_MAEMO_5
 }
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-
 void SettingsWindow::closeEvent(QCloseEvent *e)
 {
     TRACE;
@@ -226,8 +209,6 @@ void SettingsWindow::closeEvent(QCloseEvent *e)
 #endif // Q_OS_SYMBIAN
     e->accept();
 }
-
-#endif // Q_WS_MAEMO_5 || Q_OS_SYMBIAN
 
 void SettingsWindow::onLightsToggled(bool value)
 {

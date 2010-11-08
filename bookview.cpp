@@ -58,13 +58,8 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
     bookmarkImage = QImage(":/icons/bookmark.png");
 
     // Handle settings changes, force handling initial settings
-    Settings *s = Settings::instance();
-    connect(s, SIGNAL(valueChanged(const QString &)),
+    connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
             this, SLOT(onSettingsChanged(const QString &)));
-    s->setValue("zoom", s->value("zoom", 160));
-    s->setValue("font", s->value("font", Platform::instance()->defaultFont()));
-    s->setValue("scheme", s->value("scheme", "default"));
-    s->setValue("usevolumekeys", s->value("usevolumekeys", false));
     setBook(0);
 
     // Enable kinetic scrolling
@@ -262,14 +257,17 @@ void BookView::restoreAfterLoad()
 
 void BookView::onSettingsChanged(const QString &key)
 {
-    TRACE;
-    qDebug() << key << Settings::instance()->value(key);
+    Settings *s = Settings::instance();
+    Platform *p = Platform::instance();
 
     if (key == "zoom") {
-        setZoomFactor(Settings::instance()->value(key).toFloat() / 100.);
+        int value = s->value(key, p->defaultZoom()).toInt();
+        qDebug() << "BookView::onSettingsChanged: zoom" << value;
+        setZoomFactor(value / 100.);
     }
     else if (key == "font") {
-        QString face = Settings::instance()->value(key).toString();
+        QString face = s->value(key, p->defaultFont()).toString();
+        qDebug() << "BookView::onSettingsChanged: font" << face;
         settings()->setFontFamily(QWebSettings::StandardFont, face);
     }
     else if (key == "scheme") {
@@ -279,14 +277,17 @@ void BookView::onSettingsChanged(const QString &key)
             (scheme != "default")) {
             scheme = "default";
         }
+        qDebug() << "BookView::onSettingsChanged: scheme" << scheme;
         QFile script(":/styles/" + scheme + ".js");
         script.open(QFile::ReadOnly);
         QString scriptText = script.readAll();
         script.close();
-        QVariant ret = frame->evaluateJavaScript(scriptText);
+        (void)frame->evaluateJavaScript(scriptText);
     }
     else if (key == "usevolumekeys") {
-        grabVolumeKeys(Settings::instance()->value(key).toBool());
+        bool grab = s->value(key, false).toBool();
+        qDebug() << "BookView::onSettingsChanged: usevolumekeys" << grab;
+        grabVolumeKeys(grab);
     }
 }
 

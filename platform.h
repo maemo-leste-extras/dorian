@@ -18,6 +18,8 @@ public:
     QString version();
     QString downloadDir();
     QString defaultFont();
+    int defaultZoom();
+    QString defaultOrientation();
     void information(const QString &label, QWidget *parent = 0);
     void showBusy(QWidget *w, bool isBusy);
     QString traceFileName();

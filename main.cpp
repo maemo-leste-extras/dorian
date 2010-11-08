@@ -51,15 +51,16 @@ int main(int argc, char *argv[])
     a.processEvents();
 #endif
 
-    // Create main window, run event loop
-    {
-        MainWindow w;
+    // Create main window, re-apply settings, run event loop
+    MainWindow *mainWindow = new MainWindow();
+    settings->apply();
+    mainWindow->initialize();
 #ifdef Q_OS_SYMBIAN
-        splash->close();
-        splash->deleteLater();
+    splash->close();
+    splash->deleteLater();
 #endif
-        ret = a.exec();
-    }
+    ret = a.exec();
+    delete mainWindow;
 
     // Re-start application if event loop exit code was 1000
     if (ret == 1000) {

@@ -118,12 +118,40 @@ MainWindow::MainWindow(QWidget *parent):
     connect(library, SIGNAL(upgrading(const QString &)),
             this, SLOT(onUpgrading(const QString &)));
     connect(library, SIGNAL(endUpgrade()), this, SLOT(onEndUpgrade()));
-#ifndef Q_OS_SYMBIAN
-    connect(library, SIGNAL(beginLoad(int)), this, SLOT(onBeginLoad(int)));
-    connect(library, SIGNAL(loading(const QString &)),
-            this, SLOT(onLoading(const QString &)));
-    connect(library, SIGNAL(endLoad()), this, SLOT(onEndLoad()));
+
+    // Handle loading book parts
+    connect(view, SIGNAL(partLoadStart(int)), this, SLOT(onPartLoadStart()));
+    connect(view, SIGNAL(partLoadEnd(int)), this, SLOT(onPartLoadEnd(int)));
+
+    // Handle progress
+    connect(view, SIGNAL(progress(qreal)), progress, SLOT(setProgress(qreal)));
+
+    // Shadow window for full screen reading
+    fullScreenWindow = new FullScreenWindow(this);
+    connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
+
+    // Handle settings changes
+    connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
+            this, SLOT(onSettingsChanged(const QString &)));
+
+    // Handle book view buttons
+    connect(nextButton, SIGNAL(triggered()), this, SLOT(goToNextPage()));
+    connect(previousButton, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
+
+    // Adopt view, show window
+    showRegular();
+
+#ifdef DORIAN_TEST_MODEL
+    (void)new ModelTest(Library::instance(), this);
 #endif
+}
+
+void MainWindow::initialize()
+{
+    TRACE;
+    Library *library = Library::instance();
+
+    // Upgrade library if needed, then load it
     library->upgrade();
     library->load();
 
@@ -146,35 +174,6 @@ MainWindow::MainWindow(QWidget *parent):
             library->setNowReading(library->index(0));
         }
     }
-
-    // Handle loading book parts
-    connect(view, SIGNAL(partLoadStart(int)), this, SLOT(onPartLoadStart()));
-    connect(view, SIGNAL(partLoadEnd(int)), this, SLOT(onPartLoadEnd(int)));
-
-    // Handle progress
-    connect(view, SIGNAL(progress(qreal)), progress, SLOT(setProgress(qreal)));
-
-    // Shadow window for full screen reading
-    fullScreenWindow = new FullScreenWindow(this);
-    connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
-
-    // Handle settings changes
-    Settings *settings = Settings::instance();
-    connect(settings, SIGNAL(valueChanged(const QString &)),
-            this, SLOT(onSettingsChanged(const QString &)));
-    settings->setValue("orientation", settings->value("orientation"));
-    settings->setValue("lightson", settings->value("lightson"));
-
-    // Handle book view buttons
-    connect(nextButton, SIGNAL(triggered()), this, SLOT(goToNextPage()));
-    connect(previousButton, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
-
-    // Adopt view, show window
-    showRegular();
-
-#ifdef DORIAN_TEST_MODEL
-    (void)new ModelTest(Library::instance(), this);
-#endif
 }
 
 void MainWindow::onCurrentBookChanged()
@@ -220,9 +219,6 @@ void MainWindow::showRegular()
     show();
 #if defined(Q_OS_SYMBIAN)
     activateWindow();
-#elif defined(Q_WS_MAEMO_5)
-    // FIXME: This is ugly.
-    // view->restoreLastBookmark();
 #endif
     progress->flash();
     nextButton->flash();
@@ -318,11 +314,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
-    TRACE;
-    qDebug() << key;
 #if defined(Q_WS_MAEMO_5)
     if (key == "orientation") {
-        QString value = Settings::instance()->value(key).toString();
+        QString value = Settings::instance()->value(key,
+            Platform::instance()->defaultOrientation()).toString();
+        qDebug() << "MainWindow::onSettingsChanged: orientation" << value;
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
@@ -332,6 +328,7 @@ void MainWindow::onSettingsChanged(const QString &key)
         }
     } else if (key == "lightson") {
         bool enable = Settings::instance()->value(key, false).toBool();
+        qDebug() << "MainWindow::onSettingsChanged: lightson" << enable;
         killTimer(preventBlankingTimer);
         if (enable) {
             preventBlankingTimer = startTimer(29 * 1000);

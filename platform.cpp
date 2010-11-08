@@ -123,3 +123,17 @@ QString Platform::traceFileName()
 {
     return QDir::home().absoluteFilePath(DORIAN_LOG);
 }
+
+int Platform::defaultZoom()
+{
+    return 150;
+}
+
+QString Platform::defaultOrientation()
+{
+#ifdef Q_OS_SYMBIAN
+    return QString("portrait");
+#else
+    return QString("landscape");
+#endif
+}

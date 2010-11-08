@@ -22,6 +22,7 @@ class MainWindow: public AdopterWindow
 
 public:
     MainWindow(QWidget *parent = 0);
+    void initialize();
 
 public slots:
     void showLibrary();
