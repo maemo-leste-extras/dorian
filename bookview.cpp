@@ -411,18 +411,9 @@ void BookView::addJavaScriptObjects()
 void BookView::leaveEvent(QEvent *e)
 {
     TRACE;
-    // Save current position, to be restored later
+    // Save current position, to be restored later, in MainWindow::resizeEvent()
     setLastBookmark();
     QWebView::leaveEvent(e);
-}
-
-void BookView::resizeEvent(QEvent *e)
-{
-    TRACE;
-    // Restore position saved at Leave event. This seems to be required,
-    // after temporarily switching from portrait to landscape and back
-    restoreLastBookmark();
-    QWebView::enterEvent(e);
 }
 
 #endif // Q_WS_MAEMO_5

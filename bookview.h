@@ -27,13 +27,26 @@ class BookView: public QWebView
 
 public:
     explicit BookView(QWidget *parent = 0);
+
+    /** Set current book. */
     void setBook(Book *book);
+
+    /** Get current book. */
     Book *book();
+
+    /** Go to the position decribed by "bookmark". */
     void goToBookmark(const Book::Bookmark &bookmark);
+
+    /** Add bookmark to book at the current position. */
     void addBookmark(const QString &note);
+
+    /** Save current reading position into book. */
     void setLastBookmark();
-    void restoreLastBookmark();
+
+    /** Go to given part + part fragment URL. */
     void goToPart(int part, const QString &fragment);
+
+    /** Go to given fragment URL in current part. */
     void goToFragment(const QString &fragment);
 
     /** If grab is true, volume keys will generate act as page up/down. */
@@ -77,6 +90,9 @@ public slots:
     /** Restore saved position after URL loading finished. */
     void restoreAfterLoad();
 
+    /** Restore book's last reading position. */
+    void restoreLastBookmark();
+
 protected slots:
 #ifdef Q_OS_SYMBIAN
     /** Observe media keys. */
@@ -91,7 +107,6 @@ protected:
     void timerEvent(QTimerEvent *e);
 #ifdef Q_WS_MAEMO_5
     void leaveEvent(QEvent *e);
-    void resizeEvent(QEvent *e);
 #endif // Q_WS_MAEMO_5
 
     /** Load given part. */

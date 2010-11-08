@@ -435,6 +435,12 @@ void MainWindow::resizeEvent(QResizeEvent *e)
         toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
     qDebug() << "previousButton geometry" << previousButton->geometry();
+
+#ifdef Q_WS_MAEMO_5
+    // This is needed on Maemo, in order not to lose current reading position
+    // after orientation change
+    QTimer::singleShot(250, view, SLOT(restoreLastBookmark()));
+#endif
     previousButton->flash();
     nextButton->flash();
     QMainWindow::resizeEvent(e);

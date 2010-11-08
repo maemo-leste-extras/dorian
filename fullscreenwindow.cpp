@@ -45,6 +45,7 @@ void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
     TRACE;
     Q_UNUSED(e);
+    restoreButton->raise();
     QRect screen = QApplication::desktop()->screenGeometry();
     restoreButton->setGeometry(screen.width() - TranslucentButton::pixels - 9,
         screen.height() - TranslucentButton::pixels - 9,
