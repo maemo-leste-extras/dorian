@@ -334,6 +334,8 @@ void MainWindow::onSettingsChanged(const QString &key)
             preventBlankingTimer = startTimer(29 * 1000);
         }
     }
+#else
+    Q_UNUSED(key);
 #endif // Q_WS_MAEMO_5
 }
 
