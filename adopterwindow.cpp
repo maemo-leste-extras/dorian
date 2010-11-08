@@ -98,7 +98,7 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     TRACE;
     qDebug() << "icon" << iconName << "text" << text;
 #ifndef Q_OS_SYMBIAN
-    return toolBar->addAction(QIcon(Platform::icon(iconName)),
+    return toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
                               text, receiver, member);
 #else
     Q_UNUSED(iconName);

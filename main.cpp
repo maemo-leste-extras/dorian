@@ -61,18 +61,20 @@ int main(int argc, char *argv[])
         ret = a.exec();
     }
 
+    // Re-start application if event loop exit code was 1000
+    if (ret == 1000) {
+        Platform::instance()->restart(argv);
+    }
+
     // Release singletons
     Library::close();
     BookDb::close();
     Settings::close();
     Search::close();
+    Platform::close();
 #ifdef Q_OS_SYMBIAN
     MediaKeysObserver::close();
 #endif
 
-    // Re-start application if event loop exit code was 1000
-    if (ret == 1000) {
-        Platform::restart(argv);
-    }
     return ret;
 }

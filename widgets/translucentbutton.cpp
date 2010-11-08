@@ -23,7 +23,7 @@ void TranslucentButton::paintEvent(QPaintEvent *)
     QPainter painter(this);
     if (!transparent) {
         painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.drawPixmap(0, 0, QPixmap(Platform::icon(name)).scaled(
+        painter.drawPixmap(0, 0, QPixmap(Platform::instance()->icon(name)).scaled(
                 QSize(pixels, pixels), Qt::IgnoreAspectRatio,
                 Qt::SmoothTransformation));
     } else {

@@ -49,7 +49,6 @@ private:
     explicit Library(QObject *parent = 0);
     ~Library();
     void clear();
-    static Library *mInstance;
     QList<Book *> mBooks;
     QModelIndex mNowReading;
 };

@@ -91,7 +91,7 @@ protected:
     void timerEvent(QTimerEvent *e);
 #ifdef Q_WS_MAEMO_5
     void leaveEvent(QEvent *e);
-    void enterEvent(QEvent *e);
+    void resizeEvent(QEvent *e);
 #endif // Q_WS_MAEMO_5
 
     /** Load given part. */

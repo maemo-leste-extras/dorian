@@ -24,7 +24,7 @@ BookDb::BookDb()
 {
     TRACE;
     bool shouldCreate = false;
-    QFileInfo info(Platform::dbPath());
+    QFileInfo info(Platform::instance()->dbPath());
     if (!info.exists()) {
         QDir dbDir;
         if (!dbDir.mkpath(info.absolutePath())) {
@@ -33,10 +33,10 @@ BookDb::BookDb()
         shouldCreate = true;
     }
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(QDir::toNativeSeparators(Platform::dbPath()));
+    db.setDatabaseName(QDir::toNativeSeparators(Platform::instance()->dbPath()));
     if (!db.open()) {
-        qCritical() << "Could not open" << Platform::dbPath() << ": Error"
-                << db.lastError().text();
+        qCritical() << "Could not open" << Platform::instance()->dbPath()
+                << ": Error" << db.lastError().text();
     }
     if (shouldCreate) {
         create();

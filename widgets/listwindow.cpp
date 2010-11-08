@@ -92,8 +92,8 @@ void ListWindow::addAction(const QString &title, QObject *receiver,
     TRACE;
 #ifdef Q_WS_MAEMO_5
     Q_UNUSED(role);
-    QPushButton *button =
-            new QPushButton(QIcon(Platform::icon(iconName)), title, this);
+    QPushButton *button = new QPushButton(QIcon(Platform::instance()->
+                                                icon(iconName)), title, this);
     contentLayout->addWidget(button);
     connect(button, SIGNAL(clicked()), receiver, slot);
 #elif defined(Q_OS_SYMBIAN)

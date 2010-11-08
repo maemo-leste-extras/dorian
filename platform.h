@@ -9,15 +9,18 @@ class QWidget;
 class Platform
 {
 public:
-    static QString dbPath();
-    static QString icon(const QString &name);
-    static void restart(char *argv[]);
-    static QString version();
-    static QString downloadDir();
-    static QString defaultFont();
-    static void information(const QString &label, QWidget *parent = 0);
-    static void showBusy(QWidget *w, bool isBusy);
-    static QString traceFileName();
+    static Platform *instance();
+    static void close();
+
+    QString dbPath();
+    QString icon(const QString &name);
+    void restart(char *argv[]);
+    QString version();
+    QString downloadDir();
+    QString defaultFont();
+    void information(const QString &label, QWidget *parent = 0);
+    void showBusy(QWidget *w, bool isBusy);
+    QString traceFileName();
 };
 
 #endif // PLATFORM_H

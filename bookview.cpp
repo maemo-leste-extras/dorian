@@ -62,7 +62,7 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
     connect(s, SIGNAL(valueChanged(const QString &)),
             this, SLOT(onSettingsChanged(const QString &)));
     s->setValue("zoom", s->value("zoom", 160));
-    s->setValue("font", s->value("font", Platform::defaultFont()));
+    s->setValue("font", s->value("font", Platform::instance()->defaultFont()));
     s->setValue("scheme", s->value("scheme", "default"));
     s->setValue("usevolumekeys", s->value("usevolumekeys", false));
     setBook(0);
@@ -201,14 +201,18 @@ void BookView::goToPart(int part, const QString &fragment)
 {
     TRACE;
     if (mBook) {
-        if (part != contentIndex) {
-            qDebug() << "Loading new part" << part;
-            restoreFragmentAfterLoad = true;
-            fragmentAfterLoad = fragment;
-            loadContent(part);
+        if (fragment.isEmpty()) {
+            goToBookmark(Book::Bookmark(part, 0));
         } else {
-            goToFragment(fragment);
-            showProgress();
+            if (part != contentIndex) {
+                qDebug() << "Loading new part" << part;
+                restoreFragmentAfterLoad = true;
+                fragmentAfterLoad = fragment;
+                loadContent(part);
+            } else {
+                goToFragment(fragment);
+                showProgress();
+            }
         }
     }
 }
@@ -220,7 +224,7 @@ void BookView::goToFragment(const QString &fragment)
         QVariant ret = page()->mainFrame()->evaluateJavaScript(
                 QString("window.location='") + fragment + "'");
         qDebug() << ret;
-        setLastBookmark();
+        // FIXME: setLastBookmark();
     }
 }
 
@@ -411,7 +415,7 @@ void BookView::leaveEvent(QEvent *e)
     QWebView::leaveEvent(e);
 }
 
-void BookView::enterEvent(QEvent *e)
+void BookView::resizeEvent(QEvent *e)
 {
     TRACE;
     // Restore position saved at Leave event. This seems to be required,

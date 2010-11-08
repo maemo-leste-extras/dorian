@@ -6,6 +6,7 @@
 
 FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 {
+    TRACE;
     Q_ASSERT(parent);
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -29,6 +30,7 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 
 void FullScreenWindow::showFullScreen()
 {
+    TRACE;
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5PortraitOrientation, parentWidget()->
                  testAttribute(Qt::WA_Maemo5PortraitOrientation));
@@ -41,6 +43,7 @@ void FullScreenWindow::showFullScreen()
 
 void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
+    TRACE;
     Q_UNUSED(e);
     QRect screen = QApplication::desktop()->screenGeometry();
     restoreButton->setGeometry(screen.width() - TranslucentButton::pixels - 9,

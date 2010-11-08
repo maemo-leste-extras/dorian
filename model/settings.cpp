@@ -2,7 +2,7 @@
 
 #include "settings.h"
 
-static Settings *inst;
+static Settings *theInstance;
 
 Settings::Settings(QObject *parent) :
     QObject(parent)
@@ -11,16 +11,16 @@ Settings::Settings(QObject *parent) :
 
 Settings *Settings::instance()
 {
-    if (!inst) {
-        inst = new Settings();
+    if (!theInstance) {
+        theInstance = new Settings();
     }
-    return inst;
+    return theInstance;
 }
 
 void Settings::close()
 {
-    delete inst;
-    inst = 0;
+    delete theInstance;
+    theInstance = 0;
 }
 
 void Settings::setValue(const QString &key, const QVariant &value)

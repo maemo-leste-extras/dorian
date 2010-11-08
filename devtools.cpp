@@ -57,7 +57,7 @@ void DevTools::onLevelButtonClicked(int level)
 
 void DevTools::onTraceToFileToggled(bool enable)
 {
-    QString name = enable? Platform::traceFileName(): QString();
+    QString name = enable? Platform::instance()->traceFileName(): QString();
     Trace::setFileName(name);
     Settings::instance()->setValue("tracefilename", name);
 }

@@ -69,7 +69,7 @@ void SearchResultsDialog::onDownload()
 QString SearchResultsDialog::downloadName() const
 {
     TRACE;
-    QString dir = Platform::downloadDir();
+    QString dir = Platform::instance()->downloadDir();
     QDir().mkpath(dir); // Not sure if this works. QDir API is quiet lame.
     unsigned i = 0;
     QString fileName;
@@ -102,7 +102,7 @@ void SearchResultsDialog::onEndDownload(int status, const Search::Result &result
         if (-1 != row) {
             list->model()->removeRow(row);
         }
-        Platform::information(tr("Downloaded \"%1\"\nand added to the library").
-                              arg(result.title), this);
+        Platform::instance()->information(tr("Downloaded \"%1\"\nand added to the "
+                                             "library").arg(result.title), this);
     }
 }

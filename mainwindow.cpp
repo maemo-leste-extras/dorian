@@ -179,6 +179,7 @@ MainWindow::MainWindow(QWidget *parent):
 
 void MainWindow::onCurrentBookChanged()
 {
+    TRACE;
     setCurrentBook(Library::instance()->nowReading());
 }
 
@@ -221,7 +222,7 @@ void MainWindow::showRegular()
     activateWindow();
 #elif defined(Q_WS_MAEMO_5)
     // FIXME: This is ugly.
-    view->restoreLastBookmark();
+    // view->restoreLastBookmark();
 #endif
     progress->flash();
     nextButton->flash();
@@ -342,7 +343,7 @@ void MainWindow::onSettingsChanged(const QString &key)
 void MainWindow::onPartLoadStart()
 {
     TRACE;
-    Platform::showBusy(this, true);
+    Platform::instance()->showBusy(this, true);
 }
 
 void MainWindow::onPartLoadEnd(int index)
@@ -359,14 +360,14 @@ void MainWindow::onPartLoadEnd(int index)
             enableNext = true;
         }
     }
-    Platform::showBusy(this, false);
+    Platform::instance()->showBusy(this, false);
 }
 
 void MainWindow::onAddBookmark(const QString &note)
 {
     TRACE;
     view->addBookmark(note);
-    Platform::information(tr("Bookmarked current position"), this);
+    Platform::instance()->information(tr("Bookmarked current position"), this);
 }
 
 void MainWindow::onGoToBookmark(int index)
@@ -446,6 +447,7 @@ void MainWindow::about()
 {
     Dyalog *aboutDialog = new Dyalog(this, false);
     aboutDialog->setWindowTitle(tr("About Dorian"));
+    QString version = Platform::instance()->version();
     QLabel *label = new QLabel(aboutDialog);
     label->setTextFormat(Qt::RichText);
     label->setOpenExternalLinks(true);
@@ -454,7 +456,7 @@ void MainWindow::about()
         "Akos Polster &lt;akos@pipacs.com&gt;<br>"
         "Licensed under GNU General Public License, Version 3<br>"
         "Source code:<br><a href='https://garage.maemo.org/projects/dorian/'>"
-        "garage.maemo.org/projects/dorian</a>").arg(Platform::version()));
+        "garage.maemo.org/projects/dorian</a>").arg(version));
     aboutDialog->addWidget(label);
     aboutDialog->addStretch();
     aboutDialog->show();

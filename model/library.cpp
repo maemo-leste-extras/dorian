@@ -7,7 +7,7 @@ static const char *DORIAN_VERSION =
 #include "pkg/version.txt"
 ;
 
-Library *Library::mInstance = 0;
+static Library *theInstance = 0;
 
 Library::Library(QObject *parent): QAbstractListModel(parent)
 {
@@ -20,10 +20,10 @@ Library::~Library()
 
 Library *Library::instance()
 {
-    if (!mInstance) {
-        mInstance = new Library();
+    if (!theInstance) {
+        theInstance = new Library();
     }
-    return mInstance;
+    return theInstance;
 }
 
 int Library::rowCount(const QModelIndex &parent) const
@@ -65,8 +65,8 @@ Book *Library::book(const QModelIndex &index)
 
 void Library::close()
 {
-    delete mInstance;
-    mInstance = 0;
+    delete theInstance;
+    theInstance = 0;
 }
 
 void Library::load()

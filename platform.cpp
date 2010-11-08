@@ -33,6 +33,22 @@ static const char *DORIAN_VERSION =
 #   include <QMessageBox>
 #endif
 
+static Platform *theInstance;
+
+Platform *Platform::instance()
+{
+    if (!theInstance) {
+        theInstance = new Platform();
+    }
+    return theInstance;
+}
+
+void Platform::close()
+{
+    delete theInstance;
+    theInstance = 0;
+}
+
 QString Platform::dbPath()
 {
     QString base(QDir::home().absoluteFilePath(DORIAN_BASE));

@@ -83,7 +83,8 @@ void LibraryDialog::onAdd()
     // Add book to library
     QModelIndex index = library->find(path);
     if (index.isValid()) {
-        Platform::information(tr("This book is already in the library"), this);
+        Platform::instance()->information(
+                tr("This book is already in the library"), this);
         setSelected(index);
     }
     else {
@@ -217,7 +218,7 @@ void LibraryDialog::onAddFromFolderDone(int added)
 
     progress->reset();
     qDebug() << "LibraryDialog::onRefreshDone:" << msg;
-    Platform::information(msg, this);
+    Platform::instance()->information(msg, this);
 }
 
 void LibraryDialog::onAddFromFolder(const QString &path)

@@ -88,10 +88,12 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     ToolButtonBox *box = new ToolButtonBox(this);
     layout->addWidget(box);
     box->addButton(SchemeDefault, tr("Default"),
-                   Platform::icon("style-default"));
-    box->addButton(SchemeNight, tr("Night"), Platform::icon("style-night"));
-    box->addButton(SchemeDay, tr("Day"), Platform::icon("style-day"));
-    box->addButton(SchemeSand, tr("Sand"), Platform::icon("style-sand"));
+                   Platform::instance()->icon("style-default"));
+    box->addButton(SchemeNight, tr("Night"),
+                   Platform::instance()->icon("style-night"));
+    box->addButton(SchemeDay, tr("Day"), Platform::instance()->icon("style-day"));
+    box->addButton(SchemeSand, tr("Sand"),
+                   Platform::instance()->icon("style-sand"));
     box->addStretch();
     QString scheme = settings->value("scheme", "default").toString();
     if (scheme == "night") {
