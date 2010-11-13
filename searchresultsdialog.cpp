@@ -16,7 +16,7 @@
 SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     QWidget *parent): ListWindow(parent), results(results_)
 {
-    setWindowTitle(tr("Search Results"));
+    setWindowTitle(tr("Search results"));
 
     foreach (Search::Result result, results) {
         QString author;
@@ -42,7 +42,7 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
             this,
             SLOT(onEndDownload(int, const Search::Result &, const QString &)));
 
-    progress = new ProgressDialog(tr("Downloading Book"), this);
+    progress = new ProgressDialog(tr("Downloading book"), this);
 }
 
 void SearchResultsDialog::onItemActivated(const QModelIndex &index)

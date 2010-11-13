@@ -15,12 +15,19 @@
 #include "platform.h"
 #include "searchresultsdialog.h"
 #include "progressdialog.h"
+#include "settings.h"
 
 LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 {
+    TRACE;
     setWindowTitle(tr("Library"));
+    setAttribute(Qt::WA_DeleteOnClose, true);
 
     // Add actions
+
+    sortByTitle = addMenuAction(tr("Sort by title"), this, SLOT(onSortByTitle()));
+    sortByAuthor =
+            addMenuAction(tr("Sort by author"), this, SLOT(onSortByAuthor()));
 
 #ifndef Q_WS_MAEMO_5
     addItemAction(tr("Details"), this, SLOT(onDetails()));
@@ -40,7 +47,7 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     list->setSpacing(1);
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
-    setSelected(current);
+    setSelected(sortedLibrary->mapFromSource(current));
     addList(list);
 
     progress = new ProgressDialog(tr("Adding books"), this);
@@ -58,6 +65,15 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     searchDialog = new SearchDialog(this);
     connect(Search::instance(), SIGNAL(endSearch()),
             this, SLOT(showSearchResults()));
+
+    // Retrieve default sort criteria
+    switch (Settings::instance()->value("lib/sortby").toInt()) {
+    case SortedLibrary::SortByAuthor:
+        onSortByAuthor();
+        break;
+    default:
+        onSortByTitle();
+    }
 }
 
 void LibraryDialog::onAdd()
@@ -85,7 +101,7 @@ void LibraryDialog::onAdd()
     if (index.isValid()) {
         Platform::instance()->information(
                 tr("This book is already in the library"), this);
-        setSelected(index);
+        setSelected(sortedLibrary->mapFromSource(index));
     }
     else {
         library->add(path);
@@ -95,7 +111,8 @@ void LibraryDialog::onAdd()
 void LibraryDialog::onBookAdded()
 {
     Library *library = Library::instance();
-    setSelected(library->index(library->rowCount() - 1));
+    setSelected(sortedLibrary->
+                mapFromSource(library->index(library->rowCount() - 1)));
 }
 
 #ifndef Q_WS_MAEMO_5
@@ -139,9 +156,10 @@ void LibraryDialog::onItemActivated(const QModelIndex &index)
     (new InfoDialog(book, this))->exec();
 }
 
-QString LibraryDialog::createItemText(const Book *book)
+QString LibraryDialog::createItemText(Book *book)
 {
-    QString text = book->title + "\n";
+    Q_ASSERT(book);
+    QString text = book->shortName() + "\n";
     if (book->creators.size()) {
         text += book->creators[0];
         for (int i = 1; i < book->creators.size(); i++) {
@@ -242,7 +260,7 @@ void LibraryDialog::showSearchResults()
 {
     progress->reset();
     QList<Search::Result> results = Search::instance()->results();
-    if (results.count() == 0) {
+    if (results.isEmpty()) {
         QMessageBox::information(this, tr("Search results"),
                                  tr("No books found"));
         return;
@@ -252,4 +270,22 @@ void LibraryDialog::showSearchResults()
     connect(dialog, SIGNAL(add(const Search::Result &)),
             this, SLOT(onAddSearchResult(const Search::Result &)));
     dialog->show();
+}
+
+void LibraryDialog::onSortByAuthor()
+{
+    TRACE;
+    sortedLibrary->setSortBy(SortedLibrary::SortByAuthor);
+    Settings::instance()->setValue("lib/sortby", SortedLibrary::SortByAuthor);
+    sortByAuthor->setChecked(true);
+    sortByTitle->setChecked(false);
+}
+
+void LibraryDialog::onSortByTitle()
+{
+    TRACE;
+    sortedLibrary->setSortBy(SortedLibrary::SortByTitle);
+    Settings::instance()->setValue("lib/sortby", SortedLibrary::SortByTitle);
+    sortByAuthor->setChecked(false);
+    sortByTitle->setChecked(true);
 }

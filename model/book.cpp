@@ -505,7 +505,7 @@ bool Book::extractMetaData()
 {
     QStringList excludedExtensions;
     excludedExtensions << ".html" << ".xhtml" << ".xht" << ".htm" << ".gif"
-            << ".png" << ".css";
+            << ".png" << ".css" << "*.ttf" << "mimetype";
     return extract(excludedExtensions);
 }
 

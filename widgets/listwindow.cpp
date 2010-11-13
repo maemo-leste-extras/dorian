@@ -131,6 +131,29 @@ void ListWindow::addItemAction(const QString &title, QObject *receiver,
 #endif // Q_WS_MAEMO_5
 }
 
+QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
+                                   const char *slot)
+{
+    TRACE;
+    QAction *action = 0;
+#if defined(Q_WS_MAEMO_5)
+    action = menuBar()->addAction(title);
+    connect(action, SIGNAL(triggered()), receiver, slot);
+#elif defined(Q_OS_SYMBIAN)
+    action = new QAction(title, this);
+    connect(action, SIGNAL(triggered()), receiver, slot);
+    action->setSoftKeyRole(QAction::PositiveSoftKey);
+    menuBar()->addAction(action);
+#else
+    Q_UNUSED(title);
+    Q_UNUSED(receiver);
+    Q_UNUSED(slot);
+    QAction = new QAction(this);
+#endif
+    action->setCheckable(true);
+    return action;
+}
+
 #ifdef Q_WS_MAEMO_5
 
 void ListWindow::closeEvent(QCloseEvent *event)

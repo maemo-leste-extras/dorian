@@ -58,11 +58,8 @@ MainWindow::MainWindow(QWidget *parent):
     view->show();
     layout->addWidget(view);
 
-    // Progress
+    // Dialogs
     progress = new Progress(this);
-
-    // Settings dialog
-    settings = new QDialog(this);
 
     // Tool bar actions
 

@@ -44,6 +44,12 @@ public:
     void addItemAction(const QString &title, QObject *receiver,
                        const char *slot);
 
+    /**
+      * Add an action to the menu.
+      */
+    QAction *addMenuAction(const QString &title, QObject *receiver,
+                           const char *slot);
+
 public slots:
 #ifdef Q_OS_SYMBIAN
     void show();
