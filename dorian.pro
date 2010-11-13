@@ -139,11 +139,8 @@ symbian {
         WriteUserData
     TARGET.EPOCHEAPSIZE = 0x080000 0x4000000
     ICON = $$PWD/pkg/symbian/book.svg
-    # packageheader = "$${LITERAL_HASH}{\"Dorian\"}, (0xA89FC85B), 0, 3, 5"
-    # vendorinfo = \
-    #     "%{\"Nokia Betalabs \"}" \
-    #     ":\"Nokia Betalabs \""
-    # my_deployment.pkg_prerules = packageheader vendorinfo
+    # packageheader = "$${LITERAL_HASH}{\"Dorian\"}, (0xA89FC85B), 0, 3, 6"
+    # my_deployment.pkg_prerules = packageheader
     # DEPLOYMENT += my_deployment
 
     INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
