@@ -38,11 +38,14 @@ public:
         }
     };
 
-    /** Construct a book from an EPUB file in path. */
-    Book(const QString &path, QObject *parent = 0);
+    /** Construct a book from an EPUB file. */
+    Book(const QString &fileName, QObject *parent = 0);
 
     /** Default constructor. */
-    Book();
+    // Book();
+
+    /** Destructor. */
+    ~Book();
 
     /** Load book meta-data from persistent storage. */
     void load();

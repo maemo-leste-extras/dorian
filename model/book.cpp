@@ -32,6 +32,11 @@ Book::Book(const QString &p, QObject *parent): QObject(parent), loaded(false)
     }
 }
 
+Book::~Book()
+{
+    close();
+}
+
 QString Book::path()
 {
     return mPath;

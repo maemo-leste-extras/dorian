@@ -10,13 +10,14 @@
 DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
 {
     setWindowTitle(tr("Developer"));
+    addWidget(new QLabel(tr("Qt API version %1").arg(QT_VERSION_STR), this));
+    addWidget(new QLabel(tr("Qt runtime version %1").arg(qVersion()), this));
+
     QPushButton *clearSettings = new QPushButton("Clear persistent data", this);
     connect(clearSettings, SIGNAL(clicked()), this, SLOT(onClear()));
     addWidget(clearSettings);
 
-    QLabel *level = new QLabel(tr("Trace level:"), this);
-    addWidget(level);
-
+    addWidget(new QLabel(tr("Trace level:"), this));
     ToolButtonBox *box = new ToolButtonBox(this);
     addWidget(box);
     box->addButton(QtDebugMsg, tr("Debug"));
