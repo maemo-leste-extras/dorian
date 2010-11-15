@@ -76,6 +76,14 @@ void AdopterWindow::leaveChildren()
     }
 }
 
+bool AdopterWindow::hasChild(QWidget *child)
+{
+    if (child == bookView) {
+        return true;
+    }
+    return this == child->parent();
+}
+
 void AdopterWindow::show()
 {
 #ifdef Q_OS_SYMBIAN
@@ -96,16 +104,22 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
 {
     TRACE;
     qDebug() << "icon" << iconName << "text" << text;
+    QAction *action;
 #ifndef Q_OS_SYMBIAN
-    return toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
-                              text, receiver, member);
+    action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
+                                text, receiver, member);
 #else
     Q_UNUSED(iconName);
-    QAction *action = new QAction(text, this);
+    action = new QAction(text, this);
     menuBar()->addAction(action);
     connect(action, SIGNAL(triggered()), receiver, member);
-    return action;
 #endif
+
+#if defined Q_WS_MAEMO_5
+    action->setText("");
+    action->setToolTip("");
+#endif
+    return action;
 }
 
 void AdopterWindow::addToolBarSpace()

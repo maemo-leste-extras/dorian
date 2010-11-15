@@ -26,6 +26,9 @@ public:
     /** Release current children (adopted in @see takeChildren). */
     void leaveChildren();
 
+    /** Return true if a child is currently adopted. */
+    bool hasChild(QWidget *child);
+
     /**
      * Add action that is visible on the tool bar (except on Symbian, where
      * it is visible on the Options menu).

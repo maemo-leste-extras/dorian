@@ -9,7 +9,7 @@ const int TranslucentButton::elevatorInterval = 750;
 TranslucentButton::TranslucentButton(const QString &name_, QWidget *parent):
     QLabel(parent), name(name_), transparent(true)
 {
-    setGeometry(0, 0, pixels, pixels);
+    setFixedSize(pixels, pixels);
     elevatorTimer = startTimer(elevatorInterval);
 }
 
@@ -33,8 +33,8 @@ void TranslucentButton::paintEvent(QPaintEvent *)
 
 void TranslucentButton::flash(int duration)
 {
-    show();
     raise();
+    show();
     transparent = false;
     update();
     QTimer::singleShot(duration, this, SLOT(stopFlash()));
@@ -58,4 +58,5 @@ void TranslucentButton::timerEvent(QTimerEvent *e)
     if (e->timerId() == elevatorTimer) {
         raise();
     }
+    QLabel::timerEvent(e);
 }

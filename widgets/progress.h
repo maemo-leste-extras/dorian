@@ -17,6 +17,7 @@ signals:
 public slots:
     void setProgress(qreal p);
     void flash();
+    int thickness() const;
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -25,6 +26,7 @@ protected:
 private:
     qreal progress;
     int timer;
+    int mThickness;
 };
 
 #endif // PROGRESS_H

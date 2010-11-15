@@ -3,6 +3,8 @@
 #include "fullscreenwindow.h"
 #include "translucentbutton.h"
 #include "trace.h"
+#include "settings.h"
+#include "platform.h"
 
 FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 {
@@ -22,7 +24,7 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
     setCentralWidget(frame);
     restoreButton = new TranslucentButton("view-normal", this);
     QRect screen = QApplication::desktop()->screenGeometry();
-    restoreButton->setGeometry((screen.width() - TranslucentButton::pixels) / 2,
+    restoreButton->setGeometry(screen.width() - TranslucentButton::pixels - 9,
         screen.height() - TranslucentButton::pixels - 9,
         TranslucentButton::pixels, TranslucentButton::pixels);
     connect(restoreButton, SIGNAL(triggered()), this, SIGNAL(restore()));
@@ -31,23 +33,33 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 void FullScreenWindow::showFullScreen()
 {
     TRACE;
-#ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5PortraitOrientation, parentWidget()->
-                 testAttribute(Qt::WA_Maemo5PortraitOrientation));
-    setAttribute(Qt::WA_Maemo5LandscapeOrientation, parentWidget()->
-                 testAttribute(Qt::WA_Maemo5LandscapeOrientation));
-#endif // Q_WS_MAEMO_5
-    QWidget::showFullScreen();
+    AdopterWindow::showFullScreen();
     restoreButton->flash(3000);
 }
 
 void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
     TRACE;
-    Q_UNUSED(e);
-    restoreButton->raise();
+
     QRect screen = QApplication::desktop()->screenGeometry();
-    restoreButton->setGeometry(screen.width() - TranslucentButton::pixels - 9,
-        screen.height() - TranslucentButton::pixels - 9,
-        TranslucentButton::pixels, TranslucentButton::pixels);
+    int w = screen.width();
+    int h = screen.height();
+
+#ifdef Q_WS_MAEMO_5
+    // Hack: FullScreenWindow can lose orientation on Maemo...
+    QString orientation = Settings::instance()->value("orientation",
+        Platform::instance()->defaultOrientation()).toString();
+    if (((orientation == "portrait") && (w > h)) ||
+        ((orientation == "landscape") && (w < h))) {
+        int tmp = w;
+        w = h;
+        h = tmp;
+    }
+#endif // Q_WS_MAEMO_5
+
+    restoreButton->setGeometry(w - TranslucentButton::pixels - 9,
+        h - TranslucentButton::pixels - 9,  TranslucentButton::pixels,
+        TranslucentButton::pixels);
+    restoreButton->flash(3000);
+    AdopterWindow::resizeEvent(e);
 }

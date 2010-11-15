@@ -3,7 +3,8 @@
 #include "progress.h"
 #include "trace.h"
 
-Progress::Progress(QWidget *parent): QLabel(parent), progress(-1.0), timer(-1)
+Progress::Progress(QWidget *parent):
+        QLabel(parent), progress(-1.0), timer(-1), mThickness(15)
 {
     hide();
 }
@@ -26,10 +27,9 @@ void Progress::paintEvent(QPaintEvent *e)
     painter.setBrush(QBrush(QColor(100, 100, 100, 177)));
     painter.setPen(Qt::NoPen);
     int w = int(width() * progress);
-    int h = height();
-    painter.drawRect(0, 0, w, h);
+    painter.drawRect(0, 0, w, mThickness);
     painter.setBrush(QBrush(QColor(100, 100, 100, 50)));
-    painter.drawRect(w, 0, width(), h);
+    painter.drawRect(w, 0, width() - w, mThickness);
 }
 
 void Progress::flash()
@@ -47,4 +47,9 @@ void Progress::timerEvent(QTimerEvent *e)
         hide();
     }
     QLabel::timerEvent(e);
+}
+
+int Progress::thickness() const
+{
+    return mThickness;
 }

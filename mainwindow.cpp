@@ -34,8 +34,6 @@
 #   include "modeltest.h"
 #endif
 
-const int DORIAN_PROGRESS_HEIGHT = 17;
-
 MainWindow::MainWindow(QWidget *parent):
     AdopterWindow(parent), view(0), preventBlankingTimer(-1)
 {
@@ -190,8 +188,14 @@ void MainWindow::showRegular()
     takeChildren(view, otherChildren);
 
     // Adjust geometry of decorations
+
     QRect geo = geometry();
-    progress->setGeometry(0, 0, geo.width(), DORIAN_PROGRESS_HEIGHT);
+    int y = geo.height() - progress->thickness();
+#if defined(Q_WS_MAEMO_5)
+    y -= toolBar->height();
+#endif
+    progress->setGeometry(0, y, geo.width(), y + progress->thickness());
+
 #if defined(Q_WS_MAEMO_5)
     previousButton->setGeometry(0,
         geo.height() - toolBar->height() - TranslucentButton::pixels,
@@ -234,7 +238,8 @@ void MainWindow::showBig()
 
     // Adjust geometry of decorations
     QRect screen = QApplication::desktop()->screenGeometry();
-    progress->setGeometry(0, 0, screen.width(), DORIAN_PROGRESS_HEIGHT);
+    int y = screen.height() - progress->thickness();
+    progress->setGeometry(0, y, screen.width(), y + progress->thickness());
 #if defined(Q_WS_MAEMO_5)
     nextButton->setGeometry(screen.width() - TranslucentButton::pixels, 0,
         TranslucentButton::pixels, TranslucentButton::pixels);
@@ -319,9 +324,16 @@ void MainWindow::onSettingsChanged(const QString &key)
         if (value == "portrait") {
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
             setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
+            fullScreenWindow->setAttribute(Qt::WA_Maemo5LandscapeOrientation,
+                                           false);
+            fullScreenWindow->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
         } else {
             setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
             setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
+            fullScreenWindow->setAttribute(Qt::WA_Maemo5PortraitOrientation,
+                                           false);
+            fullScreenWindow->setAttribute(Qt::WA_Maemo5LandscapeOrientation,
+                                           true);
         }
     } else if (key == "lightson") {
         bool enable = Settings::instance()->value(key, false).toBool();
@@ -415,33 +427,43 @@ void MainWindow::timerEvent(QTimerEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
     TRACE;
-    progress->setGeometry(QRect(0, 0, e->size().width(), DORIAN_PROGRESS_HEIGHT));
+
+    if (hasChild(progress)) {
+        qDebug() << "To" << e->size();
+        int y = e->size().height() - progress->thickness();
 #if defined(Q_WS_MAEMO_5)
-    previousButton->setGeometry(0,
-        e->size().height() - toolBar->height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels, 0,
-        TranslucentButton::pixels, TranslucentButton::pixels);
+        y -= toolBar->height();
+#endif
+        progress->setGeometry(0, y, e->size().width(), y + progress->thickness());
+
+#if defined(Q_WS_MAEMO_5)
+        previousButton->setGeometry(0,
+            e->size().height() - toolBar->height() - TranslucentButton::pixels,
+            TranslucentButton::pixels, TranslucentButton::pixels);
+        nextButton->setGeometry(e->size().width() - TranslucentButton::pixels, 0,
+            TranslucentButton::pixels, TranslucentButton::pixels);
 #elif defined(Q_OS_SYMBIAN)
-    previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels,
-        0, TranslucentButton::pixels, TranslucentButton::pixels);
+        previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
+            TranslucentButton::pixels, TranslucentButton::pixels);
+        nextButton->setGeometry(e->size().width() - TranslucentButton::pixels,
+            0, TranslucentButton::pixels, TranslucentButton::pixels);
 #else
-    previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(e->size().width() - TranslucentButton::pixels - 25,
-        toolBar->height(), TranslucentButton::pixels, TranslucentButton::pixels);
+        previousButton->setGeometry(0,
+            e->size().height() - TranslucentButton::pixels,
+            TranslucentButton::pixels, TranslucentButton::pixels);
+        nextButton->setGeometry(e->size().width() - TranslucentButton::pixels - 25,
+            toolBar->height(), TranslucentButton::pixels,
+            TranslucentButton::pixels);
 #endif // Q_WS_MAEMO_5
-    qDebug() << "previousButton geometry" << previousButton->geometry();
 
 #ifdef Q_WS_MAEMO_5
-    // This is needed on Maemo, in order not to lose current reading position
-    // after orientation change
-    QTimer::singleShot(250, view, SLOT(restoreLastBookmark()));
+        // This is needed on Maemo, in order not to lose current reading position
+        // after orientation change
+        QTimer::singleShot(250, view, SLOT(restoreLastBookmark()));
 #endif
-    previousButton->flash();
-    nextButton->flash();
+        previousButton->flash();
+        nextButton->flash();
+    }
     QMainWindow::resizeEvent(e);
 }
 

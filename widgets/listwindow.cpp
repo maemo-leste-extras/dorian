@@ -148,7 +148,7 @@ QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
     Q_UNUSED(title);
     Q_UNUSED(receiver);
     Q_UNUSED(slot);
-    QAction = new QAction(this);
+    action = new QAction(this);
 #endif
     action->setCheckable(true);
     return action;
