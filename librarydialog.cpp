@@ -29,12 +29,6 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     sortByAuthor =
             addMenuAction(tr("Sort by author"), this, SLOT(onSortByAuthor()));
 
-#ifndef Q_WS_MAEMO_5
-    addItemAction(tr("Details"), this, SLOT(onDetails()));
-    addItemAction(tr("Read"), this, SLOT(onRead()));
-    addItemAction(tr("Delete"), this, SLOT(onRemove()));
-#endif // ! Q_WS_MAEMO_5
-
     addAction(tr("Add book"), this, SLOT(onAdd()), "add");
     addAction(tr("Add books from folder"), this, SLOT(onAddFolder()), "folder");
     addAction(tr("Search the Web"), this, SLOT(onSearch()), "search");
@@ -52,8 +46,6 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
 
     progress = new ProgressDialog(tr("Adding books"), this);
 
-    connect(Library::instance(), SIGNAL(nowReadingChanged()),
-            this, SLOT(onCurrentBookChanged()));
     connect(Library::instance(),
             SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this,
@@ -115,45 +107,31 @@ void LibraryDialog::onBookAdded()
                 mapFromSource(library->index(library->rowCount() - 1)));
 }
 
-#ifndef Q_WS_MAEMO_5
-
-void LibraryDialog::onRemove()
-{
-    QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
-    if (current.isValid()) {
-        Book *currentBook = Library::instance()->book(current);
-        QString title = currentBook->name();
-        if (QMessageBox::Yes ==
-            QMessageBox::question(this, tr("Delete book"),
-                tr("Delete book \"%1\" from library?").
-                    arg(currentBook->shortName()),
-                QMessageBox::Yes | QMessageBox::No)) {
-            Library::instance()->remove(current);
-        }
-    }
-}
-
-void LibraryDialog::onRead()
-{
-    QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
-    if (current.isValid()) {
-        Library::instance()->setNowReading(current);
-    }
-}
-
-void LibraryDialog::onDetails()
-{
-    onItemActivated(list->currentIndex());
-}
-
-#endif // Q_WS_MAEMO_5
-
 void LibraryDialog::onItemActivated(const QModelIndex &index)
 {
     TRACE;
     QModelIndex libraryIndex = sortedLibrary->mapToSource(index);
     Book *book = Library::instance()->book(libraryIndex);
-    (new InfoDialog(book, this))->exec();
+    int ret = (new InfoDialog(book, this))->exec();
+
+    switch (ret) {
+    case InfoDialog::Read:
+        {
+            QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
+            Q_ASSERT(current.isValid());
+            Library::instance()->setNowReading(current);
+            close();
+        }
+        break;
+    case InfoDialog::Delete:
+        {
+            QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
+            Library::instance()->remove(current);
+        }
+        break;
+    default:
+        ;
+    }
 }
 
 QString LibraryDialog::createItemText(Book *book)
@@ -167,11 +145,6 @@ QString LibraryDialog::createItemText(Book *book)
         }
     }
     return text;
-}
-
-void LibraryDialog::onCurrentBookChanged()
-{
-    close();
 }
 
 void LibraryDialog::setSelected(const QModelIndex &libraryIndex)

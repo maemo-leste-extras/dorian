@@ -54,8 +54,7 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
 
 void InfoDialog::onReadBook()
 {
-    Library::instance()->setNowReading(Library::instance()->find(book));
-    close();
+    done(InfoDialog::Read);
 }
 
 void InfoDialog::onRemoveBook()
@@ -64,7 +63,6 @@ void InfoDialog::onRemoveBook()
         QMessageBox::question(this, tr("Delete book"),
             tr("Delete book \"%1\" from library?").arg(book->shortName()),
             QMessageBox::Yes | QMessageBox::No)) {
-        Library::instance()->remove(Library::instance()->find(book));
-        close();
+        done(InfoDialog::Delete);
     }
 }

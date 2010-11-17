@@ -129,16 +129,16 @@ void Library::remove(const QModelIndex &index)
     if (!toRemove) {
         return;
     }
+    if (index == mNowReading) {
+        mNowReading = QModelIndex();
+        emit nowReadingChanged();
+    }
     toRemove->remove();
     int row = index.row();
     beginRemoveRows(QModelIndex(), row, row);
     mBooks.removeAt(row);
     save();
     endRemoveRows();
-    if (index == mNowReading) {
-        mNowReading = QModelIndex();
-        emit nowReadingChanged();
-    }
     delete toRemove;
 }
 

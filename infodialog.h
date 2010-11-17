@@ -12,6 +12,7 @@ class InfoDialog: public Dyalog
     Q_OBJECT
 
 public:
+    enum {Close, Read, Delete}; //< Dialog result codes.
     explicit InfoDialog(Book *book, QWidget *parent, bool showButtons = true);
 
 public slots:

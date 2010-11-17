@@ -12,6 +12,8 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
                     Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint),
     showButtons(showButtons_)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+
     scroller = new QScrollArea(this);
 
 #if defined(Q_WS_MAEMO_5)

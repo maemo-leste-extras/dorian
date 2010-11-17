@@ -29,14 +29,8 @@ public:
 public slots:
     void onAdd();
     void onAddFolder();
-#ifndef Q_WS_MAEMO_5
-    void onRemove();
-    void onDetails();
-    void onRead();
-#endif // Q_WS_MAEMO_5
     void onBookAdded();
     void onItemActivated(const QModelIndex &index);
-    void onCurrentBookChanged();
     void onAddFromFolder(const QString &path);
     void onAddFromFolderDone(int added);
     void onSearch();

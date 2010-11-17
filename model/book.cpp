@@ -552,6 +552,6 @@ void Book::upgrade()
 void Book::remove()
 {
     TRACE;
-    load();
+    close();
     BookDb::instance()->remove(path());
 }

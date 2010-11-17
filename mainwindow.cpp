@@ -29,6 +29,7 @@
 #include "translucentbutton.h"
 #include "platform.h"
 #include "progressdialog.h"
+#include "sortedlibrary.h"
 
 #ifdef DORIAN_TEST_MODEL
 #   include "modeltest.h"
@@ -166,7 +167,8 @@ void MainWindow::initialize()
             if (!library->rowCount()) {
                 library->add(":/books/2BR02B.epub");
             }
-            library->setNowReading(library->index(0));
+            SortedLibrary sorted;
+            library->setNowReading(sorted.mapToSource(sorted.index(0, 0)));
         }
     }
 }
