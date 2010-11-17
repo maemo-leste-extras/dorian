@@ -14,10 +14,6 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     }
 
     addAction(tr("Add bookmark"), this, SLOT(onAdd()), "add");
-#ifndef Q_WS_MAEMO_5
-    addItemAction(tr("Go to"), this, SLOT(onGo()));
-    addItemAction(tr("Delete"), this, SLOT(onDelete()));
-#endif // ! Q_WS_MAEMO_5
 
     // Build bookmark list
     // FIXME: Localize me
