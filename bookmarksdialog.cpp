@@ -3,7 +3,7 @@
 #include "bookmarksdialog.h"
 #include "book.h"
 #include "bookmarkinfodialog.h"
-#include "listview.h"
+#include "trace.h"
 
 BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     ListWindow(parent), book(book_)
@@ -13,9 +13,9 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
         return;
     }
 
-    addAction(tr("Add bookmark"), this, SLOT(onAdd()), "add");
+    addButton(tr("Add bookmark"), this, SLOT(onAdd()), "add");
 
-    // Build bookmark list
+    // Build and set bookmark model
     // FIXME: Localize me
     foreach (Book::Bookmark bookmark, book_->bookmarks()) {
         QString label("At ");
@@ -32,25 +32,23 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
         }
         data.append(label);
     }
-
-    // Create bookmark list view
     QStringListModel *model = new QStringListModel(data, this);
-    list = new ListView;
-    list->setSelectionMode(QAbstractItemView::SingleSelection);
-    list->setModel(model);
-    addList(list);
-    connect(list, SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(onItemActivated(const QModelIndex &)));
-    addList(list);
+    setModel(model);
+
+    // FIXME
+    // connect(list, SIGNAL(activated(const QModelIndex &)),
+    //         this, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 void BookmarksDialog::onGo()
 {
-    QModelIndex current = list->currentIndex();
-    if (current.isValid()) {
-        emit goToBookmark(current.row());
-        close();
-    }
+    TRACE;
+    // FIXME
+    // QModelIndex current = list->currentIndex();
+    // if (current.isValid()) {
+    //     emit goToBookmark(current.row());
+    //     close();
+    // }
 }
 
 void BookmarksDialog::onItemActivated(const QModelIndex &index)

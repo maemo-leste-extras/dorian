@@ -23,26 +23,24 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     setWindowTitle(tr("Library"));
     setAttribute(Qt::WA_DeleteOnClose, true);
 
-    // Add actions
-
+    // Add menu actions
     sortByTitle = addMenuAction(tr("Sort by title"), this, SLOT(onSortByTitle()));
     sortByAuthor =
             addMenuAction(tr("Sort by author"), this, SLOT(onSortByAuthor()));
 
-    addAction(tr("Add book"), this, SLOT(onAdd()), "add");
-    addAction(tr("Add books from folder"), this, SLOT(onAddFolder()), "folder");
-    addAction(tr("Search the Web"), this, SLOT(onSearch()), "search");
-
-    // Create and add list view
-    list = new ListView(this);
+    // Set model
     sortedLibrary = new SortedLibrary(this);
-    list->setModel(sortedLibrary);
-    list->setSelectionMode(QAbstractItemView::SingleSelection);
-    list->setSpacing(1);
+    setModel(sortedLibrary);
+
+    // Add action buttons
+    addButton(tr("Add book"), this, SLOT(onAdd()), "add");
+    addButton(tr("Add books from folder"), this, SLOT(onAddFolder()), "folder");
+    addButton(tr("Search the Web"), this, SLOT(onSearch()), "search");
+
+    // Set selected item
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
-    setSelected(sortedLibrary->mapFromSource(current));
-    addList(list);
+    // FIXME: setSelected(sortedLibrary->mapFromSource(current));
 
     progress = new ProgressDialog(tr("Adding books"), this);
 
@@ -50,7 +48,7 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
             SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this,
             SLOT(onBookAdded()));
-    connect(list, SIGNAL(activated(const QModelIndex &)),
+    connect(this, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
 
     // Create search dialog

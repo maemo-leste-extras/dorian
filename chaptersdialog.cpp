@@ -7,7 +7,6 @@
 ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
 {
     setWindowTitle(tr("Chapters"));
-
     if (book) {
         foreach (QString id, book->chapters) {
             QString contentTitle = book->content[id].name;
@@ -15,12 +14,10 @@ ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
         }
     }
     QStringListModel *model = new QStringListModel(data, this);
-    list = new ListView;
-    list->setSelectionMode(QAbstractItemView::SingleSelection);
-    list->setModel(model);
-    addList(list);
-    connect(list, SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(onItemActivated(const QModelIndex &)));
+    setModel(model);
+    // FIXME
+    // connect(list, SIGNAL(activated(const QModelIndex &)),
+    //         this, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 void ChaptersDialog::onItemActivated(const QModelIndex &index)

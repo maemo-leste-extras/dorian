@@ -7,7 +7,6 @@
 
 class QCloseEvent;
 class Book;
-class ListView;
 
 /** Dialog box managing bookmarks. */
 class BookmarksDialog: public ListWindow
@@ -29,7 +28,6 @@ public slots:
 
 protected:
     Book *book;
-    ListView *list;
     QStringList data;
 };
 

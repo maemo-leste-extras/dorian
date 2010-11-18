@@ -27,14 +27,10 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
     }
 
     QStringListModel *model = new QStringListModel(data, this);
-    list = new ListView;
-    list->setSelectionMode(QAbstractItemView::SingleSelection);
-    list->setModel(model);
-    list->setUniformItemSizes(true);
-    addList(list);
-    addItemAction(tr("Download book"), this, SLOT(onDownload()));
-    connect(list, SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(onItemActivated(const QModelIndex &)));
+    setModel(model);
+    // FIXME
+    // connect(list, SIGNAL(activated(const QModelIndex &)),
+    //         this, SLOT(onItemActivated(const QModelIndex &)));
     Search *search = Search::instance();
     connect(search, SIGNAL(beginDownload(int)), this, SLOT(onBeginDownload(int)));
     connect(search,
@@ -59,11 +55,6 @@ void SearchResultsDialog::onItemActivated(const QModelIndex &index)
         qDebug() << "Downloading to" << fileName;
         Search::instance()->download(result, fileName);
     }
-}
-
-void SearchResultsDialog::onDownload()
-{
-    onItemActivated(list->currentIndex());
 }
 
 QString SearchResultsDialog::downloadName() const
