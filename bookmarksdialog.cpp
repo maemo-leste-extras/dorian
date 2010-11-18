@@ -6,14 +6,12 @@
 #include "trace.h"
 
 BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
-    ListWindow(parent), book(book_)
+    ListWindow(tr("(No bookmarks)"), parent), book(book_)
 {
     setWindowTitle(tr("Bookmarks"));
     if (!book) {
         return;
     }
-
-    addButton(tr("Add bookmark"), this, SLOT(onAdd()), "add");
 
     // Build and set bookmark model
     // FIXME: Localize me
@@ -34,6 +32,8 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     }
     QStringListModel *model = new QStringListModel(data, this);
     setModel(model);
+
+    addButton(tr("Add bookmark"), this, SLOT(onAdd()), "add");
 
     // FIXME
     // connect(list, SIGNAL(activated(const QModelIndex &)),
@@ -78,6 +78,8 @@ void BookmarksDialog::onAdd()
 
 void BookmarksDialog::onDelete(bool really)
 {
+#if 0
+    // FIXME
     QModelIndex current = list->currentIndex();
     if (!current.isValid()) {
         return;
@@ -92,4 +94,5 @@ void BookmarksDialog::onDelete(bool really)
     int row = current.row();
     list->model()->removeRow(row);
     book->deleteBookmark(row);
+#endif
 }

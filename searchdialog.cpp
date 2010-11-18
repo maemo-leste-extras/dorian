@@ -6,7 +6,9 @@
 
 SearchDialog::SearchDialog(QWidget *parent): Dyalog(parent)
 {
+    TRACE;
     setWindowTitle(tr("Search the Web"));
+    setAttribute(Qt::WA_DeleteOnClose, false);
 
     QLabel *titleLabel = new QLabel(tr("Title:"), this);
     title = new QLineEdit(this);

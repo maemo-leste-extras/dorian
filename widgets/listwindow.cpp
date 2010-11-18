@@ -10,13 +10,16 @@
 #include "flickcharm.h"
 #endif
 
-ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), model(0)
+ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
+        QMainWindow(parent), mModel(0), noItems(noItems_)
 {
 #if defined(Q_WS_MAEMO_5)
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
+    setAttribute(Qt::WA_DeleteOnClose);
 
     list = new QListWidget(this);
+    list->setSelectionMode(QAbstractItemView::SingleSelection);
     populateList();
     setCentralWidget(list);
 
@@ -29,14 +32,8 @@ ListWindow::ListWindow(QWidget *parent): QMainWindow(parent), model(0)
     QMainWindow::addAction(closeAction);
 #endif // Q_OS_SYMBIAN
 
-#ifdef Q_WS_MAC
-    // FIXME
-    // addAction(tr("Close"), this, SLOT(close()), QString(),
-    //           QDialogButtonBox::RejectRole);
-#endif // Q_WS_MAC
-
     connect(list, SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(onItemActicvated(const QModelIndex &)));
+            this, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 void ListWindow::populateList()
@@ -46,32 +43,53 @@ void ListWindow::populateList()
     list->clear();
     list->setIconSize(QSize(48, 48)); // FIXME
     list->setUniformItemSizes(true);
-    if (model) {
-        for (int i = 0; i < model->rowCount(); i++) {
-            QModelIndex index = model->index(i, 0);
-            QString text = model->data(index, Qt::DisplayRole).toString();
-            QVariant imageData = model->data(index, Qt::DecorationRole);
+    if (mModel && mModel->rowCount()) {
+        for (int i = 0; i < mModel->rowCount(); i++) {
+            QModelIndex index = mModel->index(i, 0);
+            QString text = mModel->data(index, Qt::DisplayRole).toString();
+            QVariant imageData = mModel->data(index, Qt::DecorationRole);
             QIcon icon(QPixmap::fromImage(imageData.value<QImage>()));
             (void)new QListWidgetItem(icon, text, list);
         }
+    } else {
+        QListWidgetItem *item = new QListWidgetItem(noItems);
+        item->setFlags(Qt::NoItemFlags);
+        list->addItem(item);
     }
     for (int i = 0; i < buttons.count(); i++) {
-        QListWidgetItem *item = new QListWidgetItem();
-        item->setFlags(Qt::NoItemFlags);
-        list->insertItem(i, item);
-        list->setItemWidget(item, buttons[i]);
+        insertButton(i, buttons[i]);
     }
 }
 
-void ListWindow::setModel(QAbstractItemModel *model_)
+void ListWindow::insertButton(int row, const Button &b)
 {
-    model = model_;
+    QPushButton *pushButton = new QPushButton(
+        QIcon(Platform::instance()->icon(b.iconName)), b.title, this);
+    connect(pushButton, SIGNAL(clicked()), b.receiver, b.slot);
+    QListWidgetItem *item = new QListWidgetItem();
+    item->setFlags(Qt::NoItemFlags);
+    list->insertItem(row, item);
+    list->setItemWidget(item, pushButton);
+}
+
+void ListWindow::setModel(QAbstractItemModel *aModel)
+{
+    TRACE;
+    mModel = aModel;
     populateList();
-    if (model) {
-        connect(model,
-                SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+    if (mModel) {
+        connect(mModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)),
+                this, SLOT(populateList()));
+        connect(mModel, SIGNAL(rowsRemoved(QModelIndex, int, int)),
+                this, SLOT(populateList()));
+        connect(mModel, SIGNAL(rowsInserted(QModelIndex, int, int)),
                 this, SLOT(populateList()));
     }
+}
+
+QAbstractItemModel *ListWindow::model() const
+{
+    return mModel;
 }
 
 void ListWindow::addButton(const QString &title, QObject *receiver,
@@ -79,15 +97,14 @@ void ListWindow::addButton(const QString &title, QObject *receiver,
 {
     TRACE;
 
-    QPushButton *button = new QPushButton(QIcon(Platform::instance()->
-                                                icon(iconName)), title, this);
-    connect(button, SIGNAL(clicked()), receiver, slot);
-    buttons.append(button);
+    Button b;
+    b.title = title;
+    b.receiver = receiver;
+    b.slot = slot;
+    b.iconName = iconName;
 
-    int pos = buttons.length() - 1;
-    QListWidgetItem *item = new QListWidgetItem();
-    list->insertItem(pos, item);
-    list->setItemWidget(item, button);
+    insertButton(buttons.length(), b);
+    buttons.append(b);
 }
 
 QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
@@ -113,10 +130,18 @@ QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
     return action;
 }
 
-void ListWindow::onItemActivated(const QModelIndex &)
+void ListWindow::onItemActivated(const QModelIndex &index)
 {
     TRACE;
-    // FIXME
+    int row = index.row() - buttons.count();
+    qDebug() << "Activated" << index.row() << ", emit activated(" << row << ")";
+    emit activated(mModel->index(row, 0));
+}
+
+void ListWindow::setCurrentItem(const QModelIndex &item)
+{
+    int index = item.row();
+    list->setCurrentItem(list->item(index + buttons.count()));
 }
 
 #ifdef Q_WS_MAEMO_5

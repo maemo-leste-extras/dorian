@@ -7,7 +7,6 @@
 
 #include "listwindow.h"
 
-class ListView;
 class QPushButton;
 class QModelIndex;
 class QCloseEvent;
@@ -15,8 +14,8 @@ class ProgressDialog;
 class Book;
 class InfoWindow;
 class SortedLibrary;
-class SearchDialog;
 class QAction;
+class SearchDialog;
 
 /** Manage library. */
 class LibraryDialog: public ListWindow
@@ -41,13 +40,11 @@ public slots:
 private:
     QString createItemText(Book *book);
     void setSelected(const QModelIndex &index);
-    QModelIndex selected() const;
-    ListView *list;
     SortedLibrary *sortedLibrary;
     ProgressDialog *progress;
-    SearchDialog *searchDialog;
     QAction *sortByAuthor;
     QAction *sortByTitle;
+    SearchDialog *searchDialog;
 };
 
 #endif // LIBRARYDIALOG_H

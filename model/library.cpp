@@ -37,8 +37,6 @@ int Library::rowCount(const QModelIndex &parent) const
 
 QVariant Library::data(const QModelIndex &index, int role) const
 {
-    TRACE;
-
     QVariant ret;
     if (!index.isValid()) {
         return ret;
@@ -46,11 +44,9 @@ QVariant Library::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::DisplayRole:
-        qDebug() << mBooks[index.row()]->name();
         ret = mBooks[index.row()]->name();
         break;
     case Qt::DecorationRole:
-        qDebug() << "(cover)";
         ret.setValue(mBooks[index.row()]->cover);
         break;
     default:

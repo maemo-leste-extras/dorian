@@ -2,9 +2,9 @@
 
 #include "chaptersdialog.h"
 #include "book.h"
-#include "listview.h"
 
-ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent): ListWindow(parent)
+ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent):
+        ListWindow(tr("(No chapters)"), parent)
 {
     setWindowTitle(tr("Chapters"));
     if (book) {

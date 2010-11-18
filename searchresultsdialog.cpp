@@ -5,7 +5,6 @@
 #include <QDir>
 #include <QFile>
 
-#include "listview.h"
 #include "searchresultsdialog.h"
 #include "searchresultinfodialog.h"
 #include "trace.h"
@@ -14,7 +13,7 @@
 #include "platform.h"
 
 SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
-    QWidget *parent): ListWindow(parent), results(results_)
+    QWidget *parent): ListWindow(tr("(No results)"), parent), results(results_)
 {
     setWindowTitle(tr("Search results"));
 
@@ -28,9 +27,8 @@ SearchResultsDialog::SearchResultsDialog(const QList<Search::Result> results_,
 
     QStringListModel *model = new QStringListModel(data, this);
     setModel(model);
-    // FIXME
-    // connect(list, SIGNAL(activated(const QModelIndex &)),
-    //         this, SLOT(onItemActivated(const QModelIndex &)));
+    connect(this, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
     Search *search = Search::instance();
     connect(search, SIGNAL(beginDownload(int)), this, SLOT(onBeginDownload(int)));
     connect(search,
@@ -91,7 +89,7 @@ void SearchResultsDialog::onEndDownload(int status, const Search::Result &result
         Library::instance()->add(fileName);
         int row = results.indexOf(result);
         if (-1 != row) {
-            list->model()->removeRow(row);
+            model()->removeRow(row);
         }
         Platform::instance()->information(tr("Downloaded \"%1\"\nand added to the "
                                              "library").arg(result.title), this);

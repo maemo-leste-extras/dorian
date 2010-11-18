@@ -7,7 +7,6 @@
 
 class QWidget;
 class QModelIndex;
-class ListView;
 class Book;
 
 /** Display book chapters. */
@@ -25,7 +24,6 @@ public slots:
     void onItemActivated(const QModelIndex &index);
 
 protected:
-    ListView *list;
     QStringList data;
 };
 

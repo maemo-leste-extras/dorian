@@ -7,7 +7,6 @@
 #include "listwindow.h"
 #include "search.h"
 
-class ListView;
 class QModelIndex;
 class ProgressDialog;
 
@@ -31,7 +30,6 @@ protected:
 
 private:
     const QList<Search::Result> results;
-    ListView *list;
     QStringList data;
     ProgressDialog *progress;
 };

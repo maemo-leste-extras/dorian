@@ -300,7 +300,6 @@ void MainWindow::showBookmarks()
     Book *book = Library::instance()->book(mCurrent);
     if (book) {
         BookmarksDialog *bookmarks = new BookmarksDialog(book, this);
-        bookmarks->setWindowModality(Qt::WindowModal);
         connect(bookmarks, SIGNAL(addBookmark(const QString &)),
                 this, SLOT(onAddBookmark(const QString &)));
         connect(bookmarks, SIGNAL(goToBookmark(int)),
@@ -392,7 +391,6 @@ void MainWindow::showChapters()
     Book *book = Library::instance()->book(mCurrent);
     if (book) {
         ChaptersDialog *chapters = new ChaptersDialog(book, this);
-        chapters->setWindowModality(Qt::WindowModal);
         connect(chapters, SIGNAL(goToChapter(int)),
                 this, SLOT(onGoToChapter(int)));
         chapters->show();

@@ -20,29 +20,33 @@ class ListWindow: public QMainWindow
 public:
     /**
      * Constructor.
-     * @param   model   Model for the list widget contents.
+     * @param   noItems Text to display when the list has no items.
      * @param   parent  Parent widget.
      */
-    explicit ListWindow(QWidget *parent = 0);
+    explicit ListWindow(const QString &noItems, QWidget *parent = 0);
 
-    /**
-     * Set the model for the list.
-     */
+    /** Set the model for the list. */
     void setModel(QAbstractItemModel *model);
 
-    /**
-     * Add an action button to the beginning of the list.
-     */
+    /** Get model. */
+    QAbstractItemModel *model() const;
+
+    /** Add an action button to the beginning of the list. */
     void addButton(const QString &title, QObject *receiver, const char *slot,
                    const QString &iconPath = QString());
 
-    /**
-      * Add an action to the menu.
-      */
+    /** Add an action to the menu. */
     QAction *addMenuAction(const QString &title, QObject *receiver,
                            const char *slot);
 
+signals:
+    /** Emitted when a list item is activated. */
+    void activated(const QModelIndex &index);
+
 public slots:
+    /** Set the current (selected) item. */
+    void setCurrentItem(const QModelIndex &item);
+
 #ifdef Q_OS_SYMBIAN
     void show();
 #endif
@@ -52,12 +56,22 @@ protected slots:
     void populateList();
 
 protected:
+    struct Button {
+        QString title;
+        QObject *receiver;
+        const char *slot;
+        QString iconName;
+    };
+    void insertButton(int row, const Button &button);
 #ifdef Q_WS_MAEMO_5
     void closeEvent(QCloseEvent *event);
 #endif
+
+private:
     QListWidget *list;
-    QAbstractItemModel *model;
-    QList<QPushButton *> buttons;
+    QAbstractItemModel *mModel;
+    QList<Button> buttons;
+    QString noItems;
 #ifdef Q_OS_SYMBIAN
     FlickCharm *charm;
 #endif

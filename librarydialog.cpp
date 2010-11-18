@@ -8,7 +8,6 @@
 #include "infodialog.h"
 #include "settings.h"
 #include "listwindow.h"
-#include "listview.h"
 #include "trace.h"
 #include "bookfinder.h"
 #include "searchdialog.h"
@@ -17,7 +16,7 @@
 #include "progressdialog.h"
 #include "settings.h"
 
-LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
+LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(tr("(No books)"), parent)
 {
     TRACE;
     setWindowTitle(tr("Library"));
@@ -40,21 +39,20 @@ LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(parent)
     // Set selected item
     Library *library = Library::instance();
     QModelIndex current = library->nowReading();
-    // FIXME: setSelected(sortedLibrary->mapFromSource(current));
+    setCurrentItem(sortedLibrary->mapFromSource(current));
 
-    progress = new ProgressDialog(tr("Adding books"), this);
-
-    connect(Library::instance(),
-            SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-            this,
-            SLOT(onBookAdded()));
-    connect(this, SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(onItemActivated(const QModelIndex &)));
-
-    // Create search dialog
+    // Search dialog box
     searchDialog = new SearchDialog(this);
     connect(Search::instance(), SIGNAL(endSearch()),
             this, SLOT(showSearchResults()));
+
+    // Progress bar
+    progress = new ProgressDialog(tr("Adding books"), this);
+
+    connect(library, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+            this, SLOT(onBookAdded()));
+    connect(this, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
 
     // Retrieve default sort criteria
     switch (Settings::instance()->value("lib/sortby").toInt()) {
@@ -108,24 +106,18 @@ void LibraryDialog::onBookAdded()
 void LibraryDialog::onItemActivated(const QModelIndex &index)
 {
     TRACE;
+
     QModelIndex libraryIndex = sortedLibrary->mapToSource(index);
     Book *book = Library::instance()->book(libraryIndex);
     int ret = (new InfoDialog(book, this))->exec();
 
     switch (ret) {
     case InfoDialog::Read:
-        {
-            QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
-            Q_ASSERT(current.isValid());
-            Library::instance()->setNowReading(current);
-            close();
-        }
+        Library::instance()->setNowReading(libraryIndex);
+        close();
         break;
     case InfoDialog::Delete:
-        {
-            QModelIndex current = sortedLibrary->mapToSource(list->currentIndex());
-            Library::instance()->remove(current);
-        }
+        Library::instance()->remove(libraryIndex);
         break;
     default:
         ;
@@ -148,21 +140,9 @@ QString LibraryDialog::createItemText(Book *book)
 void LibraryDialog::setSelected(const QModelIndex &libraryIndex)
 {
     QModelIndex sortedIndex = sortedLibrary->mapFromSource(libraryIndex);
-    list->selectionModel()->clearSelection();
     if (sortedIndex.isValid()) {
-        list->selectionModel()->select(sortedIndex,
-                                       QItemSelectionModel::Select);
-        list->setCurrentIndex(sortedIndex);
+        setCurrentItem(sortedIndex);
     }
-}
-
-QModelIndex LibraryDialog::selected() const
-{
-    QModelIndexList selectedItems = list->selectionModel()->selectedIndexes();
-    if (selectedItems.size()) {
-        return sortedLibrary->mapToSource(selectedItems[0]);
-    }
-    return QModelIndex();
 }
 
 void LibraryDialog::onAddFolder()
@@ -218,7 +198,9 @@ void LibraryDialog::onAddFromFolder(const QString &path)
 
 void LibraryDialog::onSearch()
 {
+    TRACE;
     int ret = searchDialog->exec();
+    qDebug() << "Search dialog returned" << ret;
     if (ret != QDialog::Accepted) {
         return;
     }

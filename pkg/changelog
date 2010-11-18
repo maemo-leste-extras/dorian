@@ -3,6 +3,7 @@ dorian (0.3.9-1) unstable; urgency=low
   * Don't close library dialog when deleting current book
   * Really delete current book [#6614]
   * Remove inactive items from Options menu on Symbian [#6606]
+  * Fix Library window content scrolling [#6622]
 
  -- Akos Polster <akos@pipacs.com>  Wed, 17 Nov 2010 02:00:00 +0100
 
