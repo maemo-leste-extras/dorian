@@ -15,5 +15,7 @@ ListView::ListView(QWidget *parent): QListView(parent)
 
 int ListView::contentsHeight() const
 {
-    return QListView::contentsSize().height() + 10;
+    TRACE;
+    qDebug() << QListView::contentsRect().height();
+    return QListView::contentsRect().height(); //  + 10;
 }

@@ -59,8 +59,11 @@ void ListWindow::addList(ListView *listView)
     TRACE;
     list = listView;
 #if defined(Q_WS_MAEMO_5)
-    list->installEventFilter(this);
-    list->setMinimumHeight(list->contentsHeight());
+    // FIXME: list->installEventFilter(this);
+    list->setProperty("FingerScrollable", false);
+    int height = list->sizeHintForRow(0) * list->model()->rowCount();
+    qDebug() << "Minimum height" << height;
+    list->setMinimumHeight(height);
     contentLayout->addWidget(list);
     connect(list->model(),
             SIGNAL(rowsInserted(const QModelIndex &, int, int)),
@@ -76,7 +79,7 @@ void ListWindow::addList(ListView *listView)
     if (!charm) {
         charm = new FlickCharm(this);
     }
-    // FIXME: Charm's need more work...: charm->activateOn(list);
+    // FIXME: Charms need more work...: charm->activateOn(list);
 #endif // Q_OS_SYMBIAN
 
     connect(list->selectionModel(),
