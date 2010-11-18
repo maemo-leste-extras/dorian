@@ -44,20 +44,20 @@ void ListWindow::populateList()
     TRACE;
 
     list->clear();
+    list->setIconSize(QSize(48, 48)); // FIXME
+    list->setUniformItemSizes(true);
     if (model) {
         for (int i = 0; i < model->rowCount(); i++) {
             QModelIndex index = model->index(i, 0);
             QString text = model->data(index, Qt::DisplayRole).toString();
-            QIcon icon;
-            QVariant iconData = model->data(index, Qt::DecorationRole);
-            if (iconData.canConvert<QIcon>()) {
-                icon = iconData.value<QIcon>();
-            }
+            QVariant imageData = model->data(index, Qt::DecorationRole);
+            QIcon icon(QPixmap::fromImage(imageData.value<QImage>()));
             (void)new QListWidgetItem(icon, text, list);
         }
     }
     for (int i = 0; i < buttons.count(); i++) {
         QListWidgetItem *item = new QListWidgetItem();
+        item->setFlags(Qt::NoItemFlags);
         list->insertItem(i, item);
         list->setItemWidget(item, buttons[i]);
     }

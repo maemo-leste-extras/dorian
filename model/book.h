@@ -41,9 +41,6 @@ public:
     /** Construct a book from an EPUB file. */
     Book(const QString &fileName, QObject *parent = 0);
 
-    /** Default constructor. */
-    // Book();
-
     /** Destructor. */
     ~Book();
 
@@ -103,6 +100,9 @@ public:
      * @return @see title or path name combined with author(s) name.
      */
     QString name();
+
+    /** Get cover image. */
+    QImage coverImage();
 
     /** Get short friendly name: title or file name. */
     QString shortName();

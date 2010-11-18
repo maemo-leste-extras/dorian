@@ -52,6 +52,9 @@ protected slots:
     void populateList();
 
 protected:
+#ifdef Q_WS_MAEMO_5
+    void closeEvent(QCloseEvent *event);
+#endif
     QListWidget *list;
     QAbstractItemModel *model;
     QList<QPushButton *> buttons;

@@ -428,6 +428,12 @@ QString Book::shortName()
     return (title.isEmpty())? QFileInfo(path()).baseName(): title;
 }
 
+QImage Book::coverImage()
+{
+    load();
+    return cover;
+}
+
 int Book::chapterFromPart(int index)
 {
     TRACE;

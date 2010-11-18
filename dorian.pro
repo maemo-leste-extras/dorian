@@ -36,7 +36,6 @@ SOURCES += \
     searchdialog.cpp \
     search.cpp \
     widgets/flickable.cpp \
-    widgets/listview.cpp \
     searchresultsdialog.cpp \
     searchresultinfodialog.cpp \
     widgets/progressdialog.cpp \
@@ -72,7 +71,6 @@ HEADERS += \
     widgets/listwindow.h \
     widgets/progress.h \
     adopterwindow.h \
-    widgets/listview.h \
     model/xmlhandler.h \
     platform.h \
     model/bookdb.h \
