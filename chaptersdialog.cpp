@@ -15,9 +15,8 @@ ChaptersDialog::ChaptersDialog(Book *book, QWidget *parent):
     }
     QStringListModel *model = new QStringListModel(data, this);
     setModel(model);
-    // FIXME
-    // connect(list, SIGNAL(activated(const QModelIndex &)),
-    //         this, SLOT(onItemActivated(const QModelIndex &)));
+    connect(this, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 void ChaptersDialog::onItemActivated(const QModelIndex &index)
