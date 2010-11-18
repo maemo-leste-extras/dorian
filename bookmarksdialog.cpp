@@ -6,7 +6,7 @@
 #include "trace.h"
 
 BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
-    ListWindow(tr("(No bookmarks)"), parent), book(book_)
+    ListWindow(tr("(No bookmarks)\n"), parent), book(book_)
 {
     setWindowTitle(tr("Bookmarks"));
     if (!book) {
@@ -35,20 +35,18 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
 
     addButton(tr("Add bookmark"), this, SLOT(onAdd()), "add");
 
-    // FIXME
-    // connect(list, SIGNAL(activated(const QModelIndex &)),
-    //         this, SLOT(onItemActivated(const QModelIndex &)));
+    connect(this, SIGNAL(activated(const QModelIndex &)),
+            this, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 void BookmarksDialog::onGo()
 {
     TRACE;
-    // FIXME
-    // QModelIndex current = list->currentIndex();
-    // if (current.isValid()) {
-    //     emit goToBookmark(current.row());
-    //     close();
-    // }
+    QModelIndex current = currentItem();
+    if (current.isValid()) {
+        emit goToBookmark(current.row());
+        close();
+    }
 }
 
 void BookmarksDialog::onItemActivated(const QModelIndex &index)
@@ -78,9 +76,7 @@ void BookmarksDialog::onAdd()
 
 void BookmarksDialog::onDelete(bool really)
 {
-#if 0
-    // FIXME
-    QModelIndex current = list->currentIndex();
+    QModelIndex current = currentItem();
     if (!current.isValid()) {
         return;
     }
@@ -92,7 +88,6 @@ void BookmarksDialog::onDelete(bool really)
         }
     }
     int row = current.row();
-    list->model()->removeRow(row);
+    model()->removeRow(row);
     book->deleteBookmark(row);
-#endif
 }

@@ -39,6 +39,9 @@ public:
     QAction *addMenuAction(const QString &title, QObject *receiver,
                            const char *slot);
 
+    /** Get current (selected) item. */
+    QModelIndex currentItem() const;
+
 signals:
     /** Emitted when a list item is activated. */
     void activated(const QModelIndex &index);

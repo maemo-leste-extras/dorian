@@ -144,6 +144,18 @@ void ListWindow::setCurrentItem(const QModelIndex &item)
     list->setCurrentItem(list->item(index + buttons.count()));
 }
 
+QModelIndex ListWindow::currentItem() const
+{
+    TRACE;
+    QListWidgetItem *currentItem = list->currentItem();
+    if (currentItem) {
+        int row = list->row(currentItem) - buttons.count();
+        qDebug() << "Current row is" << row;
+        return mModel->index(row, 0);
+    }
+    return QModelIndex();
+}
+
 #ifdef Q_WS_MAEMO_5
 
 void ListWindow::closeEvent(QCloseEvent *event)
