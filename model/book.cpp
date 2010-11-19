@@ -1,4 +1,5 @@
 #include <qtextdocument.h>  // Qt::escape is currently defined here...
+#include <QtGui>
 
 #include "book.h"
 #include "opshandler.h"
@@ -15,9 +16,20 @@ const int COVER_HEIGHT = 59;
 
 static QImage makeCover(const QString &path)
 {
-    return QImage(path).scaled(COVER_WIDTH, COVER_HEIGHT,
-        Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).
-        scaled(COVER_WIDTH, COVER_HEIGHT, Qt::KeepAspectRatio);
+    QPixmap src = QPixmap(path).scaled(COVER_WIDTH, COVER_HEIGHT,
+        Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap transparent(src.size());
+    transparent.fill(Qt::transparent);
+
+    QPainter p;
+    p.begin(&transparent);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
+    p.drawPixmap((COVER_WIDTH - src.width()) / 2,
+                 (COVER_HEIGHT - src.height()) / 2, src);
+    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    p.end();
+
+    return transparent.toImage();
 }
 
 Book::Book(const QString &p, QObject *parent): QObject(parent), loaded(false)
@@ -511,7 +523,7 @@ bool Book::extractMetaData()
 {
     QStringList excludedExtensions;
     excludedExtensions << ".html" << ".xhtml" << ".xht" << ".htm" << ".gif"
-            << ".png" << ".css" << "*.ttf" << "mimetype";
+            << ".css" << "*.ttf" << "mimetype";
     return extract(excludedExtensions);
 }
 
