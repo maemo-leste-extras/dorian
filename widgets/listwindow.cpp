@@ -163,7 +163,7 @@ void ListWindow::closeEvent(QCloseEvent *event)
 {
     // Work around Maemo/Qt bug: Menu items are not removed on close
     menuBar()->clear();
-    // FIXME: Is this needed? event->accept();
+    event->accept();
     QMainWindow::closeEvent(event);
 }
 
