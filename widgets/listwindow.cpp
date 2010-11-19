@@ -84,6 +84,7 @@ void ListWindow::setModel(QAbstractItemModel *aModel)
                 this, SLOT(populateList()));
         connect(mModel, SIGNAL(rowsInserted(QModelIndex, int, int)),
                 this, SLOT(populateList()));
+        connect(mModel, SIGNAL(layoutChanged()), this, SLOT(populateList()));
     }
 }
 
