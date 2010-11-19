@@ -47,7 +47,7 @@ QVariant Library::data(const QModelIndex &index, int role) const
         ret = mBooks[index.row()]->name();
         break;
     case Qt::DecorationRole:
-        ret.setValue(mBooks[index.row()]->cover);
+        ret.setValue(mBooks[index.row()]->coverImage());
         break;
     default:
         ;
@@ -149,6 +149,7 @@ void Library::remove(const QModelIndex &index)
 
 void Library::remove(const QString &path)
 {
+    TRACE;
     remove(find(path));
 }
 
@@ -166,6 +167,7 @@ void Library::setNowReading(const QModelIndex &index)
 
 void Library::clear()
 {
+    TRACE;
     for (int i = 0; i < mBooks.size(); i++) {
         delete mBooks[i];
     }
@@ -175,6 +177,7 @@ void Library::clear()
 
 QModelIndex Library::find(QString path) const
 {
+    TRACE;
     if (path != "") {
         QString absolutePath = QFileInfo(path).absoluteFilePath();
         for (int i = 0; i < mBooks.size(); i++) {
@@ -188,6 +191,7 @@ QModelIndex Library::find(QString path) const
 
 QModelIndex Library::find(const Book *book) const
 {
+    TRACE;
     if (book) {
         for (int i = 0; i < mBooks.size(); i++) {
             if (book == mBooks[i]) {

@@ -13,24 +13,7 @@
 
 const int COVER_WIDTH = 53;
 const int COVER_HEIGHT = 59;
-
-static QImage makeCover(const QString &path)
-{
-    QPixmap src = QPixmap(path).scaled(COVER_WIDTH, COVER_HEIGHT,
-        Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    QPixmap transparent(src.size());
-    transparent.fill(Qt::transparent);
-
-    QPainter p;
-    p.begin(&transparent);
-    p.setCompositionMode(QPainter::CompositionMode_Source);
-    p.drawPixmap((COVER_WIDTH - src.width()) / 2,
-                 (COVER_HEIGHT - src.height()) / 2, src);
-    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-    p.end();
-
-    return transparent.toImage();
-}
+const int COVER_MAX = 512 * 1024;
 
 Book::Book(const QString &p, QObject *parent): QObject(parent), loaded(false)
 {
@@ -39,7 +22,6 @@ Book::Book(const QString &p, QObject *parent): QObject(parent), loaded(false)
         QFileInfo info(p);
         mPath = info.absoluteFilePath();
         title = info.baseName();
-        cover = makeCover(":/icons/book.png");
         mTempFile.open();
     }
 }
@@ -310,8 +292,7 @@ void Book::load()
     rights = data["rights"].toString();
     mLastBookmark.part = data["lastpart"].toInt();
     mLastBookmark.pos = data["lastpos"].toReal();
-    cover = data["cover"].value<QImage>().scaled(COVER_WIDTH,
-        COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    cover = data["cover"].value<QImage>();
     if (cover.isNull()) {
         cover = makeCover(":/icons/book.png");
     }
@@ -429,9 +410,8 @@ QString Book::name()
             }
         }
         return ret;
-    } else {
-        return path();
     }
+    return path();
 }
 
 QString Book::shortName()
@@ -532,7 +512,6 @@ void Book::upgrade()
     TRACE;
 
     // Load book from old database (QSettings)
-
     QSettings settings;
     QString key = "book/" + path() + "/";
     title = settings.value(key + "title").toString();
@@ -546,10 +525,11 @@ void Book::upgrade()
     rights = settings.value(key + "rights").toString();
     mLastBookmark.part = settings.value(key + "lastpart").toInt();
     mLastBookmark.pos = settings.value(key + "lastpos").toReal();
-    cover = settings.value(key + "cover").value<QImage>().scaled(COVER_WIDTH,
-        COVER_HEIGHT, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    cover = settings.value(key + "cover").value<QImage>();
     if (cover.isNull()) {
         cover = makeCover(":/icons/book.png");
+    } else {
+        cover = makeCover(QPixmap::fromImage(cover));
     }
     int size = settings.value(key + "bookmarks").toInt();
     for (int i = 0; i < size; i++) {
@@ -562,8 +542,10 @@ void Book::upgrade()
         mBookmarks.append(Bookmark(part, pos));
     }
 
-    // Save book to new database
+    // Remove QSettings
+    settings.remove("book/" + path());
 
+    // Save book to new database
     save();
 }
 
@@ -573,3 +555,34 @@ void Book::remove()
     close();
     BookDb::instance()->remove(path());
 }
+
+QImage Book::makeCover(const QString &fileName)
+{
+    TRACE;
+    qDebug() << fileName;
+    QFileInfo info(fileName);
+    if (info.isReadable() && (info.size() < COVER_MAX)) {
+        return makeCover(QPixmap(fileName));
+    }
+    return makeCover(QPixmap(":/icons/book.png"));
+}
+
+QImage Book::makeCover(const QPixmap &pixmap)
+{
+    TRACE;
+    QPixmap src = pixmap.scaled(COVER_WIDTH, COVER_HEIGHT,
+        Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap transparent(COVER_WIDTH, COVER_HEIGHT);
+    transparent.fill(Qt::transparent);
+
+    QPainter p;
+    p.begin(&transparent);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
+    p.drawPixmap((COVER_WIDTH - src.width()) / 2,
+                 (COVER_HEIGHT - src.height()) / 2, src);
+    p.end();
+
+    return transparent.toImage();
+}
+
+

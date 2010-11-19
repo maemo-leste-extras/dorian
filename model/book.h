@@ -4,10 +4,12 @@
 #include <QString>
 #include <QStringList>
 #include <QHash>
-#include <QIcon>
+#include <QImage>
 #include <QMetaType>
 #include <QObject>
 #include <QTemporaryFile>
+
+class QPixmap;
 
 /** A book. */
 class Book: public QObject
@@ -151,6 +153,12 @@ protected:
 
     /** Get location of OPS file in EPUB archive. */
     QString opsPath();
+
+    /** Make a cover image from a file. */
+    QImage makeCover(const QString &fileName);
+
+    /** Make a cover image from an pixmap. */
+    QImage makeCover(const QPixmap &pixmap);
 
     QString mPath;                          //< Path to EPUB file.
     Bookmark mLastBookmark;                 //< Last position read.
