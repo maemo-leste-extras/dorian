@@ -107,7 +107,8 @@ OTHER_FILES += \
     pkg/maemo/autobuild.sh \
     pkg/maemo/autobuild-scratchbox.sh \
     LICENSE.txt \
-    pkg/symbian/book.svg
+    pkg/symbian/book.svg \
+    pkg/symbian/clean.bat
 
 DEFINES += \
     USE_FILE32API
