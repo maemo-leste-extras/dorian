@@ -6,6 +6,9 @@ dorian (0.3.9-1) unstable; urgency=low
   * Fix Library window content scrolling [#6622]
   * Allow PNG cover images
   * Improve cover images
+  * Reduce speed of kinetic scrolling on Symbian
+  * Improve splash screen display on Symbian
+  * Add versioning to SIS package
 
  -- Akos Polster <akos@pipacs.com>  Wed, 17 Nov 2010 02:00:00 +0100
 

@@ -4,6 +4,7 @@
 
 Splash::Splash(QWidget *parent): QMainWindow(parent)
 {
+
     QLabel *label = new QLabel(this);
     QRect geo = QApplication::desktop()->geometry();
     label->setGeometry(geo);

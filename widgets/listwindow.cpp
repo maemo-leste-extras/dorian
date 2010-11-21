@@ -20,12 +20,16 @@ ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
 
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
+#if defined(Q_OS_SYMBIAN)
+    list->setFixedWidth(QApplication::desktop()->availableGeometry().width());
+    list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#endif
     populateList();
     setCentralWidget(list);
 
 #ifdef Q_OS_SYMBIAN
     charm = new FlickCharm(this);
-    charm->activateOn(list);
+    // charm->activateOn(list);
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
@@ -65,6 +69,7 @@ void ListWindow::insertButton(int row, const Button &b)
 {
     QPushButton *pushButton = new QPushButton(
         QIcon(Platform::instance()->icon(b.iconName)), b.title, this);
+    pushButton->setFixedWidth(list->width());
     connect(pushButton, SIGNAL(clicked()), b.receiver, b.slot);
     QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::NoItemFlags);
@@ -98,14 +103,18 @@ void ListWindow::addButton(const QString &title, QObject *receiver,
 {
     TRACE;
 
+#ifdef Q_OS_SYMBIAN
+    Q_UNUSED(iconName);
+    addMenuAction(title, receiver, slot);
+#else
     Button b;
     b.title = title;
     b.receiver = receiver;
     b.slot = slot;
     b.iconName = iconName;
-
     insertButton(buttons.length(), b);
     buttons.append(b);
+#endif
 }
 
 QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
@@ -134,6 +143,15 @@ QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
 void ListWindow::onItemActivated(const QModelIndex &index)
 {
     TRACE;
+
+    // Work around Qt/Symbian^3 bug: Disabled list items still can be selected
+    if (!mModel) {
+        return;
+    }
+    if (!mModel->rowCount()) {
+        return;
+    }
+
     int row = index.row() - buttons.count();
     qDebug() << "Activated" << index.row() << ", emit activated(" << row << ")";
     emit activated(mModel->index(row, 0));

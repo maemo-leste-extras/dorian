@@ -11,7 +11,7 @@ if exist %src%\bld.inf del /q %src%\bld.inf
 if exist %src%\dorian.loc del /q %src%\dorian.loc
 if exist %src%\dorian.rss del /q %src%\dorian.rss
 if exist %src%\dorian.sis del /q %src%\dorian.sis
-if exist %src%\*.nmp del /q %src%\*.mmp
+if exist %src%\*.mmp del /q %src%\*.mmp
 if exist %src%\dorian_installer.pkg del /q %src%\dorian_installer.pkg
 if exist %src%\dorian_reg.rss del /q %src%\dorian_reg.rss
 if exist %src%\dorian_template.pkg del /q %src%\dorian_template.pkg

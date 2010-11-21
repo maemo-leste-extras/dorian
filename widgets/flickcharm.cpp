@@ -57,6 +57,14 @@
 
 const int fingerAccuracyThreshold = 3;
 
+#ifdef Q_OS_SYMBIAN
+const int maxSpeed = 2000;
+const int maxSpeedAutoScroll = 1250;
+#else
+const int maxSpeed = 4000;
+const int maxSpeedAutoScroll = 2500;
+#endif
+
 struct FlickData {
     typedef enum {
         Steady, // Interaction without scrolling
@@ -97,7 +105,7 @@ struct FlickData {
                 const int newSpeedY = (qAbs(pixelsPerSecond.y()) > fingerAccuracyThreshold) ? pixelsPerSecond.y() : 0;
                 const int newSpeedX = (qAbs(pixelsPerSecond.x()) > fingerAccuracyThreshold) ? pixelsPerSecond.x() : 0;
                 if (state == AutoScrollAcceleration) {
-                    const int max = 4000; // px by seconds
+                    const int max = maxSpeedAutoScroll; // px by seconds
                     const int oldSpeedY = speed.y();
                     const int oldSpeedX = speed.x();
                     if ((oldSpeedY <= 0 && newSpeedY <= 0) ||  (oldSpeedY >= 0 && newSpeedY >= 0)
@@ -108,7 +116,7 @@ struct FlickData {
                         speed = QPoint();
                     }
                 } else {
-                    const int max = 2500; // px by seconds
+                    const int max = maxSpeed; // px by seconds
                     // we average the speed to avoid strange effects with the last delta
                     if (!speed.isNull()) {
                         speed.setX(qBound(-max, (speed.x() / 4) + (newSpeedX * 3 / 4), max));

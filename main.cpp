@@ -44,20 +44,23 @@ int main(int argc, char *argv[])
     Trace::setFileName(settings->value("tracefilename").toString());
     qInstallMsgHandler(Trace::messageHandler);
 
-#ifdef Q_OS_SYMBIAN
+#if 0 // def Q_OS_SYMBIAN
     // Show splash screen
     Splash *splash = new Splash();
     splash->showFullScreen();
+    // splash->showMaximized();
+    splash->raise();
     a.processEvents();
 #endif
 
-    // Create main window, re-apply settings, run event loop
+    // Create and initialize main window, then run event loop
     MainWindow *mainWindow = new MainWindow();
     settings->apply();
     mainWindow->initialize();
-#ifdef Q_OS_SYMBIAN
+#if 0 // def Q_OS_SYMBIAN
     splash->close();
-    splash->deleteLater();
+    delete splash;
+    mainWindow->showNormal();
 #endif
     ret = a.exec();
     delete mainWindow;
