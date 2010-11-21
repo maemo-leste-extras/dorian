@@ -8,7 +8,7 @@ BookmarkInfoDialog::BookmarkInfoDialog(Book *b, int i, QWidget *parent):
     book(b),
     index(i)
 {
-    setWindowTitle(tr("Bookmark Details"));
+    setWindowTitle(tr("Bookmark details"));
 
     Book::Bookmark bookmark = book->bookmarks()[index];
     QString label("At ");
