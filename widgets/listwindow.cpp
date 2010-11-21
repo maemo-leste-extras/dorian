@@ -69,7 +69,9 @@ void ListWindow::insertButton(int row, const Button &b)
 {
     QPushButton *pushButton = new QPushButton(
         QIcon(Platform::instance()->icon(b.iconName)), b.title, this);
+#ifdef Q_OS_SYMBIAN
     pushButton->setFixedWidth(list->width());
+#endif
     connect(pushButton, SIGNAL(clicked()), b.receiver, b.slot);
     QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::NoItemFlags);
