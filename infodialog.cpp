@@ -10,7 +10,7 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
 {
     TRACE;
 
-    setWindowTitle(tr("Book Details"));
+    setWindowTitle(tr("Book details"));
 
     if (book) {
         QLabel *title = new QLabel(book->title, this);
