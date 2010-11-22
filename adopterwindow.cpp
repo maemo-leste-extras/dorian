@@ -14,7 +14,7 @@
 #include "settings.h"
 
 AdopterWindow::AdopterWindow(QWidget *parent):
-    QMainWindow(parent), bookView(0), grabbingVolumeKeys(false)
+    QMainWindow(parent), bookView(0), grabbingVolumeKeys(false), toolBar(0)
 {
     TRACE;
 
@@ -26,6 +26,7 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     QVBoxLayout *layout = new QVBoxLayout(frame);
     layout->setMargin(0);
     frame->setLayout(layout);
+    frame->show();
     setCentralWidget(frame);
 
 #ifdef Q_OS_SYMBIAN
@@ -33,15 +34,6 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
     QMainWindow::addAction(closeAction);
-
-    // toolBar = new QToolBar(this);
-    // toolBar->setFixedWidth(QApplication::desktop()->
-    //                        availableGeometry().width());
-    // toolBar->setFixedHeight(70);
-    // toolBar->setIconSize(QSize(90, 70));
-    // toolBar->setFloatable(false);
-    // toolBar->setMovable(false);
-    // addToolBar(Qt::BottomToolBarArea, toolBar);
 #else
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
@@ -67,7 +59,9 @@ void AdopterWindow::takeChildren(BookView *view, const QList<QWidget *> &others)
         bookView = view;
         bookView->setParent(centralWidget());
         bookView->show();
-        centralWidget()->layout()->addWidget(bookView);
+        QVBoxLayout *layout =
+                qobject_cast<QVBoxLayout *>(centralWidget()->layout());
+        layout->addWidget(bookView, 1);
     }
     foreach (QWidget *child, others) {
         if (child) {
@@ -120,14 +114,15 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
                                 text, receiver, member);
 #else
-    if (0) { // if (important) {
-        qDebug() << "Add Symbian tool bar action";
-        QAction *toolBarAction = toolBar->addAction(
-            QIcon(Platform::instance()->icon(iconName)),
-            text, receiver, member);
-        toolBarAction->setText("");
-        toolBarAction->setToolTip("");
-        connect(toolBarAction, SIGNAL(triggered()), receiver, member);
+    if (toolBar && important) {
+        QPushButton *button = new QPushButton(this);
+        button->setIconSize(QSize(60, 60));
+        button->setFixedSize(89, 60);
+        button->setIcon(QIcon(Platform::instance()->icon(iconName)));
+        button->setSizePolicy(QSizePolicy::MinimumExpanding,
+                              QSizePolicy::Maximum);
+        connect(button, SIGNAL(clicked()), receiver, member);
+        toolBar->addWidget(button);
     }
     action = new QAction(text, this);
     menuBar()->addAction(action);

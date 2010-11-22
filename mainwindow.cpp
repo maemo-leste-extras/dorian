@@ -44,6 +44,17 @@ MainWindow::MainWindow(QWidget *parent):
 #endif
     setWindowTitle("Dorian");
 
+#ifdef Q_OS_SYMBIAN
+    // Tool bar
+    toolBar = new QToolBar("", this /*frame*/);
+    toolBar->setFixedWidth(QApplication::desktop()->
+                           availableGeometry().width());
+    toolBar->setFixedHeight(65);
+    toolBar->setStyleSheet("margin:0;border:0;padding:0");
+    toolBar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+    addToolBar(Qt::BottomToolBarArea, toolBar);
+#endif
+
     // Central widget. Must be an intermediate, because the book view widget
     // can be re-parented later
     QFrame *central = new QFrame(this);
@@ -194,22 +205,28 @@ void MainWindow::showRegular()
     QRect geo = geometry();
     qDebug() << geo;
     int y = geo.height() - progress->thickness();
-#if defined(Q_WS_MAEMO_5)
-    y -= toolBar->height();
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+    bool hasToolBar = false;
+#   if defined(Q_OS_SYMBIAN)
+    hasToolBar =
+        (QApplication::desktop()->width() < QApplication::desktop()->height());
+    qDebug() << (hasToolBar? "Portrait": "Landscape");
+#   endif
+    if (!hasToolBar) {
+        y -= toolBar->height();
+    }
 #endif
     progress->setGeometry(0, y, geo.width(), y + progress->thickness());
 
-#if defined(Q_WS_MAEMO_5)
-    previousButton->setGeometry(0,
-        geo.height() - toolBar->height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+    y = geo.height() - TranslucentButton::pixels;
+    if (!hasToolBar) {
+        y -= toolBar->height();
+    }
+    previousButton->setGeometry(0, y, TranslucentButton::pixels,
+                                TranslucentButton::pixels);
     nextButton->setGeometry(geo.width() - TranslucentButton::pixels, 0,
         TranslucentButton::pixels, TranslucentButton::pixels);
-#elif defined(Q_OS_SYMBIAN)
-    previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(geo.width() - TranslucentButton::pixels,
-        0, TranslucentButton::pixels, TranslucentButton::pixels);
 #else
     previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
@@ -235,9 +252,7 @@ void MainWindow::showBig()
 
     // Re-parent children
     leaveChildren();
-    QList<QWidget *> otherChildren;
-    otherChildren << progress << nextButton << previousButton;
-    fullScreenWindow->takeChildren(view, otherChildren);
+    fullScreenWindow->takeChildren(view, progress, previousButton, nextButton);
 
     // Adjust geometry of decorations
     QRect screen = QApplication::desktop()->screenGeometry();
@@ -429,14 +444,25 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     TRACE;
 
+    int toolBarHeight = 0;
+
+#ifdef Q_OS_SYMBIAN
+    // Tool bar is only useful in portrait mode
+    bool isPortrait = (e->size().width() < e->size().height());
+    toolBar->setVisible(isPortrait);
+    if (!isPortrait) {
+        toolBarHeight = toolBar->height();
+    }
+#endif // Q_OS_SYMBIAN
+
     if (bookView) {
         qDebug() << "BookView geometry" << bookView->geometry();
         QRect geo = bookView->geometry();
         progress->setGeometry(geo.x(),
-            geo.y() + geo.height() - progress->thickness(), geo.width(),
-            progress->thickness());
+            geo.y() + geo.height() - progress->thickness() + toolBarHeight,
+            geo.width(), progress->thickness());
         previousButton->setGeometry(geo.x(),
-            geo.y() + geo.height() - TranslucentButton::pixels,
+            geo.y() + geo.height() - TranslucentButton::pixels + toolBarHeight,
             TranslucentButton::pixels, TranslucentButton::pixels);
         nextButton->setGeometry(
             geo.x() + geo.width() - TranslucentButton::pixels,
