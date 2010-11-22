@@ -192,6 +192,7 @@ void MainWindow::showRegular()
     // Adjust geometry of decorations
 
     QRect geo = geometry();
+    qDebug() << geo;
     int y = geo.height() - progress->thickness();
 #if defined(Q_WS_MAEMO_5)
     y -= toolBar->height();
@@ -428,41 +429,18 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     TRACE;
 
-    if (hasChild(progress)) {
-        qDebug() << "To" << e->size();
-        int y = e->size().height() - progress->thickness();
-#if defined(Q_WS_MAEMO_5)
-        y -= toolBar->height();
-#endif
-        progress->setGeometry(0, y, e->size().width(), y + progress->thickness());
-
-#if defined(Q_WS_MAEMO_5)
-        previousButton->setGeometry(0,
-            e->size().height() - toolBar->height() - TranslucentButton::pixels,
+    if (bookView) {
+        qDebug() << "BookView geometry" << bookView->geometry();
+        QRect geo = bookView->geometry();
+        progress->setGeometry(geo.x(),
+            geo.y() + geo.height() - progress->thickness(), geo.width(),
+            progress->thickness());
+        previousButton->setGeometry(geo.x(),
+            geo.y() + geo.height() - TranslucentButton::pixels,
             TranslucentButton::pixels, TranslucentButton::pixels);
-        nextButton->setGeometry(e->size().width() - TranslucentButton::pixels, 0,
-            TranslucentButton::pixels, TranslucentButton::pixels);
-#elif defined(Q_OS_SYMBIAN)
-        previousButton->setGeometry(0, e->size().height() - TranslucentButton::pixels,
-            TranslucentButton::pixels, TranslucentButton::pixels);
-        nextButton->setGeometry(e->size().width() - TranslucentButton::pixels,
-            0, TranslucentButton::pixels, TranslucentButton::pixels);
-#else
-        previousButton->setGeometry(0,
-            e->size().height() - TranslucentButton::pixels,
-            TranslucentButton::pixels, TranslucentButton::pixels);
-        nextButton->setGeometry(e->size().width() - TranslucentButton::pixels - 25,
-            toolBar->height(), TranslucentButton::pixels,
-            TranslucentButton::pixels);
-#endif // Q_WS_MAEMO_5
-
-#ifdef Q_WS_MAEMO_5
-        // This is needed on Maemo, in order not to lose current reading position
-        // after orientation change
-        QTimer::singleShot(250, view, SLOT(restoreLastBookmark()));
-#endif
-        previousButton->flash();
-        nextButton->flash();
+        nextButton->setGeometry(
+            geo.x() + geo.width() - TranslucentButton::pixels,
+            geo.y(), TranslucentButton::pixels, TranslucentButton::pixels);
     }
     QMainWindow::resizeEvent(e);
 }
