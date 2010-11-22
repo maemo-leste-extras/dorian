@@ -55,6 +55,9 @@ protected:
     void timerEvent(QTimerEvent *event);
     void resizeEvent(QResizeEvent *event);
 
+protected slots:
+    void placeChildren();
+
 private:
     void setCurrentBook(const QModelIndex &current);
     BookView *view;

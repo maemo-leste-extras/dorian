@@ -39,6 +39,10 @@ protected:
     /** Handle size (and orientation) change. */
     void resizeEvent(QResizeEvent *e);
 
+protected slots:
+    /** Re-align adopted child windows. */
+    void placeChildren();
+
 private:
     TranslucentButton *restoreButton;
     Progress *progress;

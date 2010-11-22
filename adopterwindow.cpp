@@ -57,7 +57,7 @@ void AdopterWindow::takeChildren(BookView *view, const QList<QWidget *> &others)
     leaveChildren();
     if (view) {
         bookView = view;
-        bookView->setParent(centralWidget());
+        bookView->setParent(this);
         bookView->show();
         QVBoxLayout *layout =
                 qobject_cast<QVBoxLayout *>(centralWidget()->layout());

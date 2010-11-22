@@ -38,14 +38,35 @@ FullScreenWindow::FullScreenWindow(QWidget *parent):
 
 void FullScreenWindow::showFullScreen()
 {
-    TRACE;
+    Trace t("FullScreenWindow::showFullScreen");
     AdopterWindow::showFullScreen();
-    restoreButton->flash(3000);
+    placeChildren();
 }
 
 void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
+    Trace t("FullScreenWindow::resizeEvent");
+    QTimer::singleShot(100, this, SLOT(placeChildren()));
+    AdopterWindow::resizeEvent(e);
+}
+
+void FullScreenWindow::takeChildren(BookView *view,
+                                    Progress *prog,
+                                    TranslucentButton *previous,
+                                    TranslucentButton *next)
+{
     TRACE;
+    progress = prog;
+    previousButton = previous;
+    nextButton = next;
+    QList<QWidget *> otherChildren;
+    otherChildren << progress << previousButton << nextButton;
+    AdopterWindow::takeChildren(view, otherChildren);
+}
+
+void FullScreenWindow::placeChildren()
+{
+    Trace t("FullScreenWindow::placeChildren");
 
     QRect screen = QApplication::desktop()->screenGeometry();
     int w = screen.width();
@@ -72,6 +93,9 @@ void FullScreenWindow::resizeEvent(QResizeEvent *e)
     if (hasChild(progress)) {
         progress->setGeometry(0, h - progress->thickness(),
                               w, progress->thickness());
+        qDebug() << "Screen (FullScreenWindow::resizeEvent)" << w << "x" << h;
+        qDebug() << "Progress (FullScreenWindow::resizeEvent)"
+                << progress->geometry();
     }
     if (hasChild(previousButton)) {
         previousButton->setGeometry(
@@ -89,19 +113,4 @@ void FullScreenWindow::resizeEvent(QResizeEvent *e)
     }
 
     restoreButton->flash(3000);
-    AdopterWindow::resizeEvent(e);
-}
-
-void FullScreenWindow::takeChildren(BookView *view,
-                                    Progress *prog,
-                                    TranslucentButton *previous,
-                                    TranslucentButton *next)
-{
-    TRACE;
-    progress = prog;
-    previousButton = previous;
-    nextButton = next;
-    QList<QWidget *> otherChildren;
-    otherChildren << progress << previousButton << nextButton;
-    AdopterWindow::takeChildren(view, otherChildren);
 }

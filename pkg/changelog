@@ -1,6 +1,7 @@
 dorian (0.4.0-1) unstable; urgency=low
 
   * Fix popup button positions
+  * Add tool bar on Symbian
 
  -- Akos Polster <akos@pipacs.com>  Sun, 21 Nov 2010 02:00:00 +0100
 

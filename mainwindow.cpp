@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent):
     setCentralWidget(central);
 
     // Book view
-    view = new BookView(central);
+    view = new BookView(this);
     view->show();
     layout->addWidget(view);
 
@@ -200,10 +200,13 @@ void MainWindow::showRegular()
     otherChildren << progress << previousButton << nextButton;
     takeChildren(view, otherChildren);
 
+#if 0
+
     // Adjust geometry of decorations
 
     QRect geo = geometry();
-    qDebug() << geo;
+    qDebug() << "MainWindow (MainWindow::showRegular)" << geo;
+    qDebug() << "BookView (MainWindow::showRegular)" << view->geometry();
     int y = geo.height() - progress->thickness();
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     bool hasToolBar = false;
@@ -236,14 +239,13 @@ void MainWindow::showRegular()
 #endif // Q_WS_MAEMO_5
     qDebug() << "previousButton geometry" << previousButton->geometry();
 
+#endif
+
     fullScreenWindow->hide();
     show();
 #if defined(Q_OS_SYMBIAN)
     activateWindow();
 #endif
-    progress->flash();
-    nextButton->flash();
-    previousButton->flash();
 }
 
 void MainWindow::showBig()
@@ -253,6 +255,8 @@ void MainWindow::showBig()
     // Re-parent children
     leaveChildren();
     fullScreenWindow->takeChildren(view, progress, previousButton, nextButton);
+
+#if 0
 
     // Adjust geometry of decorations
     QRect screen = QApplication::desktop()->screenGeometry();
@@ -268,16 +272,16 @@ void MainWindow::showBig()
     previousButton->setGeometry(0, screen.height() - TranslucentButton::pixels,
         TranslucentButton::pixels, TranslucentButton::pixels);
 
-#ifdef Q_OS_SYMBIAN
-    hide();
 #endif
+
+// #ifdef Q_OS_SYMBIAN
+    hide();
+// #endif
+
     fullScreenWindow->showFullScreen();
 #ifdef Q_OS_SYMBIAN
     fullScreenWindow->activateWindow();
 #endif
-    progress->flash();
-    nextButton->flash();
-    previousButton->flash();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -442,22 +446,47 @@ void MainWindow::timerEvent(QTimerEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    TRACE;
+    Trace t("MainWindow::resizeEvent");
+#ifdef Q_OS_SYMBIAN
+    // Tool bar is only useful in portrait mode
+    bool isPortrait =
+        (QApplication::desktop()->width() < QApplication::desktop()->height());
+    toolBar->setVisible(isPortrait);
+#endif
+    QTimer::singleShot(100, this, SLOT(placeChildren()));
+    AdopterWindow::resizeEvent(e);
+}
+
+void MainWindow::placeChildren()
+{
+    Trace t("MainWindow::placeChildren");
 
     int toolBarHeight = 0;
 
 #ifdef Q_OS_SYMBIAN
     // Tool bar is only useful in portrait mode
-    bool isPortrait = (e->size().width() < e->size().height());
-    toolBar->setVisible(isPortrait);
+    bool isPortrait =
+        (QApplication::desktop()->width() < QApplication::desktop()->height());
+    // toolBar->setVisible(isPortrait);
+
+    // Work around Symbian bug: If there is no tool bar, increase decorator
+    // widgets' Y coordinates
     if (!isPortrait) {
         toolBarHeight = toolBar->height();
     }
 #endif // Q_OS_SYMBIAN
 
-    if (bookView) {
-        qDebug() << "BookView geometry" << bookView->geometry();
-        QRect geo = bookView->geometry();
+    if (hasChild(view)) {
+        QRect geo = centralWidget()->geometry();
+        qDebug() << "centralWidget (MainWindow::resizeEvent)" << geo;
+#ifdef Q_OS_SYMBIAN
+        // FIXME: When returning from full screen in landscape mode,
+        // the central widget's height is miscalculated on Symbian.
+        // My apologies for this kludge
+        if (geo.height() == 288) {
+            geo.setHeight(223);
+        }
+#endif // Q_OS_SYMBIAN
         progress->setGeometry(geo.x(),
             geo.y() + geo.height() - progress->thickness() + toolBarHeight,
             geo.width(), progress->thickness());
@@ -467,8 +496,13 @@ void MainWindow::resizeEvent(QResizeEvent *e)
         nextButton->setGeometry(
             geo.x() + geo.width() - TranslucentButton::pixels,
             geo.y(), TranslucentButton::pixels, TranslucentButton::pixels);
+        progress->flash();
+        previousButton->flash();
+        nextButton->flash();
+        qDebug() << "Progress (MainWindow::resizeEvent)"
+                << progress->geometry();
     }
-    QMainWindow::resizeEvent(e);
+
 }
 
 void MainWindow::about()
