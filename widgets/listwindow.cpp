@@ -21,7 +21,6 @@ ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
     list = new QListWidget(this);
     list->setSelectionMode(QAbstractItemView::SingleSelection);
 #if defined(Q_OS_SYMBIAN)
-    list->setFixedWidth(QApplication::desktop()->availableGeometry().width());
     list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #endif
     populateList();
