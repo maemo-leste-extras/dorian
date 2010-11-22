@@ -20,7 +20,7 @@ AdopterWindow::AdopterWindow(QWidget *parent):
 
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
-#endif // Q_WS_MAEMO_5
+#endif
 
     QFrame *frame = new QFrame(this);
     QVBoxLayout *layout = new QVBoxLayout(frame);
@@ -33,10 +33,19 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
     QMainWindow::addAction(closeAction);
+
+    // toolBar = new QToolBar(this);
+    // toolBar->setFixedWidth(QApplication::desktop()->
+    //                        availableGeometry().width());
+    // toolBar->setFixedHeight(70);
+    // toolBar->setIconSize(QSize(90, 70));
+    // toolBar->setFloatable(false);
+    // toolBar->setMovable(false);
+    // addToolBar(Qt::BottomToolBarArea, toolBar);
 #else
     // Tool bar
     setUnifiedTitleAndToolBarOnMac(true);
-    toolBar = addToolBar("controls");
+    toolBar = addToolBar("");
     toolBar->setMovable(false);
     toolBar->setFloatable(false);
     toolBar->toggleViewAction()->setVisible(false);
@@ -57,8 +66,8 @@ void AdopterWindow::takeChildren(BookView *view, const QList<QWidget *> &others)
     if (view) {
         bookView = view;
         bookView->setParent(centralWidget());
-        centralWidget()->layout()->addWidget(bookView);
         bookView->show();
+        centralWidget()->layout()->addWidget(bookView);
     }
     foreach (QWidget *child, others) {
         if (child) {
@@ -100,16 +109,26 @@ void AdopterWindow::show()
 QAction *AdopterWindow::addToolBarAction(QObject *receiver,
                                          const char *member,
                                          const QString &iconName,
-                                         const QString &text)
+                                         const QString &text,
+                                         bool important)
 {
     TRACE;
     qDebug() << "icon" << iconName << "text" << text;
     QAction *action;
 #ifndef Q_OS_SYMBIAN
+    Q_UNUSED(important);
     action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
                                 text, receiver, member);
 #else
-    Q_UNUSED(iconName);
+    if (0) { // if (important) {
+        qDebug() << "Add Symbian tool bar action";
+        QAction *toolBarAction = toolBar->addAction(
+            QIcon(Platform::instance()->icon(iconName)),
+            text, receiver, member);
+        toolBarAction->setText("");
+        toolBarAction->setToolTip("");
+        connect(toolBarAction, SIGNAL(triggered()), receiver, member);
+    }
     action = new QAction(text, this);
     menuBar()->addAction(action);
     connect(action, SIGNAL(triggered()), receiver, member);
@@ -119,6 +138,7 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     action->setText("");
     action->setToolTip("");
 #endif
+
     return action;
 }
 

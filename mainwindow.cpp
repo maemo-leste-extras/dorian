@@ -68,13 +68,13 @@ MainWindow::MainWindow(QWidget *parent):
 #endif
 
     chaptersAction = addToolBarAction(this, SLOT(showChapters()),
-                                      "chapters", tr("Chapters"));
+                                      "chapters", tr("Chapters"), true);
     bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
-                                       "bookmarks", tr("Bookmarks"));
+                                       "bookmarks", tr("Bookmarks"), true);
     infoAction = addToolBarAction(this, SLOT(showInfo()),
-                                  "info", tr("Book info"));
+                                  "info", tr("Book info"), true);
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
-                                     "library", tr("Library"));
+                                     "library", tr("Library"), true);
 
 #ifdef Q_WS_MAEMO_5
     settingsAction = menuBar()->addAction(tr("Settings"));
@@ -312,7 +312,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     TRACE;
     view->setLastBookmark();
-    event->accept();
+    AdopterWindow::closeEvent(event);
 }
 
 void MainWindow::onSettingsChanged(const QString &key)

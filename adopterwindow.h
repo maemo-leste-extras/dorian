@@ -8,6 +8,7 @@ class QWidget;
 class QToolBar;
 class QAction;
 class BookView;
+class QVBoxLayout;
 
 /**
  * A toplevel window that can adopt a BookView and other children.
@@ -30,11 +31,18 @@ public:
     bool hasChild(QWidget *child);
 
     /**
-     * Add action that is visible on the tool bar (except on Symbian, where
-     * it is visible on the Options menu).
+     * Add action that is visible on the tool bar.
+     * @param   receiver    Object receiving "activated" signal.
+     * @param   slot        Slot receiving "activated" signal.
+     * @param   iconName    Base name of tool bar icon in resource file.
+     * @param   text        Tool bar item text.
+     * @param   important   On Symbian, only "important" actions are added to
+     *                      the tool bar. All actions are added to the Options
+     *                      menu though.
      */
     QAction *addToolBarAction(QObject *receiver, const char *slot,
-                              const QString &iconName, const QString &text);
+                              const QString &iconName, const QString &text,
+                              bool important = false);
 
     /** Add spacing to tool bar. */
     void addToolBarSpace();
@@ -42,7 +50,7 @@ public:
     /** Show window. */
     void show();
 
-    /** If grab is true, volume keys will generate pageUp/Down keys. */
+    /** If grab is true, volume keys will generate pageUp/Down key events. */
     void grabVolumeKeys(bool grab);
 
 public slots:
@@ -57,9 +65,7 @@ protected:
 #endif
     BookView *bookView;
     bool grabbingVolumeKeys;/**< True, if volume keys should be grabbed. */
-#ifndef Q_OS_SYMBIAN
     QToolBar *toolBar;
-#endif
 };
 
 #endif // ADOPTERWINDOW_H

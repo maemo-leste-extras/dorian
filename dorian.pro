@@ -136,7 +136,7 @@ symbian {
     TARGET.UID3 = 0xA89FC85B
     TARGET.CAPABILITY = UserEnvironment NetworkServices ReadUserData \
         WriteUserData
-    TARGET.EPOCHEAPSIZE = 0x080000 0x8000000
+    TARGET.EPOCHEAPSIZE = 0x080000 0x4000000
     ICON = $$PWD/pkg/symbian/book.svg
 
     # FIXME: Package header for Qt 4.6.2:
