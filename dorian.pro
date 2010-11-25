@@ -141,7 +141,7 @@ symbian {
 
     # FIXME: Package header for Qt 4.6.2:
     packageheader = \
-        "$${LITERAL_HASH}{\"Dorian\"},(0xA89FC85B),0,4,0" \
+        "$${LITERAL_HASH}{\"Dorian\"},(0xA89FC85B),0,4,1" \
         "[0x101F7961],0,0,0,{\"S60ProductID\"}" \
         "[0x102032BE],0,0,0,{\"S60ProductID\"}" \
         "[0x102752AE],0,0,0,{\"S60ProductID\"}" \

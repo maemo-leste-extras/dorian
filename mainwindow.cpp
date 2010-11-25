@@ -517,8 +517,8 @@ void MainWindow::about()
     label->setText(tr("<b>Dorian %1</b><br><br>Copyright &copy; 2010 "
         "Akos Polster &lt;akos@pipacs.com&gt;<br>"
         "Licensed under GNU General Public License, Version 3<br>"
-        "Source code:<br><a href='https://garage.maemo.org/projects/dorian/'>"
-        "garage.maemo.org/projects/dorian</a>").arg(version));
+        "Source code:<br><a href='http://dorian.garage.maemo.org/'>"
+        "dorian.garage.maemo.org</a>").arg(version));
     aboutDialog->addWidget(label);
     aboutDialog->addStretch();
     aboutDialog->show();
