@@ -216,6 +216,17 @@ void AdopterWindow::showEvent(QShowEvent *e)
 {
     Trace t("AdopterWindow::showEvent");
 
+#ifdef Q_OS_SYMBIAN
+    if (toolBar) {
+        if (portrait()) {
+            qDebug() << "Show tool bar";
+            toolBar->setVisible(true);
+        } else {
+            qDebug() << "Hide tool bar";
+            toolBar->setVisible(false);
+        }
+    }
+#endif // Q_OS_SYMBIAN
     QMainWindow::showEvent(e);
 #if defined(Q_WS_MAEMO_5)
     doGrabVolumeKeys(grabbingVolumeKeys);
@@ -226,6 +237,18 @@ void AdopterWindow::showEvent(QShowEvent *e)
 void AdopterWindow::resizeEvent(QResizeEvent *event)
 {
     Trace t("AdopterWindow::resizeEvent");
+#ifdef Q_OS_SYMBIAN
+    if (toolBar) {
+        if (portrait()) {
+            qDebug() << "Show tool bar";
+            toolBar->setVisible(true);
+        } else {
+            qDebug() << "Hide tool bar";
+            toolBar->setVisible(false);
+        }
+    }
+#endif // Q_OS_SYMBIAN
+
     QMainWindow::resizeEvent(event);
     placeDecorations();
 }
@@ -280,18 +303,6 @@ bool AdopterWindow::portrait()
 void AdopterWindow::placeDecorations()
 {
     Trace t("AdopterWindow::placeDecorations");
-
-#ifdef Q_OS_SYMBIAN
-    if (toolBar) {
-        if (portrait()) {
-            qDebug() << "Show tool bar";
-            toolBar->setVisible(true);
-        } else {
-            qDebug() << "Hide tool bar";
-            toolBar->setVisible(false);
-        }
-    }
-#endif // Q_OS_SYMBIAN
 
     if (!hasBookView()) {
         return;
