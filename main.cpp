@@ -31,11 +31,11 @@ int main(int argc, char *argv[])
     int ret;
 
     // Set up application
-    QApplication a(argc, argv);
-    a.setApplicationName("Dorian");
-    a.setApplicationVersion(DORIAN_VERSION);
-    a.setOrganizationDomain("pipacs.com");
-    a.setOrganizationName("Pipacs");
+    QApplication app(argc, argv);
+    app.setApplicationName("Dorian");
+    app.setApplicationVersion(DORIAN_VERSION);
+    app.setOrganizationDomain("pipacs.com");
+    app.setOrganizationName("Pipacs");
 
     // Initialize tracing
     Settings *settings = Settings::instance();
@@ -44,33 +44,31 @@ int main(int argc, char *argv[])
     Trace::setFileName(settings->value("tracefilename").toString());
     qInstallMsgHandler(Trace::messageHandler);
 
-#if 0 // def Q_OS_SYMBIAN
+#ifdef Q_OS_SYMBIAN
     // Show splash screen
-    Splash *splash = new Splash();
-    splash->showFullScreen();
-    // splash->showMaximized();
-    splash->raise();
-    a.processEvents();
+    Splash splash;
+    splash.show();
+    app.processEvents();
 #endif
 
-    // Create and initialize main window, then run event loop
+    // Initialize main window
     MainWindow *mainWindow = new MainWindow();
     settings->apply();
     mainWindow->initialize();
-#if 0 // def Q_OS_SYMBIAN
-    splash->close();
-    delete splash;
-    mainWindow->showNormal();
-#endif
-    ret = a.exec();
-    delete mainWindow;
 
-    // Re-start application if event loop exit code was 1000
+#ifdef Q_OS_SYMBIAN
+    // Hide splash screen
+    splash.finish(mainWindow);
+#endif
+
+    // Run event loop, Re-start application if event loop exit code was 1000
+    ret = app.exec();
     if (ret == 1000) {
         Platform::instance()->restart(argv);
     }
 
     // Release singletons
+    delete mainWindow;
     Library::close();
     BookDb::close();
     Settings::close();

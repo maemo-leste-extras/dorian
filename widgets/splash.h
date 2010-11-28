@@ -1,14 +1,14 @@
 #ifndef SPLASH_H
 #define SPLASH_H
 
-#include <QMainWindow>
+#include <QSplashScreen>
 
-class Splash: public QMainWindow
+class Splash: public QSplashScreen
 {
     Q_OBJECT
 
 public:
-    explicit Splash(QWidget *parent = 0);
+    explicit Splash();
 };
 
 #endif // SPLASH_H

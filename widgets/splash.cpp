@@ -2,14 +2,6 @@
 
 #include "splash.h"
 
-Splash::Splash(QWidget *parent): QMainWindow(parent)
+Splash::Splash(): QSplashScreen(QPixmap(":/icons/splash.jpg"))
 {
-
-    QLabel *label = new QLabel(this);
-    QRect geo = QApplication::desktop()->geometry();
-    label->setGeometry(geo);
-    label->setStyleSheet("background-color: white; color: white");
-    label->setPixmap(QPixmap(":/icons/splash.jpg").scaled(geo.width(),
-        geo.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    setCentralWidget(label);
 }
