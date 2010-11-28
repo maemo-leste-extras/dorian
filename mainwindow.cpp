@@ -131,9 +131,6 @@ MainWindow::MainWindow(QWidget *parent):
     connect(next, SIGNAL(triggered()), this, SLOT(goToNextPage()));
     connect(prev, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
 
-    // Adopt view, show window
-    showRegular();
-
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
 #endif
@@ -168,6 +165,9 @@ void MainWindow::initialize()
             library->setNowReading(sorted.mapToSource(sorted.index(0, 0)));
         }
     }
+
+    // Show in regular (non full-screen) mode
+    showRegular();
 }
 
 void MainWindow::onCurrentBookChanged()
@@ -186,7 +186,8 @@ void MainWindow::showRegular()
 
     fullScreenWindow->hide();
     show();
-#if defined(Q_OS_SYMBIAN)
+
+#if 0 // #if defined(Q_OS_SYMBIAN)
     activateWindow();
 #endif
 }
@@ -199,12 +200,10 @@ void MainWindow::showBig()
     leaveBookView();
     fullScreenWindow->takeBookView(view, prog, prev, next);
 
-// #ifdef Q_OS_SYMBIAN
-    hide();
-// #endif
-
     fullScreenWindow->showFullScreen();
-#ifdef Q_OS_SYMBIAN
+    hide();
+
+#if 0 // #ifdef Q_OS_SYMBIAN
     fullScreenWindow->activateWindow();
 #endif
 }

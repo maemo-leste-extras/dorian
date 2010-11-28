@@ -29,7 +29,7 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     QVBoxLayout *layout = new QVBoxLayout(frame);
     layout->setMargin(0);
     frame->setLayout(layout);
-    frame->show();
+    //frame->show();
     setCentralWidget(frame);
 
 #ifdef Q_OS_SYMBIAN
@@ -70,8 +70,8 @@ void AdopterWindow::takeBookView(BookView *view,
 
     bookView = view;
     bookView->setParent(this);
-    bookView->show();
     centralWidget()->layout()->addWidget(bookView);
+    bookView->show();
 
     progress = prog;
     previousButton = previous;
@@ -85,6 +85,7 @@ void AdopterWindow::leaveBookView()
 {
     TRACE;
     if (bookView) {
+        bookView->hide();
         centralWidget()->layout()->removeWidget(bookView);
     }
     bookView = 0;
@@ -100,12 +101,12 @@ bool AdopterWindow::hasBookView()
 
 void AdopterWindow::show()
 {
+    Trace t("AdopterWindow::show");
 #ifdef Q_OS_SYMBIAN
     foreach (QWidget *w, QApplication::allWidgets()) {
         w->setContextMenuPolicy(Qt::NoContextMenu);
     }
     showMaximized();
-    raise();
 #else
     QMainWindow::show();
 #endif
@@ -215,32 +216,18 @@ void AdopterWindow::showEvent(QShowEvent *e)
 {
     Trace t("AdopterWindow::showEvent");
 
+    QMainWindow::showEvent(e);
 #if defined(Q_WS_MAEMO_5)
     doGrabVolumeKeys(grabbingVolumeKeys);
 #endif // Q_WS_MAEMO_5
-    QMainWindow::showEvent(e);
+    placeDecorations();
 }
 
 void AdopterWindow::resizeEvent(QResizeEvent *event)
 {
     Trace t("AdopterWindow::resizeEvent");
-
-#ifdef Q_OS_SYMBIAN
-    if (toolBar) {
-        if (portrait()) {
-            qDebug() << "Show tool bar";
-            toolBar->setVisible(true);
-        } else {
-            qDebug() << "Hide tool bar";
-            toolBar->setVisible(false);
-        }
-    }
-#endif // Q_OS_SYMBIAN
-
-    if (hasBookView()) {
-        QTimer::singleShot(100, this, SLOT(placeDecorations()));
-    }
     QMainWindow::resizeEvent(event);
+    placeDecorations();
 }
 
 void AdopterWindow::keyPressEvent(QKeyEvent *event)
@@ -293,6 +280,18 @@ bool AdopterWindow::portrait()
 void AdopterWindow::placeDecorations()
 {
     Trace t("AdopterWindow::placeDecorations");
+
+#ifdef Q_OS_SYMBIAN
+    if (toolBar) {
+        if (portrait()) {
+            qDebug() << "Show tool bar";
+            toolBar->setVisible(true);
+        } else {
+            qDebug() << "Hide tool bar";
+            toolBar->setVisible(false);
+        }
+    }
+#endif // Q_OS_SYMBIAN
 
     if (!hasBookView()) {
         return;

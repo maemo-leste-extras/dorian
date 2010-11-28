@@ -35,18 +35,18 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
     connect(restoreButton, SIGNAL(triggered()), this, SIGNAL(restore()));
 }
 
-void FullScreenWindow::showFullScreen()
+void FullScreenWindow::showEvent(QShowEvent *e)
 {
-    Trace t("FullScreenWindow::showFullScreen");
-    AdopterWindow::showFullScreen();
+    Trace t("FullScreenWindow::showEvent");
+    AdopterWindow::showEvent(e);
     placeChildren();
 }
 
 void FullScreenWindow::resizeEvent(QResizeEvent *e)
 {
     Trace t("FullScreenWindow::resizeEvent");
-    QTimer::singleShot(100, this, SLOT(placeChildren()));
     AdopterWindow::resizeEvent(e);
+    placeChildren();
 }
 
 void FullScreenWindow::placeChildren()

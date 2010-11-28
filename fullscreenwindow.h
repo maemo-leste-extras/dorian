@@ -20,9 +20,6 @@ class FullScreenWindow: public AdopterWindow
 public:
     explicit FullScreenWindow(QWidget *parent);
 
-    /** Swith to full screen, and flash the restore button. */
-    void showFullScreen();
-
     /**
      * Adopt children.
      * Same as @AdopterWindow::takeChildren(), but saves prog, previous
@@ -38,6 +35,9 @@ signals:
 protected:
     /** Handle size (and orientation) change. */
     void resizeEvent(QResizeEvent *e);
+
+    /** Handle show event. */
+    void showEvent(QShowEvent *e);
 
 protected slots:
     /** Re-align adopted child windows. */
