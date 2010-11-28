@@ -42,7 +42,10 @@ MainWindow::MainWindow(QWidget *parent):
 #ifdef Q_WS_MAEMO_5
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
+
+#ifndef Q_OS_SYMBIAN
     setWindowTitle("Dorian");
+#endif
 
     // Central widget. Must be an intermediate, because the book view widget
     // can be re-parented later
@@ -54,7 +57,6 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Book view
     view = new BookView(this);
-    view->show();
 
     // Tool bar actions
 
