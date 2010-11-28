@@ -129,9 +129,7 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     if (!toolBar && important) {
         // Create tool bar if needed
         toolBar = new QToolBar("", this);
-        // toolBar->setFixedWidth(QApplication::desktop()->
-        //                        availableGeometry().width());
-        toolBar->setFixedHeight(65);
+        // toolBar->setFixedHeight(63);
         toolBar->setStyleSheet("margin:0; border:0; padding:0");
         toolBar->setSizePolicy(QSizePolicy::MinimumExpanding,
                                QSizePolicy::Maximum);
@@ -194,7 +192,8 @@ void AdopterWindow::doGrabVolumeKeys(bool grab)
         return;
     }
     unsigned long val = grab? 1: 0;
-    Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
+    Atom atom =
+            XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
     if (!atom) {
         qCritical() << "Unable to obtain _HILDON_ZOOM_KEY_ATOM";
         return;
@@ -212,25 +211,44 @@ void AdopterWindow::doGrabVolumeKeys(bool grab)
 
 #endif // Q_WS_MAEMO_5
 
+#ifdef Q_OS_SYMBIAN
+
+void AdopterWindow::updateToolBar()
+{
+    TRACE;
+    if (toolBar) {
+        QRect geometry = QApplication::desktop()->geometry();
+        bool isPortrait = geometry.width() < geometry.height();
+        bool isToolBarHidden = toolBar->isHidden();
+        if (isPortrait && isToolBarHidden) {
+            qDebug() << "Show tool bar";
+            toolBar->setVisible(true);
+        } else if (!isPortrait && !isToolBarHidden) {
+            qDebug() << "Hide tool bar";
+            toolBar->setVisible(false);
+        }
+    }
+}
+
+bool AdopterWindow::portrait()
+{
+    QRect geometry = QApplication::desktop()->geometry();
+    return geometry.width() < geometry.height();
+}
+
+#endif // Q_OS_SYMBIAN
+
 void AdopterWindow::showEvent(QShowEvent *e)
 {
     Trace t("AdopterWindow::showEvent");
 
 #ifdef Q_OS_SYMBIAN
-    if (toolBar) {
-        if (portrait()) {
-            qDebug() << "Show tool bar";
-            toolBar->setVisible(true);
-        } else {
-            qDebug() << "Hide tool bar";
-            toolBar->setVisible(false);
-        }
-    }
-#endif // Q_OS_SYMBIAN
+    updateToolBar();
+#endif
     QMainWindow::showEvent(e);
 #if defined(Q_WS_MAEMO_5)
     doGrabVolumeKeys(grabbingVolumeKeys);
-#endif // Q_WS_MAEMO_5
+#endif
     placeDecorations();
 }
 
@@ -238,17 +256,8 @@ void AdopterWindow::resizeEvent(QResizeEvent *event)
 {
     Trace t("AdopterWindow::resizeEvent");
 #ifdef Q_OS_SYMBIAN
-    if (toolBar) {
-        if (portrait()) {
-            qDebug() << "Show tool bar";
-            toolBar->setVisible(true);
-        } else {
-            qDebug() << "Hide tool bar";
-            toolBar->setVisible(false);
-        }
-    }
-#endif // Q_OS_SYMBIAN
-
+    updateToolBar();
+#endif
     QMainWindow::resizeEvent(event);
     placeDecorations();
 }
@@ -294,12 +303,6 @@ void AdopterWindow::onSettingsChanged(const QString &key)
     }
 }
 
-bool AdopterWindow::portrait()
-{
-    QRect geometry = QApplication::desktop()->geometry();
-    return geometry.width() < geometry.height();
-}
-
 void AdopterWindow::placeDecorations()
 {
     Trace t("AdopterWindow::placeDecorations");
@@ -316,7 +319,7 @@ void AdopterWindow::placeDecorations()
 #ifdef Q_OS_SYMBIAN
     // Work around Symbian bug: If tool bar is hidden, increase bottom
     // decorator widgets' Y coordinates by the tool bar's height
-    if (!portrait() && toolBar) {
+    if (toolBar && toolBar->isHidden()) {
         toolBarHeight = toolBar->height();
     }
 

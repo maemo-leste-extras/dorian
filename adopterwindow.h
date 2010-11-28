@@ -61,9 +61,6 @@ public slots:
     void onSettingsChanged(const QString &key);
 
 protected:
-    /** Return true, if we are in portrait mode. */
-    bool portrait();
-
     /** Handle key press events. */
     void keyPressEvent(QKeyEvent *event);
 
@@ -76,10 +73,18 @@ protected:
     /** Handle resize events. */
     void resizeEvent(QResizeEvent *event);
 
+#ifdef Q_OS_SYMBIAN
+    /** Update toolbar visibility. */
+    void updateToolBar();
+
+    /** Return true in portrait mode. */
+    bool portrait();
+#endif // Q_OS_SYMBIAN
+
 #ifdef Q_WS_MAEMO_5
     /** Actually grab the volume keys. */
     void doGrabVolumeKeys(bool grab);
-#endif
+#endif // Q_WS_MAEMO_5
 
 protected slots:
     void placeDecorations();

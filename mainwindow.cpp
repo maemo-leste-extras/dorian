@@ -187,7 +187,7 @@ void MainWindow::showRegular()
     fullScreenWindow->hide();
     show();
 
-#if 0 // #if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN)
     activateWindow();
 #endif
 }
@@ -203,7 +203,7 @@ void MainWindow::showBig()
     fullScreenWindow->showFullScreen();
     hide();
 
-#if 0 // #ifdef Q_OS_SYMBIAN
+#ifdef Q_OS_SYMBIAN
     fullScreenWindow->activateWindow();
 #endif
 }
