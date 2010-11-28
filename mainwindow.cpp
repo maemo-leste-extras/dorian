@@ -44,17 +44,6 @@ MainWindow::MainWindow(QWidget *parent):
 #endif
     setWindowTitle("Dorian");
 
-#ifdef Q_OS_SYMBIAN
-    // Tool bar
-    toolBar = new QToolBar("", this /*frame*/);
-    toolBar->setFixedWidth(QApplication::desktop()->
-                           availableGeometry().width());
-    toolBar->setFixedHeight(65);
-    toolBar->setStyleSheet("margin:0;border:0;padding:0");
-    toolBar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
-    addToolBar(Qt::BottomToolBarArea, toolBar);
-#endif
-
     // Central widget. Must be an intermediate, because the book view widget
     // can be re-parented later
     QFrame *central = new QFrame(this);
@@ -66,10 +55,6 @@ MainWindow::MainWindow(QWidget *parent):
     // Book view
     view = new BookView(this);
     view->show();
-    layout->addWidget(view);
-
-    // Dialogs
-    progress = new Progress(this);
 
     // Tool bar actions
 
@@ -110,9 +95,10 @@ MainWindow::MainWindow(QWidget *parent):
     (void)addToolBarAction(this, SLOT(close()), "", tr("Exit"));
 #endif
 
-    // Buttons on top of the book view
-    previousButton = new TranslucentButton("back", this);
-    nextButton = new TranslucentButton("forward", this);
+    // Decorations
+    prev = new TranslucentButton("back", this);
+    next = new TranslucentButton("forward", this);
+    prog = new Progress(this);
 
     // Handle model changes
     connect(Library::instance(), SIGNAL(nowReadingChanged()),
@@ -131,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent):
     connect(view, SIGNAL(partLoadEnd(int)), this, SLOT(onPartLoadEnd(int)));
 
     // Handle progress
-    connect(view, SIGNAL(progress(qreal)), progress, SLOT(setProgress(qreal)));
+    connect(view, SIGNAL(progress(qreal)), prog, SLOT(setProgress(qreal)));
 
     // Shadow window for full screen reading
     fullScreenWindow = new FullScreenWindow(this);
@@ -142,8 +128,8 @@ MainWindow::MainWindow(QWidget *parent):
             this, SLOT(onSettingsChanged(const QString &)));
 
     // Handle book view buttons
-    connect(nextButton, SIGNAL(triggered()), this, SLOT(goToNextPage()));
-    connect(previousButton, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
+    connect(next, SIGNAL(triggered()), this, SLOT(goToNextPage()));
+    connect(prev, SIGNAL(triggered()), this, SLOT(goToPreviousPage()));
 
     // Adopt view, show window
     showRegular();
@@ -195,51 +181,8 @@ void MainWindow::showRegular()
     TRACE;
 
     // Re-parent children
-    fullScreenWindow->leaveChildren();
-    QList<QWidget *> otherChildren;
-    otherChildren << progress << previousButton << nextButton;
-    takeChildren(view, otherChildren);
-
-#if 0
-
-    // Adjust geometry of decorations
-
-    QRect geo = geometry();
-    qDebug() << "MainWindow (MainWindow::showRegular)" << geo;
-    qDebug() << "BookView (MainWindow::showRegular)" << view->geometry();
-    int y = geo.height() - progress->thickness();
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    bool hasToolBar = false;
-#   if defined(Q_OS_SYMBIAN)
-    hasToolBar =
-        (QApplication::desktop()->width() < QApplication::desktop()->height());
-    qDebug() << (hasToolBar? "Portrait": "Landscape");
-#   endif
-    if (!hasToolBar) {
-        y -= toolBar->height();
-    }
-#endif
-    progress->setGeometry(0, y, geo.width(), y + progress->thickness());
-
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    y = geo.height() - TranslucentButton::pixels;
-    if (!hasToolBar) {
-        y -= toolBar->height();
-    }
-    previousButton->setGeometry(0, y, TranslucentButton::pixels,
-                                TranslucentButton::pixels);
-    nextButton->setGeometry(geo.width() - TranslucentButton::pixels, 0,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-#else
-    previousButton->setGeometry(0, geo.height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(geo.width() - TranslucentButton::pixels - 25,
-        toolBar->height(), TranslucentButton::pixels,
-        TranslucentButton::pixels);
-#endif // Q_WS_MAEMO_5
-    qDebug() << "previousButton geometry" << previousButton->geometry();
-
-#endif
+    fullScreenWindow->leaveBookView();
+    takeBookView(view, prog, prev, next);
 
     fullScreenWindow->hide();
     show();
@@ -253,26 +196,8 @@ void MainWindow::showBig()
     TRACE;
 
     // Re-parent children
-    leaveChildren();
-    fullScreenWindow->takeChildren(view, progress, previousButton, nextButton);
-
-#if 0
-
-    // Adjust geometry of decorations
-    QRect screen = QApplication::desktop()->screenGeometry();
-    int y = screen.height() - progress->thickness();
-    progress->setGeometry(0, y, screen.width(), y + progress->thickness());
-#if defined(Q_WS_MAEMO_5)
-    nextButton->setGeometry(screen.width() - TranslucentButton::pixels, 0,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-#else
-    nextButton->setGeometry(screen.width() - TranslucentButton::pixels - 25, 0,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-#endif // Q_WS_MAEMO_5
-    previousButton->setGeometry(0, screen.height() - TranslucentButton::pixels,
-        TranslucentButton::pixels, TranslucentButton::pixels);
-
-#endif
+    leaveBookView();
+    fullScreenWindow->takeBookView(view, prog, prev, next);
 
 // #ifdef Q_OS_SYMBIAN
     hide();
@@ -444,67 +369,6 @@ void MainWindow::timerEvent(QTimerEvent *event)
     AdopterWindow::timerEvent(event);
 }
 
-void MainWindow::resizeEvent(QResizeEvent *e)
-{
-    Trace t("MainWindow::resizeEvent");
-#ifdef Q_OS_SYMBIAN
-    // Tool bar is only useful in portrait mode
-    bool isPortrait =
-        (QApplication::desktop()->width() < QApplication::desktop()->height());
-    toolBar->setVisible(isPortrait);
-#endif
-    QTimer::singleShot(100, this, SLOT(placeChildren()));
-    AdopterWindow::resizeEvent(e);
-}
-
-void MainWindow::placeChildren()
-{
-    Trace t("MainWindow::placeChildren");
-
-    int toolBarHeight = 0;
-
-#ifdef Q_OS_SYMBIAN
-    // Tool bar is only useful in portrait mode
-    bool isPortrait =
-        (QApplication::desktop()->width() < QApplication::desktop()->height());
-    // toolBar->setVisible(isPortrait);
-
-    // Work around Symbian bug: If there is no tool bar, increase decorator
-    // widgets' Y coordinates
-    if (!isPortrait) {
-        toolBarHeight = toolBar->height();
-    }
-#endif // Q_OS_SYMBIAN
-
-    if (hasChild(view)) {
-        QRect geo = centralWidget()->geometry();
-        qDebug() << "centralWidget (MainWindow::resizeEvent)" << geo;
-#ifdef Q_OS_SYMBIAN
-        // FIXME: When returning from full screen in landscape mode,
-        // the central widget's height is miscalculated on Symbian.
-        // My apologies for this kludge
-        if (geo.height() == 288) {
-            geo.setHeight(223);
-        }
-#endif // Q_OS_SYMBIAN
-        progress->setGeometry(geo.x(),
-            geo.y() + geo.height() - progress->thickness() + toolBarHeight,
-            geo.width(), progress->thickness());
-        previousButton->setGeometry(geo.x(),
-            geo.y() + geo.height() - TranslucentButton::pixels + toolBarHeight,
-            TranslucentButton::pixels, TranslucentButton::pixels);
-        nextButton->setGeometry(
-            geo.x() + geo.width() - TranslucentButton::pixels,
-            geo.y(), TranslucentButton::pixels, TranslucentButton::pixels);
-        progress->flash();
-        previousButton->flash();
-        nextButton->flash();
-        qDebug() << "Progress (MainWindow::resizeEvent)"
-                << progress->geometry();
-    }
-
-}
-
 void MainWindow::about()
 {
     Dyalog *aboutDialog = new Dyalog(this, false);
@@ -526,15 +390,15 @@ void MainWindow::about()
 
 void MainWindow::goToNextPage()
 {
-    nextButton->flash();
-    previousButton->flash();
+    next->flash();
+    prev->flash();
     view->goNextPage();
 }
 
 void MainWindow::goToPreviousPage()
 {
-    nextButton->flash();
-    previousButton->flash();
+    next->flash();
+    prev->flash();
     view->goPreviousPage();
 }
 

@@ -53,10 +53,6 @@ public slots:
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
-    void resizeEvent(QResizeEvent *event);
-
-protected slots:
-    void placeChildren();
 
 private:
     void setCurrentBook(const QModelIndex &current);
@@ -75,9 +71,9 @@ private:
     QModelIndex mCurrent;
     FullScreenWindow *fullScreenWindow;
     int preventBlankingTimer;
-    Progress *progress;
-    TranslucentButton *previousButton;
-    TranslucentButton *nextButton;
+    Progress *prog;
+    TranslucentButton *prev;
+    TranslucentButton *next;
     ProgressDialog *libraryProgress;
 };
 

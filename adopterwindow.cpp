@@ -12,9 +12,12 @@
 #include "bookview.h"
 #include "platform.h"
 #include "settings.h"
+#include "progress.h"
+#include "translucentbutton.h"
 
 AdopterWindow::AdopterWindow(QWidget *parent):
-    QMainWindow(parent), bookView(0), grabbingVolumeKeys(false), toolBar(0)
+    QMainWindow(parent), bookView(0), grabbingVolumeKeys(false), toolBar(0),
+    progress(0), previousButton(0), nextButton(0)
 {
     TRACE;
 
@@ -51,40 +54,48 @@ AdopterWindow::AdopterWindow(QWidget *parent):
             this, SLOT(onSettingsChanged(const QString &)));
 }
 
-void AdopterWindow::takeChildren(BookView *view, const QList<QWidget *> &others)
+void AdopterWindow::takeBookView(BookView *view,
+                                 Progress *prog,
+                                 TranslucentButton *previous,
+                                 TranslucentButton *next)
 {
     TRACE;
-    leaveChildren();
-    if (view) {
-        bookView = view;
-        bookView->setParent(this);
-        bookView->show();
-        QVBoxLayout *layout =
-                qobject_cast<QVBoxLayout *>(centralWidget()->layout());
-        layout->addWidget(bookView, 1);
-    }
-    foreach (QWidget *child, others) {
-        if (child) {
-            child->setParent(this);
-        }
-    }
+
+    Q_ASSERT(view);
+    Q_ASSERT(prog);
+    Q_ASSERT(previous);
+    Q_ASSERT(next);
+
+    leaveBookView();
+
+    bookView = view;
+    bookView->setParent(this);
+    bookView->show();
+    centralWidget()->layout()->addWidget(bookView);
+
+    progress = prog;
+    previousButton = previous;
+    nextButton = next;
+    progress->setParent(this);
+    previousButton->setParent(this);
+    nextButton->setParent(this);
 }
 
-void AdopterWindow::leaveChildren()
+void AdopterWindow::leaveBookView()
 {
     TRACE;
     if (bookView) {
         centralWidget()->layout()->removeWidget(bookView);
-        bookView = 0;
     }
+    bookView = 0;
+    progress = 0;
+    nextButton = 0;
+    previousButton = 0;
 }
 
-bool AdopterWindow::hasChild(QWidget *child)
+bool AdopterWindow::hasBookView()
 {
-    if (child == bookView) {
-        return true;
-    }
-    return this == child->parent();
+    return bookView != 0;
 }
 
 void AdopterWindow::show()
@@ -114,7 +125,19 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
     action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
                                 text, receiver, member);
 #else
-    if (toolBar && important) {
+    if (!toolBar && important) {
+        // Create tool bar if needed
+        toolBar = new QToolBar("", this);
+        // toolBar->setFixedWidth(QApplication::desktop()->
+        //                        availableGeometry().width());
+        toolBar->setFixedHeight(65);
+        toolBar->setStyleSheet("margin:0; border:0; padding:0");
+        toolBar->setSizePolicy(QSizePolicy::MinimumExpanding,
+                               QSizePolicy::Maximum);
+        addToolBar(Qt::BottomToolBarArea, toolBar);
+    }
+    if (important) {
+        // Add tool bar action
         QPushButton *button = new QPushButton(this);
         button->setIconSize(QSize(60, 60));
         button->setFixedSize(89, 60);
@@ -124,6 +147,7 @@ QAction *AdopterWindow::addToolBarAction(QObject *receiver,
         connect(button, SIGNAL(clicked()), receiver, member);
         toolBar->addWidget(button);
     }
+    // Add menu action, too
     action = new QAction(text, this);
     menuBar()->addAction(action);
     connect(action, SIGNAL(triggered()), receiver, member);
@@ -187,16 +211,37 @@ void AdopterWindow::doGrabVolumeKeys(bool grab)
 
 #endif // Q_WS_MAEMO_5
 
-#ifdef Q_WS_MAEMO_5
-
 void AdopterWindow::showEvent(QShowEvent *e)
 {
-    TRACE;
+    Trace t("AdopterWindow::showEvent");
+
+#if defined(Q_WS_MAEMO_5)
     doGrabVolumeKeys(grabbingVolumeKeys);
+#endif // Q_WS_MAEMO_5
     QMainWindow::showEvent(e);
 }
 
-#endif // Q_WS_MAEMO_5
+void AdopterWindow::resizeEvent(QResizeEvent *event)
+{
+    Trace t("AdopterWindow::resizeEvent");
+
+#ifdef Q_OS_SYMBIAN
+    if (toolBar) {
+        if (portrait()) {
+            qDebug() << "Show tool bar";
+            toolBar->setVisible(true);
+        } else {
+            qDebug() << "Hide tool bar";
+            toolBar->setVisible(false);
+        }
+    }
+#endif // Q_OS_SYMBIAN
+
+    if (hasBookView()) {
+        QTimer::singleShot(100, this, SLOT(placeDecorations()));
+    }
+    QMainWindow::resizeEvent(event);
+}
 
 void AdopterWindow::keyPressEvent(QKeyEvent *event)
 {
@@ -239,3 +284,52 @@ void AdopterWindow::onSettingsChanged(const QString &key)
     }
 }
 
+bool AdopterWindow::portrait()
+{
+    QRect geometry = QApplication::desktop()->geometry();
+    return geometry.width() < geometry.height();
+}
+
+void AdopterWindow::placeDecorations()
+{
+    Trace t("AdopterWindow::placeDecorations");
+
+    if (!hasBookView()) {
+        return;
+    }
+
+    int toolBarHeight = 0;
+
+    QRect geo = bookView->geometry();
+    qDebug() << "bookView:" << geo;
+
+#ifdef Q_OS_SYMBIAN
+    // Work around Symbian bug: If tool bar is hidden, increase bottom
+    // decorator widgets' Y coordinates by the tool bar's height
+    if (!portrait() && toolBar) {
+        toolBarHeight = toolBar->height();
+    }
+
+    // Work around another Symbian bug: When returning from full screen mode
+    // in landscape, the book view widget's height is miscalculated.
+    // My apologies for this kludge
+    if (geo.height() == 288) {
+        qDebug() << "Adjusting bottom Y";
+        toolBarHeight -= 288 - 223;
+    }
+#endif // Q_OS_SYMBIAN
+
+    progress->setGeometry(geo.x(),
+        geo.y() + geo.height() - progress->thickness() + toolBarHeight,
+        geo.width(), progress->thickness());
+    previousButton->setGeometry(geo.x(),
+        geo.y() + geo.height() - TranslucentButton::pixels + toolBarHeight,
+        TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(
+        geo.x() + geo.width() - TranslucentButton::pixels,
+        geo.y(), TranslucentButton::pixels, TranslucentButton::pixels);
+    progress->flash();
+    previousButton->flash();
+    nextButton->flash();
+    qDebug() << "progress:" << progress->geometry();
+}

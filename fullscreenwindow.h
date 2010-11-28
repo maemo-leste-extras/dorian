@@ -45,9 +45,6 @@ protected slots:
 
 private:
     TranslucentButton *restoreButton;
-    Progress *progress;
-    TranslucentButton *previousButton;
-    TranslucentButton *nextButton;
 };
 
 #endif // FULLSCREENWINDOW_H

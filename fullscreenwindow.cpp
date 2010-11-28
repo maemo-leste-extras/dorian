@@ -9,8 +9,7 @@
 
 static const int MARGIN = 9;
 
-FullScreenWindow::FullScreenWindow(QWidget *parent):
-        AdopterWindow(parent), progress(0), previousButton(0), nextButton(0)
+FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 {
     TRACE;
     Q_ASSERT(parent);
@@ -50,20 +49,6 @@ void FullScreenWindow::resizeEvent(QResizeEvent *e)
     AdopterWindow::resizeEvent(e);
 }
 
-void FullScreenWindow::takeChildren(BookView *view,
-                                    Progress *prog,
-                                    TranslucentButton *previous,
-                                    TranslucentButton *next)
-{
-    TRACE;
-    progress = prog;
-    previousButton = previous;
-    nextButton = next;
-    QList<QWidget *> otherChildren;
-    otherChildren << progress << previousButton << nextButton;
-    AdopterWindow::takeChildren(view, otherChildren);
-}
-
 void FullScreenWindow::placeChildren()
 {
     Trace t("FullScreenWindow::placeChildren");
@@ -89,28 +74,5 @@ void FullScreenWindow::placeChildren()
         h - TranslucentButton::pixels - MARGIN,
         TranslucentButton::pixels,
         TranslucentButton::pixels);
-
-    if (hasChild(progress)) {
-        progress->setGeometry(0, h - progress->thickness(),
-                              w, progress->thickness());
-        qDebug() << "Screen (FullScreenWindow::resizeEvent)" << w << "x" << h;
-        qDebug() << "Progress (FullScreenWindow::resizeEvent)"
-                << progress->geometry();
-    }
-    if (hasChild(previousButton)) {
-        previousButton->setGeometry(
-                MARGIN,
-                h - TranslucentButton::pixels - MARGIN,
-                TranslucentButton::pixels,
-                TranslucentButton::pixels);
-    }
-    if (hasChild(nextButton)) {
-        nextButton->setGeometry(
-        w - TranslucentButton::pixels - MARGIN,
-        MARGIN,
-        TranslucentButton::pixels,
-        TranslucentButton::pixels);
-    }
-
     restoreButton->flash(3000);
 }
