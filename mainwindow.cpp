@@ -109,7 +109,8 @@ MainWindow::MainWindow(QWidget *parent):
     // Load library, upgrade it if needed
     libraryProgress = new ProgressDialog(tr("Upgrading library"), this);
     Library *library = Library::instance();
-    connect(library, SIGNAL(beginUpgrade(int)), this, SLOT(onBeginUpgrade(int)));
+    connect(library, SIGNAL(beginUpgrade(int)),
+            this, SLOT(onBeginUpgrade(int)));
     connect(library, SIGNAL(upgrading(const QString &)),
             this, SLOT(onUpgrading(const QString &)));
     connect(library, SIGNAL(endUpgrade()), this, SLOT(onEndUpgrade()));
@@ -252,13 +253,6 @@ void MainWindow::showBookmarks()
                 this, SLOT(onGoToBookmark(int)));
         bookmarks->show();
     }
-}
-
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    TRACE;
-    view->setLastBookmark();
-    AdopterWindow::closeEvent(event);
 }
 
 void MainWindow::onSettingsChanged(const QString &key)

@@ -51,7 +51,6 @@ public slots:
     void onEndLoad();
 
 protected:
-    void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
 
 private:

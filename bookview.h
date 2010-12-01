@@ -105,9 +105,6 @@ protected:
     void wheelEvent(QWheelEvent *);
     bool eventFilter(QObject *o, QEvent *e);
     void timerEvent(QTimerEvent *e);
-#ifdef Q_WS_MAEMO_5
-    void leaveEvent(QEvent *e);
-#endif // Q_WS_MAEMO_5
 
     /** Load given part. */
     void loadContent(int index);

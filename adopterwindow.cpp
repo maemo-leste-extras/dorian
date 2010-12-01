@@ -52,6 +52,7 @@ AdopterWindow::AdopterWindow(QWidget *parent):
     // Monitor settings
     connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
             this, SLOT(onSettingsChanged(const QString &)));
+
 }
 
 void AdopterWindow::takeBookView(BookView *view,
@@ -79,6 +80,12 @@ void AdopterWindow::takeBookView(BookView *view,
     progress->setParent(this);
     previousButton->setParent(this);
     nextButton->setParent(this);
+
+    // Handle page and/or volume keys
+    connect(this, SIGNAL(pageUp()), this, SLOT(onPageUp()),
+            Qt::QueuedConnection);
+    connect(this, SIGNAL(pageDown()), this, SLOT(onPageDown()),
+            Qt::QueuedConnection);
 }
 
 void AdopterWindow::leaveBookView()
@@ -92,6 +99,8 @@ void AdopterWindow::leaveBookView()
     progress = 0;
     nextButton = 0;
     previousButton = 0;
+    disconnect(this, SLOT(onPageUp()));
+    disconnect(this, SLOT(onPageDown()));
 }
 
 bool AdopterWindow::hasBookView()
@@ -260,36 +269,49 @@ void AdopterWindow::resizeEvent(QResizeEvent *event)
 #endif
     QMainWindow::resizeEvent(event);
     placeDecorations();
+    if (bookView) {
+        QTimer::singleShot(110, bookView, SLOT(restoreLastBookmark()));
+    }
+}
+
+void AdopterWindow::closeEvent(QCloseEvent *event)
+{
+    Trace t("AdopterWindow::closeEvent");
+    if (bookView) {
+        bookView->setLastBookmark();
+    }
+    QMainWindow::closeEvent(event);
+}
+
+void AdopterWindow::leaveEvent(QEvent *event)
+{
+    Trace t("AdopterWindow::leaveEvent");
+    if (bookView) {
+        bookView->setLastBookmark();
+    }
+    QMainWindow::leaveEvent(event);
 }
 
 void AdopterWindow::keyPressEvent(QKeyEvent *event)
 {
     TRACE;
-    if (bookView && grabbingVolumeKeys) {
-        switch (event->key()) {
+    switch (event->key()) {
+    case Qt::Key_PageDown:
 #ifdef Q_WS_MAEMO_5
-        case Qt::Key_F7:
-            qDebug() << "F7";
-            bookView->goNextPage();
-            event->accept();
-            break;
-        case Qt::Key_F8:
-            qDebug() << "F8";
-            bookView->goPreviousPage();
-            event->accept();
-            break;
-#endif // Q_WS_MAEMO_5
-        case Qt::Key_PageUp:
-            bookView->goPreviousPage();
-            event->accept();
-            break;
-        case Qt::Key_PageDown:
-            bookView->goNextPage();
-            event->accept();
-            break;
-        default:
-            ;
-        }
+    case Qt::Key_F7:
+#endif
+        emit pageDown();
+        event->accept();
+        break;
+    case Qt::Key_PageUp:
+#ifdef Q_WS_MAEMO_5
+    case Qt::Key_F8:
+#endif
+        emit pageUp();
+        event->accept();
+        break;
+    default:
+        ;
     }
     QMainWindow::keyPressEvent(event);
 }
@@ -345,4 +367,29 @@ void AdopterWindow::placeDecorations()
     previousButton->flash();
     nextButton->flash();
     qDebug() << "progress:" << progress->geometry();
+}
+
+void AdopterWindow::onPageUp()
+{
+    if (bookView && grabbingVolumeKeys) {
+        setEnabled(false);
+        bookView->goPreviousPage();
+        setEnabled(true);
+    }
+}
+
+void AdopterWindow::onPageDown()
+{
+    if (bookView && grabbingVolumeKeys) {
+        setEnabled(false);
+        bookView->goNextPage();
+        setEnabled(true);
+    }
+}
+
+void AdopterWindow::hideToolBar()
+{
+    if (toolBar) {
+        toolBar->hide();
+    }
 }

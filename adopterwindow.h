@@ -60,6 +60,13 @@ public slots:
     /** Handle settings changes. */
     void onSettingsChanged(const QString &key);
 
+signals:
+    /** Emitted when Page Up or Volume Up pressed. */
+    void pageUp();
+
+    /** Emitted when Page Down or Volume Down pressed. */
+    void pageDown();
+
 protected:
     /** Handle key press events. */
     void keyPressEvent(QKeyEvent *event);
@@ -70,8 +77,14 @@ protected:
      */
     void showEvent(QShowEvent *event);
 
-    /** Handle resize events. */
+    /** Handle resize event: Restore reading position. */
     void resizeEvent(QResizeEvent *event);
+
+    /** Handle close event. */
+    void closeEvent(QCloseEvent *event);
+
+    /** Handle leave event: Save reading position. */
+    void leaveEvent(QEvent *event);
 
 #ifdef Q_OS_SYMBIAN
     /** Update toolbar visibility. */
@@ -86,8 +99,13 @@ protected:
     void doGrabVolumeKeys(bool grab);
 #endif // Q_WS_MAEMO_5
 
+    /** Hide tool bar if visible. */
+    void hideToolBar();
+
 protected slots:
     void placeDecorations();
+    void onPageDown();
+    void onPageUp();
 
 private:
     BookView *bookView;     /**< Book view widget. */

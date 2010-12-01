@@ -406,18 +406,6 @@ void BookView::addJavaScriptObjects()
     page()->mainFrame()->addToJavaScriptWindowObject("bv", this);
 }
 
-#ifdef Q_WS_MAEMO_5
-
-void BookView::leaveEvent(QEvent *e)
-{
-    TRACE;
-    // Save current position, to be restored later, in MainWindow::resizeEvent()
-    setLastBookmark();
-    QWebView::leaveEvent(e);
-}
-
-#endif // Q_WS_MAEMO_5
-
 void BookView::goToPosition(qreal position)
 {
     int contentsHeight = page()->mainFrame()->contentsSize().height();
@@ -480,7 +468,7 @@ void BookView::goNextPage()
     if (pos == frame->scrollPosition().y()) {
         goNext();
     } else {
-        setLastBookmark();
+        // setLastBookmark();
         showProgress();
     }
 }
