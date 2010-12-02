@@ -2,6 +2,7 @@ dorian (0.4.2-1) unstable; urgency=low
 
   * Speed up paging through the book
   * Make progress indicator more subtle
+  * Prefer mass memory on Symbian for downloads
 
  -- Akos Polster <akos@pipacs.com>  Fri,  1 Dec 2010 02:00:00 +0100
 

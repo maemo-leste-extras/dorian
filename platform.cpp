@@ -83,7 +83,14 @@ QString Platform::version()
 
 QString Platform::downloadDir()
 {
+#ifdef Q_OS_SYMBIAN
+    if (QDir("E:/").exists()) {
+        return "E:/Books";
+    }
+    return "C:/Books";
+#else
     return QDir::home().absoluteFilePath("Books");
+#endif
 }
 
 QString Platform::defaultFont()
