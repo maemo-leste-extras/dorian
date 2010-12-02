@@ -4,7 +4,7 @@
 #include "trace.h"
 
 Progress::Progress(QWidget *parent):
-        QLabel(parent), progress(-1.0), timer(-1), mThickness(15)
+        QLabel(parent), progress(-1.0), timer(-1), mThickness(5)
 {
     hide();
 }
