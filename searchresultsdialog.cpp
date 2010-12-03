@@ -89,9 +89,11 @@ void SearchResultsDialog::onEndDownload(int status, const Search::Result &result
         Library::instance()->add(fileName);
         int row = results.indexOf(result);
         if (-1 != row) {
+            results.removeAt(row);
             model()->removeRow(row);
         }
-        Platform::instance()->information(tr("Downloaded \"%1\"\nand added to the "
-                                             "library").arg(result.title), this);
+        Platform::instance()->
+            information(tr("Downloaded \"%1\"\nand added to the "
+                           "library").arg(result.title), this);
     }
 }

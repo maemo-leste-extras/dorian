@@ -16,7 +16,7 @@ class SearchResultsDialog: public ListWindow
     Q_OBJECT
 
 public:
-    explicit SearchResultsDialog(const QList<Search::Result> searchResults,
+    explicit SearchResultsDialog(QList<Search::Result> searchResults,
                                  QWidget *parent = 0);
 
 protected slots:
@@ -29,7 +29,7 @@ protected:
     QString downloadName() const;
 
 private:
-    const QList<Search::Result> results;
+    QList<Search::Result> results;
     QStringList data;
     ProgressDialog *progress;
 };
