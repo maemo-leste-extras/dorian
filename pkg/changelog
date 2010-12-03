@@ -1,10 +1,16 @@
+dorian (0.4.3-1) unstable; urgency=low
+
+  * Fix downloading several books from search result list
+
+ -- Akos Polster <akos@pipacs.com>  Fri,  3 Dec 2010 02:00:00 +0100
+
 dorian (0.4.2-1) unstable; urgency=low
 
   * Speed up paging through the book
   * Make progress indicator more subtle
   * Prefer mass memory on Symbian for downloads
 
- -- Akos Polster <akos@pipacs.com>  Fri,  1 Dec 2010 02:00:00 +0100
+ -- Akos Polster <akos@pipacs.com>  Wed,  1 Dec 2010 02:00:00 +0100
 
 dorian (0.4.1-1) unstable; urgency=low
 
