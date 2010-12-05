@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINBASE_H
+#define MAINBASE_H
 
 #include <QMainWindow>
 
@@ -8,12 +8,12 @@ class QToolBar;
 /**
  * Main window with a toolbar.
  */
-class MainWindow: public QMainWindow
+class MainBase: public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainBase(QWidget *parent = 0);
 
     /**
      * Add action that is visible on the tool bar.
@@ -32,9 +32,8 @@ public:
     /** Add spacing to tool bar. */
     void addToolBarSpace();
 
-signals:
-
 public slots:
+    void show();
 
 protected:
     /** Handle resize event: Manage tool bar visibility. */
@@ -43,19 +42,23 @@ protected:
     /** Handle show event: Manage tool bar visibility. */
     void showEvent(QShowEvent *event);
 
-#ifdef Q_OS_SYMBIAN
-    /** Update toolbar visibility. */
+    /**
+     * Update toolb ar visibility.
+     * On Symbian, the tool bar is not visible in landscape mode.
+     */
     void updateToolBar();
-
-    /** Return true in portrait mode. */
-    bool portrait();
-#endif // Q_OS_SYMBIAN
 
     /** Hide tool bar if visible. */
     void hideToolBar();
+
+    /** Return true if the tool bar is present and hidden. */
+    bool isToolBarHidden();
+
+    /** Return the height of the tool bar (or 0 if there is no tool bar). */
+    int toolBarHeight();
 
 private:
     QToolBar *toolBar;      /**< Tool bar. */
 };
 
-#endif // MAINWINDOW_H
+#endif // MAINBASE_H

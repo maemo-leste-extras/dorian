@@ -1,10 +1,10 @@
 #include <QtGui>
 
-#include "mainwindow.h"
+#include "mainbase.h"
 #include "trace.h"
 #include "platform.h"
 
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), toolBar(0)
+MainBase::MainBase(QWidget *parent): QMainWindow(parent), toolBar(0)
 {
     TRACE;
 
@@ -37,11 +37,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), toolBar(0)
 #endif // Q_OS_SYMBIAN
 }
 
-QAction *MainWindow::addToolBarAction(QObject *receiver,
-                                      const char *member,
-                                      const QString &iconName,
-                                      const QString &text,
-                                      bool important)
+QAction *MainBase::addToolBarAction(QObject *receiver,
+                                    const char *member,
+                                    const QString &iconName,
+                                    const QString &text,
+                                    bool important)
 {
     TRACE;
     qDebug() << "icon" << iconName << "text" << text;
@@ -83,7 +83,7 @@ QAction *MainWindow::addToolBarAction(QObject *receiver,
     return action;
 }
 
-void MainWindow::addToolBarSpace()
+void MainBase::addToolBarSpace()
 {
 #ifndef Q_OS_SYMBIAN
     QFrame *frame = new QFrame(toolBar);
@@ -92,10 +92,9 @@ void MainWindow::addToolBarSpace()
 #endif
 }
 
-#ifdef Q_OS_SYMBIAN
-
-void MainWindow::updateToolBar()
+void MainBase::updateToolBar()
 {
+#ifdef Q_OS_SYMBIAN
     TRACE;
     if (toolBar) {
         QRect geometry = QApplication::desktop()->geometry();
@@ -109,38 +108,49 @@ void MainWindow::updateToolBar()
             toolBar->setVisible(false);
         }
     }
-}
-
-bool MainWindow::portrait()
-{
-    QRect geometry = QApplication::desktop()->geometry();
-    return geometry.width() < geometry.height();
-}
-
 #endif // Q_OS_SYMBIAN
-
-void MainWindow::showEvent(QShowEvent *e)
-{
-    Trace t("MainWindow::showEvent");
-
-#ifdef Q_OS_SYMBIAN
-    updateToolBar();
-#endif
-    QMainWindow::showEvent(e);
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainBase::showEvent(QShowEvent *event)
 {
-    Trace t("MainWindow::resizeEvent");
-#ifdef Q_OS_SYMBIAN
+    Trace t("MainBase::showEvent");
     updateToolBar();
-#endif
+    QMainWindow::showEvent(event);
+}
+
+void MainBase::resizeEvent(QResizeEvent *event)
+{
+    Trace t("MainBase::resizeEvent");
+    updateToolBar();
     QMainWindow::resizeEvent(event);
 }
 
-void MainWindow::hideToolBar()
+void MainBase::hideToolBar()
 {
     if (toolBar) {
         toolBar->hide();
     }
+}
+
+bool MainBase::isToolBarHidden()
+{
+    return toolBar && toolBar->isHidden();
+}
+
+int MainBase::toolBarHeight()
+{
+    return toolBar? toolBar->height(): 0;
+}
+
+void MainBase::show()
+{
+    Trace t("MainBase::show");
+#ifdef Q_OS_SYMBIAN
+    foreach (QWidget *w, QApplication::allWidgets()) {
+        w->setContextMenuPolicy(Qt::NoContextMenu);
+    }
+    showMaximized();
+#else
+    QMainWindow::show();
+#endif
 }
