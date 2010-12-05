@@ -11,7 +11,7 @@
 #endif
 
 ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
-        QMainWindow(parent), mModel(0), noItems(noItems_)
+        MainBase(parent), mModel(0), noItems(noItems_)
 {
 #if defined(Q_WS_MAEMO_5)
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
@@ -32,7 +32,7 @@ ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
-    QMainWindow::addAction(closeAction);
+    MainBase::addAction(closeAction);
 #endif // Q_OS_SYMBIAN
 
     connect(list, SIGNAL(activated(const QModelIndex &)),
@@ -104,10 +104,7 @@ void ListWindow::addButton(const QString &title, QObject *receiver,
 {
     TRACE;
 
-#ifdef Q_OS_SYMBIAN
-    Q_UNUSED(iconName);
-    addMenuAction(title, receiver, slot);
-#else
+#if defined(Q_WS_MAEMO_5)
     Button b;
     b.title = title;
     b.receiver = receiver;
@@ -115,6 +112,29 @@ void ListWindow::addButton(const QString &title, QObject *receiver,
     b.iconName = iconName;
     insertButton(buttons.length(), b);
     buttons.append(b);
+#else
+    (void)addToolBarAction(receiver, slot, iconName, title, true);
+    (void)addMenuAction(title, receiver, slot);
+#endif
+}
+
+void ListWindow::addItemButton(const QString &title, QObject *receiver,
+                               const char *slot, const QString &iconName)
+{
+    TRACE;
+#if defined(Q_WS_MAEMO_5)
+    Q_UNUSED(title);
+    Q_UNUSED(receiver);
+    Q_UNUSED(slot);
+    Q_UNUSED(iconPath);
+#else
+    QAction *toolBarAction =
+            addToolBarAction(receiver, slot, iconName, title, true);
+    // QAction *menuAction = addMenuAction(title, receiver, slot);
+    // toolBarAction->setEnabled(false);
+    // menuAction->setEnabled(false);
+    itemActions.append(toolBarAction);
+    // itemActions.append(menuAction);
 #endif
 }
 
@@ -137,7 +157,6 @@ QAction *ListWindow::addMenuAction(const QString &title, QObject *receiver,
     Q_UNUSED(slot);
     action = new QAction(this);
 #endif
-    action->setCheckable(true);
     return action;
 }
 
@@ -187,15 +206,3 @@ void ListWindow::closeEvent(QCloseEvent *event)
 }
 
 #endif // Q_WS_MAEMO_5
-
-#ifdef Q_OS_SYMBIAN
-
-void ListWindow::show()
-{
-    foreach (QWidget *w, QApplication::allWidgets()) {
-        w->setContextMenuPolicy(Qt::NoContextMenu);
-    }
-    showMaximized();
-}
-
-#endif // Q_OS_SYMBIAN

@@ -34,6 +34,7 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     setModel(model);
 
     addButton(tr("Add bookmark"), this, SLOT(onAdd()), "add");
+    addItemButton(tr("Delete bookmark"), this, SLOT(onDelete()), "remove");
 
     connect(this, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));

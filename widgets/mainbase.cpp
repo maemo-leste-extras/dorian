@@ -46,21 +46,14 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
     TRACE;
     qDebug() << "icon" << iconName << "text" << text;
     QAction *action;
-#ifndef Q_OS_SYMBIAN
-    Q_UNUSED(important);
-    action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
-                                text, receiver, member);
-#else
-    if (!toolBar && important) {
-        // Create tool bar if needed
-        toolBar = new QToolBar("", this);
-        // toolBar->setFixedHeight(63);
-        toolBar->setStyleSheet("margin:0; border:0; padding:0");
-        toolBar->setSizePolicy(QSizePolicy::MinimumExpanding,
-                               QSizePolicy::Maximum);
-        addToolBar(Qt::BottomToolBarArea, toolBar);
-    }
+#ifdef Q_OS_SYMBIAN
     if (important) {
+        if (!toolBar) {
+            // Create tool bar if needed
+            toolBar = new QToolBar("", this);
+            toolBar->setStyleSheet("margin:0; border:0; padding:0");
+            addToolBar(Qt::BottomToolBarArea, toolBar);
+        }
         // Add tool bar action
         QPushButton *button = new QPushButton(this);
         button->setIconSize(QSize(60, 60));
@@ -72,14 +65,15 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
         toolBar->addWidget(button);
     }
     // Add menu action, too
-    action = new QAction(text, this);
-    menuBar()->addAction(action);
+    action = menuBar()->addAction(text);
     connect(action, SIGNAL(triggered()), receiver, member);
+#else
+    Q_UNUSED(important);
+    action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
+                                text, receiver, member);
 #endif
 
-    action->setText("");
     action->setToolTip("");
-
     return action;
 }
 
