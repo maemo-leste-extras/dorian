@@ -23,10 +23,14 @@ signals:
 public slots:
     void onGo();
     void onAdd();
-    void onDelete(bool really = false);
+    void onDelete();
+    void onEdit();
     void onItemActivated(const QModelIndex &index);
 
 protected:
+    void reallyDelete();
+
+private:
     Book *book;
     QStringList data;
 };

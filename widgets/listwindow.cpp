@@ -114,7 +114,6 @@ void ListWindow::addButton(const QString &title, QObject *receiver,
     buttons.append(b);
 #else
     (void)addToolBarAction(receiver, slot, iconName, title, true);
-    (void)addMenuAction(title, receiver, slot);
 #endif
 }
 
@@ -130,11 +129,8 @@ void ListWindow::addItemButton(const QString &title, QObject *receiver,
 #else
     QAction *toolBarAction =
             addToolBarAction(receiver, slot, iconName, title, true);
-    // QAction *menuAction = addMenuAction(title, receiver, slot);
-    // toolBarAction->setEnabled(false);
-    // menuAction->setEnabled(false);
+    toolBarAction->setEnabled(false);
     itemActions.append(toolBarAction);
-    // itemActions.append(menuAction);
 #endif
 }
 

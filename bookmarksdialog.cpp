@@ -34,7 +34,9 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     setModel(model);
 
     addButton(tr("Add bookmark"), this, SLOT(onAdd()), "add");
-    addItemButton(tr("Delete bookmark"), this, SLOT(onDelete()), "remove");
+    addItemButton(tr("Go to bookmark"), this, SLOT(onGo()), "goto");
+    addItemButton(tr("Edit bookmark"), this, SLOT(onEdit()), "edit");
+    addItemButton(tr("Delete bookmark"), this, SLOT(onDelete()), "delete");
 
     connect(this, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
@@ -52,20 +54,26 @@ void BookmarksDialog::onGo()
 
 void BookmarksDialog::onItemActivated(const QModelIndex &index)
 {
+    TRACE;
+#ifdef Q_WS_MAEMO_5
     switch ((new BookmarkInfoDialog(book, index.row(), this))->exec()) {
     case BookmarkInfoDialog::GoTo:
         onGo();
         break;
     case BookmarkInfoDialog::Delete:
-        onDelete(true);
+        reallyDelete();
         break;
     default:
         ;
     }
+#else
+    Q_UNUSED(index);
+#endif
 }
 
 void BookmarksDialog::onAdd()
 {
+    TRACE;
     bool ok;
     QString text = QInputDialog::getText(this, tr("Add bookmark"),
         tr("Note (optional):"), QLineEdit::Normal, QString(), &ok);
@@ -75,20 +83,33 @@ void BookmarksDialog::onAdd()
     }
 }
 
-void BookmarksDialog::onDelete(bool really)
+void BookmarksDialog::onDelete()
 {
+    TRACE;
+    if (!currentItem().isValid()) {
+        return;
+    }
+    if (QMessageBox::Yes !=
+        QMessageBox::question(this, tr("Delete bookmark"),
+            tr("Delete bookmark?"), QMessageBox::Yes | QMessageBox::No)) {
+        return;
+    }
+    reallyDelete();
+}
+
+void BookmarksDialog::reallyDelete()
+{
+    TRACE;
     QModelIndex current = currentItem();
     if (!current.isValid()) {
         return;
     }
-    if (!really) {
-        if (QMessageBox::Yes !=
-            QMessageBox::question(this, tr("Delete bookmark"),
-                tr("Delete bookmark?"), QMessageBox::Yes | QMessageBox::No)) {
-            return;
-        }
-    }
     int row = current.row();
     model()->removeRow(row);
     book->deleteBookmark(row);
+}
+
+void BookmarksDialog::onEdit()
+{
+    // FIXME: Implement me
 }
