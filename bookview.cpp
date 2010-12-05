@@ -447,7 +447,7 @@ void BookView::goPreviousPage()
 {
     QWebFrame *frame = page()->mainFrame();
     int pos = frame->scrollPosition().y();
-    frame->scroll(0, -height());
+    frame->scroll(0, -(height() - 19));
     if (pos == frame->scrollPosition().y()) {
         if (contentIndex > 0) {
             Book::Bookmark bookmark(contentIndex - 1, 1.0);
@@ -464,7 +464,7 @@ void BookView::goNextPage()
     TRACE;
     QWebFrame *frame = page()->mainFrame();
     int pos = frame->scrollPosition().y();
-    frame->scroll(0, height());
+    frame->scroll(0, height() - 19);
     if (pos == frame->scrollPosition().y()) {
         goNext();
     } else {

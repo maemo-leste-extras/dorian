@@ -1,3 +1,9 @@
+dorian (0.4.4-1) unstable; urgency=low
+
+  * Have an overlap between current/next page
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  5 Dec 2010 02:00:00 +0100
+
 dorian (0.4.3-1) unstable; urgency=low
 
   * Fix downloading several books from search result list
