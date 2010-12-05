@@ -14,13 +14,16 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
 
     if (book) {
         QLabel *title = new QLabel(book->title, this);
+        title->setWordWrap(true);
         addWidget(title);
         if (book->subject != "") {
             QLabel *subject = new QLabel(book->subject, this);
+            subject->setWordWrap(true);
             addWidget(subject);
         }
         if (book->creators.size()) {
             QLabel *creators = new QLabel(this);
+            creators->setWordWrap(true);
             QString c = "By " + book->creators[0];
             for (int i = 1; i < book->creators.size(); i++) {
                 c += ", " + book->creators[i];
@@ -29,18 +32,22 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
             addWidget(creators);
         }
         QLabel *path = new QLabel("File: " + book->path(), this);
+        path->setWordWrap(true);
         addWidget(path);
         if (book->publisher != "") {
             QLabel *publisher =
                     new QLabel("Published by " + book->publisher, this);
+            publisher->setWordWrap(true);
             addWidget(publisher);
         }
         if (book->source != "") {
             QLabel *source = new QLabel("Source: " + book->source, this);
+            source->setWordWrap(true);
             addWidget(source);
         }
         if (book->rights != "") {
             QLabel *rights = new QLabel(book->rights, this);
+            rights->setWordWrap(true);
             addWidget(rights);
         }
         addStretch();
