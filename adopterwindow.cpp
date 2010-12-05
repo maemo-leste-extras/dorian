@@ -387,9 +387,3 @@ void AdopterWindow::onPageDown()
     }
 }
 
-void AdopterWindow::hideToolBar()
-{
-    if (toolBar) {
-        toolBar->hide();
-    }
-}

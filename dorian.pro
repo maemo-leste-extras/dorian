@@ -39,7 +39,8 @@ SOURCES += \
     searchresultsdialog.cpp \
     searchresultinfodialog.cpp \
     widgets/progressdialog.cpp \
-    widgets/splash.cpp
+    widgets/splash.cpp \
+    widgets/mainwindow.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -80,7 +81,8 @@ HEADERS += \
     searchresultsdialog.h \
     searchresultinfodialog.h \
     widgets/progressdialog.h \
-    widgets/splash.h
+    widgets/splash.h \
+    widgets/mainwindow.h
 
 RESOURCES += \
     dorian.qrc

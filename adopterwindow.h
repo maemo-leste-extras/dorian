@@ -1,8 +1,8 @@
 #ifndef ADOPTERWINDOW_H
 #define ADOPTERWINDOW_H
 
-#include <QMainWindow>
 #include <QList>
+#include "mainwindow.h"
 
 class QWidget;
 class QToolBar;
@@ -16,7 +16,7 @@ class TranslucentButton;
  * A toplevel window that can adopt a BookView and other children.
  * On Maemo, it can also grab the volume keys.
  */
-class AdopterWindow: public QMainWindow
+class AdopterWindow: public MainWindow
 {
     Q_OBJECT
 
