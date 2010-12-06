@@ -12,6 +12,7 @@ class FlickCharm;
 class QAbstractItemModel;
 class QListWidget;
 class QModelIndex;
+class QListWidgetItem;
 
 /** A window with a list and menu actions (Maemo) or buttons (non-Maemo). */
 class ListWindow: public MainBase
