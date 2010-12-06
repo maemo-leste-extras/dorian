@@ -404,10 +404,7 @@ QString Book::name()
     if (title.size()) {
         QString ret = title;
         if (creators.length()) {
-            ret += "\nBy " + creators[0];
-            for (int i = 1; i < creators.length(); i++) {
-                ret += ", " + creators[i];
-            }
+            ret += "\nBy " + creators.join(", ");
         }
         return ret;
     }

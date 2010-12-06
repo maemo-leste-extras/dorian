@@ -16,14 +16,16 @@
 #include "progressdialog.h"
 #include "settings.h"
 
-LibraryDialog::LibraryDialog(QWidget *parent): ListWindow(tr("(No books)"), parent)
+LibraryDialog::LibraryDialog(QWidget *parent):
+        ListWindow(tr("(No books)"), parent)
 {
     TRACE;
     setWindowTitle(tr("Library"));
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     // Add menu actions
-    sortByTitle = addMenuAction(tr("Sort by title"), this, SLOT(onSortByTitle()));
+    sortByTitle =
+            addMenuAction(tr("Sort by title"), this, SLOT(onSortByTitle()));
     sortByAuthor =
             addMenuAction(tr("Sort by author"), this, SLOT(onSortByAuthor()));
 

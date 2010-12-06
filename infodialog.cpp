@@ -24,11 +24,7 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
         if (book->creators.size()) {
             QLabel *creators = new QLabel(this);
             creators->setWordWrap(true);
-            QString c = "By " + book->creators[0];
-            for (int i = 1; i < book->creators.size(); i++) {
-                c += ", " + book->creators[i];
-            }
-            creators->setText(c);
+            creators->setText(book->creators.join(", "));
             addWidget(creators);
         }
         QLabel *path = new QLabel("File: " + book->path(), this);
