@@ -3,6 +3,7 @@ dorian (0.4.4-1) unstable; urgency=low
   * Have an overlap between current/next page
   * Add tool bars to list windows on Symbian
   * Fix author name in libary and book info
+  * Improve identification of bookmark's chapter
 
  -- Akos Polster <akos@pipacs.com>  Sun,  5 Dec 2010 02:00:00 +0100
 

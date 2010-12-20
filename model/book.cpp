@@ -435,18 +435,17 @@ int Book::chapterFromPart(int index)
     for (int i = 0; i < chapters.size(); i++) {
         QString id = chapters[i];
         QString href = content[id].href;
-        QString baseRef(href);
-        QUrl url(QString("file://") + href);
-        if (url.hasFragment()) {
-            QString fragment = url.fragment();
-            baseRef.chop(fragment.length() + 1);
+        int hashPos = href.indexOf("#");
+        if (hashPos != -1) {
+            href = href.left(hashPos);
         }
-        if (baseRef == partHref) {
+        if (href == partHref) {
             ret = i;
             // Don't break, keep looking
         }
     }
 
+    qDebug() << "Part" << index << partId << partHref << ":" << ret;
     return ret;
 }
 
