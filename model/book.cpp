@@ -53,6 +53,7 @@ bool Book::open()
     if (!parse()) {
         return false;
     }
+    dateOpened = QDateTime::currentDateTimeUtc();
     save();
     emit opened(path());
     return true;
@@ -190,8 +191,8 @@ bool Book::parse()
         cover = makeCover(coverPath);
     }
 
-    // If there is an "ncx" item in content, parse it: That's the real table of
-    // contents
+    // If there is an "ncx" item in content, parse it: That's the real table
+    // of contents
     QString ncxFileName;
     if (content.contains("ncx")) {
         ncxFileName = content["ncx"].href;
@@ -303,6 +304,8 @@ void Book::load()
         QString note = data[QString("bookmark%1note").arg(i)].toString();
         mBookmarks.append(Bookmark(part, pos, note));
     }
+    dateAdded = data["dateadded"].toDateTime();
+    dateOpened = data["dateopened"].toDateTime();
 }
 
 void Book::save()
@@ -328,6 +331,8 @@ void Book::save()
         data[QString("bookmark%1pos").arg(i)] = mBookmarks[i].pos;
         data[QString("bookmark%1note").arg(i)] = mBookmarks[i].note;
     }
+    data["dateadded"] = dateAdded;
+    data["dateopened"] = dateOpened;
     BookDb::instance()->save(path(), data);
 }
 

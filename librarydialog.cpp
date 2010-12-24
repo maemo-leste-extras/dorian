@@ -35,7 +35,8 @@ LibraryDialog::LibraryDialog(QWidget *parent):
 
     // Add action buttons
     addButton(tr("Add book"), this, SLOT(onAdd()), "add");
-    addButton(tr("Add books from folder"), this, SLOT(onAddFolder()), "folder");
+    addButton(tr("Add books from folder"), this,
+              SLOT(onAddFolder()), "folder");
     addButton(tr("Search the Web"), this, SLOT(onSearch()), "search");
 
     // Set selected item
@@ -77,7 +78,7 @@ void LibraryDialog::onAdd()
     }
 
     // Get book file name
-    QString path = QFileDialog::getOpenFileName(this, tr("Add Book"),
+    QString path = QFileDialog::getOpenFileName(this, tr("Add book"),
                                                 lastDir, "Books (*.epub)");
     if (path == "") {
         return;

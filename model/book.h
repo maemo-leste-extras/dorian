@@ -8,6 +8,7 @@
 #include <QMetaType>
 #include <QObject>
 #include <QTemporaryFile>
+#include <QDateTime>
 
 class QPixmap;
 
@@ -36,7 +37,7 @@ public:
         qreal pos;
         QString note;
         bool operator<(const Bookmark &other) const {
-            return (part == other.part)? (pos < other.pos): (part < other.part);
+            return (part == other.part)? (pos<other.pos): (part<other.part);
         }
     };
 
@@ -131,8 +132,10 @@ public:
     QString rights;                         //< Rights.
     QString tocPath;                        //< Path to toc NCX file.
     QString coverPath;                      //< Path to cover HTML file.
-    QStringList chapters;                   //< Main navigation items from EPUB.
+    QStringList chapters;                   //< Main navigation items.
     qint64 size;                            //< Size of all parts.
+    QDateTime dateAdded;                    //< Date book added to library.
+    QDateTime dateOpened;                   //< Date book was last read.
 
 signals:
     /** Emitted if @see open() succeeds. */

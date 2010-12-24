@@ -46,6 +46,18 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
             rights->setWordWrap(true);
             addWidget(rights);
         }
+        if (book->dateAdded.isValid()) {
+            QLabel *added = new QLabel("Added to library: " +
+                book->dateAdded.toString(Qt::SystemLocaleShortDate), this);
+            added->setWordWrap(true);
+            addWidget(added);
+        }
+        if (book->dateOpened.isValid()) {
+            QLabel *opened = new QLabel("Last read: " +
+                book->dateOpened.toString(Qt::SystemLocaleShortDate), this);
+            opened->setWordWrap(true);
+            addWidget(opened);
+        }
         addStretch();
     }
 
