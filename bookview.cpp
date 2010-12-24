@@ -29,7 +29,8 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
     settings()->setAttribute(QWebSettings::PluginsEnabled, false);
     settings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, true);
     settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, false);
-    settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
+    settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard,
+                             false);
     settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled,
                              false);
     settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled,
@@ -45,7 +46,8 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
     frame->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 #endif
     frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
-    connect(this, SIGNAL(loadFinished(bool)), this, SLOT(onLoadFinished(bool)));
+    connect(this, SIGNAL(loadFinished(bool)),
+            this, SLOT(onLoadFinished(bool)));
     connect(frame, SIGNAL(javaScriptWindowObjectCleared()),
             this, SLOT(addJavaScriptObjects()));
 
@@ -311,6 +313,17 @@ void BookView::paintEvent(QPaintEvent *e)
         int height = contentsHeight;
         int bookmarkPos = (int)((qreal)height * (qreal)b.pos);
         painter.drawPixmap(2, bookmarkPos - scrollPos.y(), bookmarkPixmap);
+    }
+    QPen pen(Qt::gray);
+    pen.setStyle(Qt::DotLine);
+    pen.setWidth(3);
+    painter.setPen(pen);
+    if (contentIndex > 0) {
+        painter.drawLine(0, -scrollPos.y(), width(), -scrollPos.y());
+    }
+    if (contentIndex < (mBook->parts.size() - 1)) {
+        int h = contentsHeight - scrollPos.y() - 1;
+        painter.drawLine(0, h, width(), h);
     }
 }
 
