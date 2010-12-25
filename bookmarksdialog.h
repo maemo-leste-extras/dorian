@@ -4,9 +4,9 @@
 #include <QStringList>
 
 #include "listwindow.h"
+#include "book.h"
 
 class QCloseEvent;
-class Book;
 
 /** Dialog box managing bookmarks. */
 class BookmarksDialog: public ListWindow
@@ -29,6 +29,7 @@ public slots:
 
 protected:
     void reallyDelete();
+    QString bookmarkToText(const Book::Bookmark &bookmark);
 
 private:
     Book *book;

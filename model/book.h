@@ -92,6 +92,9 @@ public:
     /** Add bookmark. */
     void addBookmark(int part, qreal position, const QString &note);
 
+    /** Change a given bookmark's note text */
+    void setBookmarkNote(int index, const QString &note);
+
     /** Delete bookmark. */
     void deleteBookmark(int index);
 
