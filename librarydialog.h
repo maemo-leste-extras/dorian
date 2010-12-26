@@ -36,6 +36,7 @@ public slots:
     void showSearchResults();
     void onSortByAuthor();
     void onSortByTitle();
+    void onDelete();
 
 private:
     QString createItemText(Book *book);

@@ -38,6 +38,7 @@ LibraryDialog::LibraryDialog(QWidget *parent):
     addButton(tr("Add books from folder"), this,
               SLOT(onAddFolder()), "folder");
     addButton(tr("Search the Web"), this, SLOT(onSearch()), "search");
+    addItemButton(tr("Delete"), this, SLOT(onDelete()), "delete");
 
     // Set selected item
     Library *library = Library::instance();
@@ -125,6 +126,23 @@ void LibraryDialog::onItemActivated(const QModelIndex &index)
     default:
         ;
     }
+}
+
+void LibraryDialog::onDelete()
+{
+    QModelIndex current = currentItem();
+    if (!current.isValid()) {
+        return;
+    }
+    QModelIndex libraryIndex = sortedLibrary->mapToSource(current);
+    Book *book = Library::instance()->book(libraryIndex);
+    if (QMessageBox::Yes !=
+        QMessageBox::question(this, tr("Delete book"),
+            tr("Delete book \"%1\"?").arg(book->shortName()),
+            QMessageBox::Yes | QMessageBox::No)) {
+        return;
+    }
+    Library::instance()->remove(libraryIndex);
 }
 
 QString LibraryDialog::createItemText(Book *book)
