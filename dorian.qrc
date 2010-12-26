@@ -51,5 +51,6 @@
         <file>icons/symbian/style-night.png</file>
         <file>icons/splash.jpg</file>
         <file>icons/goto.png</file>
+        <file>icons/edit.png</file>
     </qresource>
 </RCC>
