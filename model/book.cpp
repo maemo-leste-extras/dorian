@@ -336,13 +336,17 @@ void Book::save()
     BookDb::instance()->save(path(), data);
 }
 
-void Book::setLastBookmark(int part, qreal position)
+void Book::setLastBookmark(int part, qreal position, bool fast)
 {
     TRACE;
-    load();
+    if (!fast) {
+        load();
+    }
     mLastBookmark.part = part;
     mLastBookmark.pos = position;
-    save();
+    if (!fast) {
+        save();
+    }
 }
 
 Book::Bookmark Book::lastBookmark()

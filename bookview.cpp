@@ -157,7 +157,7 @@ void BookView::goNext()
     }
 }
 
-void BookView::setLastBookmark()
+void BookView::setLastBookmark(bool fast)
 {
     TRACE;
     if (mBook) {
@@ -166,7 +166,7 @@ void BookView::setLastBookmark()
         int pos = frame->scrollPosition().y();
         qDebug() << QString("At %1 (%2%, height %3)").
                 arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height);
-        mBook->setLastBookmark(contentIndex, (qreal)pos / (qreal)height);
+        mBook->setLastBookmark(contentIndex, (qreal)pos / (qreal)height, fast);
     }
 }
 
@@ -341,14 +341,16 @@ void BookView::mousePressEvent(QMouseEvent *e)
     if (scroller) {
         scrollerMonitor = startTimer(500);
     }
+#elif defined(Q_OS_SYMBIAN)
+    // Do nothing
 #else
-    // Handle mouse presses on the scroll bar
+    // Handle mouse press on the scroll bar
     QWebFrame *frame = page()->mainFrame();
     if (frame->scrollBarGeometry(Qt::Vertical).contains(e->pos())) {
         e->accept();
         return;
     }
-#endif // Q_WS_MAEMO_5
+#endif
     e->ignore();
 }
 
@@ -395,7 +397,6 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
     // Work around Qt bug that sometimes selects web view contents during swipe
     switch (e->type()) {
     case QEvent::MouseButtonPress:
-        emit suppressedMouseButtonPress();
         mousePressed = true;
         break;
     case QEvent::MouseButtonRelease:
@@ -454,7 +455,8 @@ void BookView::timerEvent(QTimerEvent *e)
             scrollerMonitor = -1;
         }
     }
-#endif
+#endif // Q_WS_MAEMO_5
+
     QWebView::timerEvent(e);
 }
 
@@ -483,7 +485,6 @@ void BookView::goNextPage()
     if (pos == frame->scrollPosition().y()) {
         goNext();
     } else {
-        // setLastBookmark();
         showProgress();
     }
 }
@@ -512,3 +513,14 @@ void BookView::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
 }
 
 #endif // Q_OS_SYMBIAN
+
+void BookView::adjustPosition(const QSize &size, const QSize &oldSize)
+{
+    if (mBook) {
+        QWebFrame *frame = page()->mainFrame();
+        int height = frame->contentsSize().height();
+        int pos = frame->scrollPosition().y();
+        qDebug() << QString("At %1 (%2%, height %3)").
+                arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height);
+    }
+}

@@ -84,7 +84,7 @@ public:
     bool clearDir(const QString &directory);
 
     /** Set last bookmark. */
-    void setLastBookmark(int part, qreal position);
+    void setLastBookmark(int part, qreal position, bool fast = false);
 
     /** Get last bookmark. */
     Bookmark lastBookmark();

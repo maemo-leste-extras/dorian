@@ -41,7 +41,7 @@ public:
     void addBookmark(const QString &note);
 
     /** Save current reading position into book. */
-    void setLastBookmark();
+    void setLastBookmark(bool fast = false);
 
     /** Go to given part + part fragment URL. */
     void goToPart(int part, const QString &fragment);
@@ -58,9 +58,6 @@ signals:
 
     /** Part loading finished. */
     void partLoadEnd(int index);
-
-    /** Signal button press, when the real event has been suppressed. */
-    void suppressedMouseButtonPress();
 
     /** Signal progress in reading the book. */
     void progress(qreal p);
@@ -93,6 +90,9 @@ public slots:
     /** Restore book's last reading position. */
     void restoreLastBookmark();
 
+    /** Adjust web view position after orientation change. */
+    void adjustPosition(const QSize &size, const QSize &oldSize);
+
 protected slots:
 #ifdef Q_OS_SYMBIAN
     /** Observe media keys. */
@@ -118,6 +118,7 @@ protected:
     /** Show reading progress. */
     void showProgress();
 
+private:
     int contentIndex;       /**< Current part in book. */
     Book *mBook;            /**< Book to show. */
     bool restorePositionAfterLoad;
@@ -135,10 +136,13 @@ protected:
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     int scrollerMonitor;    /**< ID of timer monitoring kinetic scroll. */
 #endif
+
 #if defined(Q_WS_MAEMO_5)
     QAbstractKineticScroller *scroller;
-#elif defined(Q_OS_SYMBIAN)
-    FlickCharm *charm;
+#endif
+
+#if defined(Q_OS_SYMBIAN)
+    FlickCharm *charm;      /**< Kinetic scroller. */
 #endif
 };
 
