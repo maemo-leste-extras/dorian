@@ -53,7 +53,7 @@ bool Book::open()
     if (!parse()) {
         return false;
     }
-    dateOpened = QDateTime::currentDateTimeUtc();
+    dateOpened = QDateTime::currentDateTime().toUTC();
     save();
     emit opened(path());
     return true;
