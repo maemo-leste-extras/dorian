@@ -514,13 +514,15 @@ void BookView::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
 
 #endif // Q_OS_SYMBIAN
 
-void BookView::adjustPosition(const QSize &size, const QSize &oldSize)
+void BookView::adjustPosition()
 {
+    QSize desktop = QApplication::desktop()->size();
+    qreal ratio = (qreal)(desktop.width()) / (qreal)(desktop.height());
     if (mBook) {
         QWebFrame *frame = page()->mainFrame();
         int height = frame->contentsSize().height();
         int pos = frame->scrollPosition().y();
-        qDebug() << QString("At %1 (%2%, height %3)").
-                arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height);
+        qreal relativePos = (qreal)pos / (qreal)height;
+        // FIXME: Finish me
     }
 }

@@ -91,7 +91,7 @@ public slots:
     void restoreLastBookmark();
 
     /** Adjust web view position after orientation change. */
-    void adjustPosition(const QSize &size, const QSize &oldSize);
+    void adjustPosition();
 
 protected slots:
 #ifdef Q_OS_SYMBIAN

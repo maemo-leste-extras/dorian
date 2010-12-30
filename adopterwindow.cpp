@@ -135,16 +135,15 @@ void AdopterWindow::showEvent(QShowEvent *e)
 void AdopterWindow::resizeEvent(QResizeEvent *event)
 {
     Trace t("AdopterWindow::resizeEvent");
-#if defined(Q_OS_SYMBIAN)
-    if (bookView) {
-        bookView->setLastBookmark();
-    }
-#endif
     MainBase::resizeEvent(event);
     placeDecorations();
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5)
     if (bookView) {
         QTimer::singleShot(110, bookView, SLOT(restoreLastBookmark()));
+    }
+#elif defined(Q_OS_SYMBIAN)
+    if (bookView) {
+        QTimer::singleShot(110, bookView, SLOT(adjustPosition()));
     }
 #endif
 }
