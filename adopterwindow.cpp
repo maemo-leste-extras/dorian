@@ -143,7 +143,7 @@ void AdopterWindow::resizeEvent(QResizeEvent *event)
     }
 #elif defined(Q_OS_SYMBIAN)
     if (bookView) {
-        QTimer::singleShot(110, bookView, SLOT(adjustPosition()));
+        QTimer::singleShot(1000, bookView, SLOT(adjustPosition()));
     }
 #endif
 }

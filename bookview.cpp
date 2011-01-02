@@ -516,13 +516,17 @@ void BookView::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
 
 void BookView::adjustPosition()
 {
-    QSize desktop = QApplication::desktop()->size();
-    qreal ratio = (qreal)(desktop.width()) / (qreal)(desktop.height());
+    TRACE;
+    const qreal portraitMagic = 1.66;
+    const qreal landscapeMagic = 0.655;
     if (mBook) {
+        QSize desktop = QApplication::desktop()->size();
+        int screenHeight = desktop.height();
+        int screenWidth = desktop.width();
+        qreal ratio = (screenWidth<screenHeight)? portraitMagic: landscapeMagic;
         QWebFrame *frame = page()->mainFrame();
-        int height = frame->contentsSize().height();
-        int pos = frame->scrollPosition().y();
-        qreal relativePos = (qreal)pos / (qreal)height;
-        // FIXME: Finish me
+        int current = frame->scrollPosition().y();
+        qDebug() << "From" << current << "to" << (int)(current * ratio);
+        frame->scroll(0, (int)(current * ratio) - current);
     }
 }
