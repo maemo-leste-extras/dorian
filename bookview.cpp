@@ -400,7 +400,9 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
         mousePressed = true;
         break;
     case QEvent::MouseButtonRelease:
+#ifndef Q_OS_SYMBIAN // Too heavy on Symbian
         showProgress();
+#endif
         mousePressed = false;
         break;
     case QEvent::MouseMove:
@@ -434,6 +436,7 @@ void BookView::goToPosition(qreal position)
 
 void BookView::showProgress()
 {
+    TRACE;
     if (mBook) {
         int contentsHeight = page()->mainFrame()->contentsSize().height();
         qreal pos = (qreal)(page()->mainFrame()->scrollPosition().y()) /
