@@ -65,8 +65,10 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
 
     addButton(tr("Read"), this, SLOT(onReadBook()),
               QDialogButtonBox::ActionRole);
+#ifndef Q_OS_SYMBIAN
     addButton(tr("Delete"), this, SLOT(onRemoveBook()),
               QDialogButtonBox::DestructiveRole);
+#endif
 }
 
 void InfoDialog::onReadBook()
