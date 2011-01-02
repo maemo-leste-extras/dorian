@@ -90,8 +90,10 @@ public slots:
     /** Restore book's last reading position. */
     void restoreLastBookmark();
 
+#ifdef Q_OS_SYMBIAN
     /** Adjust web view position after orientation change. */
     void adjustPosition();
+#endif
 
 protected slots:
 #ifdef Q_OS_SYMBIAN

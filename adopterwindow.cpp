@@ -137,15 +137,30 @@ void AdopterWindow::resizeEvent(QResizeEvent *event)
     Trace t("AdopterWindow::resizeEvent");
     MainBase::resizeEvent(event);
     placeDecorations();
+
 #if defined(Q_WS_MAEMO_5)
-    if (bookView) {
-        QTimer::singleShot(110, bookView, SLOT(restoreLastBookmark()));
+    // Restore previous reading position
+    if (!bookView) {
+        return;
     }
-#elif defined(Q_OS_SYMBIAN)
-    if (bookView) {
-        QTimer::singleShot(1000, bookView, SLOT(adjustPosition()));
+    QTimer::singleShot(110, bookView, SLOT(restoreLastBookmark()));
+#endif // Q_WS_MAEMO_5
+
+#if defined(Q_OS_SYMBIAN)
+    // Adjust reading position after orientation change
+    if (!bookView) {
+        return;
     }
-#endif
+    if (event->oldSize().width() == -1) {
+        return;
+    }
+    bool oldPortrait = event->oldSize().width() < event->oldSize().height();
+    bool portrait = event->size().width() < event->size().height();
+    if (oldPortrait == portrait) {
+        return;
+    }
+    QTimer::singleShot(990, bookView, SLOT(adjustPosition()));
+#endif // Q_OS_SYMBIAN
 }
 
 void AdopterWindow::closeEvent(QCloseEvent *event)
