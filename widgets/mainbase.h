@@ -29,6 +29,9 @@ public:
                               const QString &iconName, const QString &text,
                               bool important = false);
 
+    /** Add tool bar. */
+    void addToolBar();
+
     /** Add spacing to tool bar. */
     void addToolBarSpace();
 
@@ -36,24 +39,6 @@ public slots:
     void show();
 
 protected:
-    /** Handle resize event: Manage tool bar visibility. */
-    void resizeEvent(QResizeEvent *event);
-
-    /** Handle show event: Manage tool bar visibility. */
-    void showEvent(QShowEvent *event);
-
-    /**
-     * Update toolb ar visibility.
-     * On Symbian, the tool bar is not visible in landscape mode.
-     */
-    void updateToolBar();
-
-    /** Hide tool bar if visible. */
-    void hideToolBar();
-
-    /** Return true if the tool bar is present and hidden. */
-    bool isToolBarHidden();
-
     /** Return the height of the tool bar (or 0 if there is no tool bar). */
     int toolBarHeight();
 

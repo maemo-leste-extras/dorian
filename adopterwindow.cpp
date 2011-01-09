@@ -38,12 +38,14 @@ void AdopterWindow::takeBookView(BookView *view,
     Q_ASSERT(previous);
     Q_ASSERT(next);
 
-    leaveBookView();
+    if (bookView) {
+        return;
+    }
 
     bookView = view;
     bookView->setParent(this);
     centralWidget()->layout()->addWidget(bookView);
-    bookView->show();
+    // bookView->show();
 
     progress = prog;
     previousButton = previous;
@@ -62,10 +64,13 @@ void AdopterWindow::takeBookView(BookView *view,
 void AdopterWindow::leaveBookView()
 {
     TRACE;
-    if (bookView) {
-        bookView->hide();
-        centralWidget()->layout()->removeWidget(bookView);
+
+    if (!bookView) {
+        return;
     }
+
+    // bookView->hide();
+    centralWidget()->layout()->removeWidget(bookView);
     bookView = 0;
     progress = 0;
     nextButton = 0;
@@ -121,11 +126,11 @@ void AdopterWindow::doGrabVolumeKeys(bool grab)
 
 #endif // Q_WS_MAEMO_5
 
-void AdopterWindow::showEvent(QShowEvent *e)
+void AdopterWindow::showEvent(QShowEvent *event)
 {
     Trace t("AdopterWindow::showEvent");
 
-    MainBase::showEvent(e);
+    MainBase::showEvent(event);
 #if defined(Q_WS_MAEMO_5)
     doGrabVolumeKeys(grabbingVolumeKeys);
 #endif
@@ -135,9 +140,9 @@ void AdopterWindow::showEvent(QShowEvent *e)
 void AdopterWindow::resizeEvent(QResizeEvent *event)
 {
     Trace t("AdopterWindow::resizeEvent");
+
     MainBase::resizeEvent(event);
     placeDecorations();
-
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     // Restore previous reading position
     if (bookView) {
@@ -202,29 +207,15 @@ void AdopterWindow::placeDecorations()
     Trace t("AdopterWindow::placeDecorations");
 
     if (!hasBookView()) {
+        qDebug() << "Doesn't have the book view";
         return;
     }
 
+    qDebug() << "Has the book view";
     int extraHeight = 0;
 
     QRect geo = bookView->geometry();
     qDebug() << "bookView:" << geo;
-
-#ifdef Q_OS_SYMBIAN
-    // Work around Symbian bug: If tool bar is hidden, increase bottom
-    // decorator widgets' Y coordinates by the tool bar's height
-    // if (isToolBarHidden()) {
-    //     extraHeight = toolBarHeight();
-    // }
-
-    // Work around another Symbian bug: When returning from full screen mode
-    // in landscape, the book view widget's height is miscalculated.
-    // My apologies for this kludge
-    if (geo.height() == 288) {
-        qDebug() << "Adjusting bottom Y";
-        extraHeight -= 288 - 223;
-    }
-#endif // Q_OS_SYMBIAN
 
     progress->setGeometry(geo.x(),
         geo.y() + geo.height() - progress->thickness() + extraHeight,

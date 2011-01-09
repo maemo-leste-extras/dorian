@@ -188,10 +188,6 @@ void MainWindow::showRegular()
 
     fullScreenWindow->hide();
     show();
-
-#if defined(Q_OS_SYMBIAN)
-    activateWindow();
-#endif
 }
 
 void MainWindow::showBig()
@@ -202,12 +198,8 @@ void MainWindow::showBig()
     leaveBookView();
     fullScreenWindow->takeBookView(view, prog, prev, next);
 
-    fullScreenWindow->showFullScreen();
     hide();
-
-#ifdef Q_OS_SYMBIAN
-    fullScreenWindow->activateWindow();
-#endif
+    fullScreenWindow->showFullScreen();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)

@@ -8,7 +8,7 @@ MainBase::MainBase(QWidget *parent): QMainWindow(parent), toolBar(0)
 {
     TRACE;
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
 
@@ -16,25 +16,39 @@ MainBase::MainBase(QWidget *parent): QMainWindow(parent), toolBar(0)
     QVBoxLayout *layout = new QVBoxLayout(frame);
     layout->setMargin(0);
     frame->setLayout(layout);
-    //frame->show();
     setCentralWidget(frame);
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN)
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
     closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
     connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
     QMainWindow::addAction(closeAction);
+#endif // Q_OS_SYMBIAN
+}
+
+void MainBase::addToolBar()
+{
+    TRACE;
+
+    if (toolBar) {
+        return;
+    }
+
+#if defined(Q_OS_SYMBIAN)
+    toolBar = new QToolBar("", this);
+    QMainWindow::addToolBar(Qt::BottomToolBarArea, toolBar);
 #else
-    // Tool bar
+    toolBar = QMainWindow::addToolBar("");
+#endif
+
     setUnifiedTitleAndToolBarOnMac(true);
-    toolBar = addToolBar("");
     toolBar->setMovable(false);
     toolBar->setFloatable(false);
     toolBar->toggleViewAction()->setVisible(false);
+
 #if defined(Q_WS_X11) && !defined(Q_WS_MAEMO_5)
     toolBar->setIconSize(QSize(42, 42));
 #endif
-#endif // Q_OS_SYMBIAN
 }
 
 QAction *MainBase::addToolBarAction(QObject *receiver,
@@ -48,12 +62,8 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
     QAction *action;
 #ifdef Q_OS_SYMBIAN
     if (important) {
-        if (!toolBar) {
-            // Create tool bar if needed
-            toolBar = new QToolBar("", this);
-            addToolBar(Qt::BottomToolBarArea, toolBar);
-        }
         // Add tool bar action
+        addToolBar();
         QPushButton *button = new QPushButton(this);
         button->setIconSize(QSize(60, 60));
         button->setFixedHeight(60);
@@ -68,6 +78,7 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
     connect(action, SIGNAL(triggered()), receiver, member);
 #else
     Q_UNUSED(important);
+    addToolBar();
     action = toolBar->addAction(QIcon(Platform::instance()->icon(iconName)),
                                 text, receiver, member);
 #endif
@@ -78,54 +89,10 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
 
 void MainBase::addToolBarSpace()
 {
+    addToolBar();
     QFrame *frame = new QFrame(toolBar);
     frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     toolBar->addWidget(frame);
-}
-
-void MainBase::updateToolBar()
-{
-#if 0 // ifdef Q_OS_SYMBIAN
-    TRACE;
-    if (toolBar) {
-        QRect geometry = QApplication::desktop()->geometry();
-        bool isPortrait = geometry.width() < geometry.height();
-        bool isToolBarHidden = toolBar->isHidden();
-        if (isPortrait && isToolBarHidden) {
-            qDebug() << "Show tool bar";
-            toolBar->setVisible(true);
-        } else if (!isPortrait && !isToolBarHidden) {
-            qDebug() << "Hide tool bar";
-            toolBar->setVisible(false);
-        }
-    }
-#endif // Q_OS_SYMBIAN
-}
-
-void MainBase::showEvent(QShowEvent *event)
-{
-    Trace t("MainBase::showEvent");
-    updateToolBar();
-    QMainWindow::showEvent(event);
-}
-
-void MainBase::resizeEvent(QResizeEvent *event)
-{
-    Trace t("MainBase::resizeEvent");
-    updateToolBar();
-    QMainWindow::resizeEvent(event);
-}
-
-void MainBase::hideToolBar()
-{
-    if (toolBar) {
-        toolBar->hide();
-    }
-}
-
-bool MainBase::isToolBarHidden()
-{
-    return toolBar && toolBar->isHidden();
 }
 
 int MainBase::toolBarHeight()
