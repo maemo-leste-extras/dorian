@@ -66,8 +66,6 @@ MainWindow::MainWindow(QWidget *parent):
                                        "bookmarks", tr("Bookmarks"), true);
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
                                      "library", tr("Library"), false);
-    rotateAction = addToolBarAction(this, SLOT(rotate()),
-                                    "rotate", tr("Rotate"), true);
 
 #ifdef Q_WS_MAEMO_5
     settingsAction = menuBar()->addAction(tr("Settings"));
@@ -81,7 +79,9 @@ MainWindow::MainWindow(QWidget *parent):
                                       "developer", tr("Developer"));
 #endif
 
-    addToolBarSpace();
+    rotateAction = addToolBarAction(this, SLOT(rotate()),
+                                    "rotate", tr("Rotate"), true);
+    // addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
         "view-fullscreen", tr("Full screen"), true);
 
@@ -363,11 +363,13 @@ void MainWindow::about()
     label->setTextFormat(Qt::RichText);
     label->setOpenExternalLinks(true);
     label->setWordWrap(true);
-    label->setText(tr("<b>Dorian %1</b><br><br>Copyright &copy; 2010 "
-        "Akos Polster &lt;akos@pipacs.com&gt;<br>"
-        "Licensed under GNU General Public License, Version 3<br>"
-        "Source code:<br><a href='http://dorian.garage.maemo.org/'>"
-        "dorian.garage.maemo.org</a>").arg(version));
+    label->setText(tr("<b>Dorian %1</b><br><br>"
+        "Copyright &copy; 2010-2011 by "
+        "Akos Polster &lt;akos@pipacs.com&gt;<br><br>"
+        "Licensed under GNU General Public License, Version 3<br><br>"
+        "<a href='http://dorian.garage.maemo.org/'>"
+        "dorian.garage.maemo.org</a><br><br>"
+        ).arg(version));
     aboutDialog->addWidget(label);
     aboutDialog->addStretch();
     aboutDialog->show();
