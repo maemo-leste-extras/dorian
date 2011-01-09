@@ -162,7 +162,7 @@ symbian {
     SOURCES += \
         widgets/flickcharm.cpp \
         widgets/mediakeysobserver.cpp
-    LIBS += -lremconinterfacebase -lremconcoreapi
+    LIBS += -lremconinterfacebase -lremconcoreapi -lcone -leikcore -lavkon
 }
 
 maemo5 {

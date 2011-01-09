@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent):
 #endif
 
     // Central widget. Must be an intermediate, because the book view widget
-    // can be re-parented later
+    // might be re-parented later
     QFrame *central = new QFrame(this);
     QVBoxLayout *layout = new QVBoxLayout(central);
     layout->setMargin(0);
@@ -257,36 +257,27 @@ void MainWindow::showBookmarks()
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
-#if defined(Q_WS_MAEMO_5)
+    TRACE;
+    qDebug() << "Key" << key;
+
     if (key == "orientation") {
+        view->setLastBookmark();
         QString value = Settings::instance()->value(key,
             Platform::instance()->defaultOrientation()).toString();
-        qDebug() << "MainWindow::onSettingsChanged: orientation" << value;
-        if (value == "portrait") {
-            setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
-            setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5LandscapeOrientation,
-                                           false);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-        } else {
-            setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
-            setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5PortraitOrientation,
-                                           false);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5LandscapeOrientation,
-                                           true);
-        }
-    } else if (key == "lightson") {
+        qDebug() << "Value: orientation" << value;
+        Platform::instance()->setOrientation(this, value);
+        Platform::instance()->setOrientation(fullScreenWindow, value);
+    }
+
+#if defined(Q_WS_MAEMO_5)
+    else if (key == "lightson") {
         bool enable = Settings::instance()->value(key, false).toBool();
-        qDebug() << "MainWindow::onSettingsChanged: lightson" << enable;
         killTimer(preventBlankingTimer);
         if (enable) {
             preventBlankingTimer = startTimer(29 * 1000);
         }
     }
-#else
-    Q_UNUSED(key);
-#endif // Q_WS_MAEMO_5
+#endif // defined(Q_WS_MAEMO_5)
 }
 
 void MainWindow::onPartLoadStart()

@@ -516,27 +516,3 @@ void BookView::onMediaKeysPressed(MediaKeysObserver::MediaKeys key)
 }
 
 #endif // Q_OS_SYMBIAN
-
-#ifdef Q_OS_SYMBIAN
-
-void BookView::adjustPosition()
-{
-    TRACE;
-
-    // QWebView widget doesn't maintain reading positon during orientation
-    // switch. This heuristics tries to work around it.
-
-    const qreal portraitMagic = 1.66;
-    const qreal landscapeMagic = 0.655;
-    if (mBook) {
-        QSize desktop = QApplication::desktop()->size();
-        int screenHeight = desktop.height();
-        int screenWidth = desktop.width();
-        qreal ratio = (screenWidth<screenHeight)? portraitMagic: landscapeMagic;
-        QWebFrame *frame = page()->mainFrame();
-        int current = frame->scrollPosition().y();
-        frame->scroll(0, (int)(current * ratio) - current);
-    }
-}
-
-#endif // Q_OS_SYMBIAN

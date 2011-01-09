@@ -57,7 +57,7 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
         // Add tool bar action
         QPushButton *button = new QPushButton(this);
         button->setIconSize(QSize(60, 60));
-        button->setFixedSize(89, 60);
+        button->setFixedHeight(60);
         button->setIcon(QIcon(Platform::instance()->icon(iconName)));
         button->setSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::Maximum);
@@ -88,7 +88,7 @@ void MainBase::addToolBarSpace()
 
 void MainBase::updateToolBar()
 {
-#ifdef Q_OS_SYMBIAN
+#if 0 // ifdef Q_OS_SYMBIAN
     TRACE;
     if (toolBar) {
         QRect geometry = QApplication::desktop()->geometry();
