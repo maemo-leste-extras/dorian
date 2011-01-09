@@ -51,7 +51,6 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
         if (!toolBar) {
             // Create tool bar if needed
             toolBar = new QToolBar("", this);
-            toolBar->setStyleSheet("margin:0; border:0; padding:0");
             addToolBar(Qt::BottomToolBarArea, toolBar);
         }
         // Add tool bar action
@@ -79,11 +78,9 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
 
 void MainBase::addToolBarSpace()
 {
-#ifndef Q_OS_SYMBIAN
     QFrame *frame = new QFrame(toolBar);
     frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     toolBar->addWidget(frame);
-#endif
 }
 
 void MainBase::updateToolBar()

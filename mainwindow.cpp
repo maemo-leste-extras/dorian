@@ -60,11 +60,6 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Tool bar actions
 
-#ifdef Q_OS_SYMBIAN
-    fullScreenAction = addToolBarAction(this, SLOT(showBig()),
-                                        "view-fullscreen", tr("Full screen"));
-#endif
-
     chaptersAction = addToolBarAction(this, SLOT(showChapters()),
                                       "chapters", tr("Chapters"), true);
     bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
@@ -72,30 +67,34 @@ MainWindow::MainWindow(QWidget *parent):
     infoAction = addToolBarAction(this, SLOT(showInfo()),
                                   "info", tr("Book info"), true);
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
-                                     "library", tr("Library"), true);
+                                     "library", tr("Library"), false);
 
 #ifdef Q_WS_MAEMO_5
     settingsAction = menuBar()->addAction(tr("Settings"));
     connect(settingsAction, SIGNAL(triggered()), this, SLOT(showSettings()));
     devToolsAction = menuBar()->addAction(tr("Developer"));
     connect(devToolsAction, SIGNAL(triggered()), this, SLOT(showDevTools()));
-    QAction *aboutAction = menuBar()->addAction(tr("About"));
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
     settingsAction = addToolBarAction(this, SLOT(showSettings()),
                                       "preferences-system", tr("Settings"));
     devToolsAction = addToolBarAction(this, SLOT(showDevTools()),
                                       "developer", tr("Developer"));
-    addToolBarAction(this, SLOT(about()), "about", tr("About"));
-#endif // Q_WS_MAEMO_5
+#endif
 
-#ifndef Q_OS_SYMBIAN
     addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
-                                        "view-fullscreen", tr("Full screen"));
+        "view-fullscreen", tr("Full screen"), true);
+
+#if defined(Q_WS_MAEMO_5)
+    QAction *aboutAction = menuBar()->addAction(tr("About"));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
-    (void)addToolBarAction(this, SLOT(close()), "", tr("Exit"));
-#endif
+    addToolBarAction(this, SLOT(about()), "about", tr("About"));
+#endif // defined(Q_WS_MAEMO_5)
+
+#if defined(Q_OS_SYMBIAN)
+    (void)addToolBarAction(this, SLOT(close()), "", tr("Exit"), false);
+#endif // defined(Q_OS_SYMBIAN)
 
     // Decorations
     prev = new TranslucentButton("back", this);
