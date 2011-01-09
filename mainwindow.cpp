@@ -64,10 +64,10 @@ MainWindow::MainWindow(QWidget *parent):
                                       "chapters", tr("Chapters"), true);
     bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
                                        "bookmarks", tr("Bookmarks"), true);
-    infoAction = addToolBarAction(this, SLOT(showInfo()),
-                                  "info", tr("Book info"), true);
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
                                      "library", tr("Library"), false);
+    rotateAction = addToolBarAction(this, SLOT(rotate()),
+                                    "rotate", tr("Rotate"), true);
 
 #ifdef Q_WS_MAEMO_5
     settingsAction = menuBar()->addAction(tr("Settings"));
@@ -228,12 +228,12 @@ void MainWindow::showSettings()
     (new SettingsWindow(this))->show();
 }
 
-void MainWindow::showInfo()
+void MainWindow::rotate()
 {
-    if (mCurrent.isValid()) {
-        (new InfoDialog(Library::instance()->book(mCurrent), this, false))->
-                exec();
-    }
+    QString current = Settings::instance()->value("orientation",
+        Platform::instance()->defaultOrientation()).toString();
+    QString target = (current == "landscape")? "portrait": "landscape";
+    Settings::instance()->setValue("orientation", target);
 }
 
 void MainWindow::showDevTools()

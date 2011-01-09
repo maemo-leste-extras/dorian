@@ -463,6 +463,17 @@ void BookView::timerEvent(QTimerEvent *e)
     QWebView::timerEvent(e);
 }
 
+void BookView::hideEvent(QHideEvent *e)
+{
+    Trace t("BookView::hideEvent");
+
+#if defined(Q_OS_SYMBIAN)
+    setLastBookmark();
+#endif
+
+    QWebView::hideEvent(e);
+}
+
 void BookView::goPreviousPage()
 {
     QWebFrame *frame = page()->mainFrame();

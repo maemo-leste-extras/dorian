@@ -26,7 +26,7 @@ public:
 
 public slots:
     void showLibrary();
-    void showInfo();
+    void rotate();
     void showSettings();
     void showDevTools();
     void showBookmarks();
@@ -58,7 +58,7 @@ private:
     BookView *view;
     QAction *settingsAction;
     QAction *libraryAction;
-    QAction *infoAction;
+    QAction *rotateAction;
     QAction *devToolsAction;
     QAction *bookmarksAction;
     QAction *fullScreenAction;

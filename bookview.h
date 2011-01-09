@@ -102,6 +102,7 @@ protected:
     void wheelEvent(QWheelEvent *);
     bool eventFilter(QObject *o, QEvent *e);
     void timerEvent(QTimerEvent *e);
+    void hideEvent(QHideEvent *e);
 
     /** Load given part. */
     void loadContent(int index);
