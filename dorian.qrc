@@ -36,6 +36,7 @@
         <file>icons/library.png</file>
         <file>icons/add.png</file>
         <file>icons/delete.png</file>
+        <file>icons/goto.png</file>
         <file>icons/folder.png</file>
         <file>icons/view-normal.png</file>
         <file>icons/mac/view-normal.png</file>
