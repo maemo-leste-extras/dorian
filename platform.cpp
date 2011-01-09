@@ -6,7 +6,15 @@
 #   include <unistd.h>
 #endif
 
+#ifdef Q_OS_SYMBIAN
+#   include <eikenv.h>
+#   include <eikappui.h>
+#   include <aknenv.h>
+#   include <aknappui.h>
+#endif
+
 #include "platform.h"
+#include "trace.h"
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_SYMBIAN)
 #   define DORIAN_BASE "dorian"
@@ -144,4 +152,38 @@ QString Platform::defaultOrientation()
 #else
     return QString("landscape");
 #endif
+}
+
+void Platform::setOrientation(QWidget *widget, const QString &orientation)
+{
+    TRACE;
+    qDebug() << "To" << orientation;
+
+    Q_UNUSED(widget);
+
+#if defined(Q_OS_SYMBIAN)
+    CAknAppUi *appUi = dynamic_cast<CAknAppUi *>(CEikonEnv::Static()->AppUi());
+    if (!appUi) {
+        qCritical() << "Platform::setOrientation: Couldn't get AppUi pointer";
+        return;
+    }
+#endif
+
+    if (orientation == "portrait") {
+#if defined(Q_WS_MAEMO_5)
+        widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
+        widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
+#elif defined(Q_OS_SYMBIAN)
+        TRAPD(error,
+              appUi->SetOrientationL(CAknAppUi::EAppUiOrientationPortrait););
+#endif
+    } else {
+#if defined(Q_WS_MAEMO_5)
+        widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
+        widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
+#elif defined(Q_OS_SYMBIAN)
+        TRAPD(error,
+              appUi->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape););
+#endif
+    }
 }

@@ -24,11 +24,7 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
         if (book->creators.size()) {
             QLabel *creators = new QLabel(this);
             creators->setWordWrap(true);
-            QString c = "By " + book->creators[0];
-            for (int i = 1; i < book->creators.size(); i++) {
-                c += ", " + book->creators[i];
-            }
-            creators->setText(c);
+            creators->setText(book->creators.join(", "));
             addWidget(creators);
         }
         QLabel *path = new QLabel("File: " + book->path(), this);
@@ -50,13 +46,29 @@ InfoDialog::InfoDialog(Book *b, QWidget *parent, bool showButtons):
             rights->setWordWrap(true);
             addWidget(rights);
         }
+        if (book->dateAdded.isValid()) {
+            QLabel *added = new QLabel("Added to library: " +
+             book->dateAdded.toLocalTime().toString(Qt::SystemLocaleShortDate),
+             this);
+            added->setWordWrap(true);
+            addWidget(added);
+        }
+        if (book->dateOpened.isValid()) {
+            QLabel *opened = new QLabel("Last read: " +
+             book->dateOpened.toLocalTime().toString(Qt::SystemLocaleShortDate),
+             this);
+            opened->setWordWrap(true);
+            addWidget(opened);
+        }
         addStretch();
     }
 
     addButton(tr("Read"), this, SLOT(onReadBook()),
               QDialogButtonBox::ActionRole);
+#ifndef Q_OS_SYMBIAN
     addButton(tr("Delete"), this, SLOT(onRemoveBook()),
               QDialogButtonBox::DestructiveRole);
+#endif
 }
 
 void InfoDialog::onReadBook()

@@ -37,6 +37,10 @@ ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
 
     connect(list, SIGNAL(activated(const QModelIndex &)),
             this, SLOT(onItemActivated(const QModelIndex &)));
+    connect(list, SIGNAL(itemSelectionChanged()),
+            this, SLOT(onItemSelectionChanged()));
+    connect(list, SIGNAL(itemSelectionChanged()),
+            this, SIGNAL(itemSelectionChanged()));
 }
 
 void ListWindow::populateList()
@@ -169,7 +173,8 @@ void ListWindow::onItemActivated(const QModelIndex &index)
     }
 
     int row = index.row() - buttons.count();
-    qDebug() << "Activated" << index.row() << ", emit activated(" << row << ")";
+    qDebug() << "Activated" << index.row() << ", emit activated(" << row
+            << ")";
     emit activated(mModel->index(row, 0));
 }
 
@@ -202,3 +207,12 @@ void ListWindow::closeEvent(QCloseEvent *event)
 }
 
 #endif // Q_WS_MAEMO_5
+
+void ListWindow::onItemSelectionChanged()
+{
+    TRACE;
+    bool enabled = currentItem().isValid();
+    foreach (QAction *action, itemActions) {
+        action->setEnabled(enabled);
+    }
+}

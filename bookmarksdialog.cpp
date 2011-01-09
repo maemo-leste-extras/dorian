@@ -14,21 +14,8 @@ BookmarksDialog::BookmarksDialog(Book *book_, QWidget *parent):
     }
 
     // Build and set bookmark model
-    // FIXME: Localize me
     foreach (Book::Bookmark bookmark, book_->bookmarks()) {
-        QString label("At ");
-        label += QString::number((int)(100 * book_->
-            getProgress(bookmark.part, bookmark.pos))) + "%";
-        if (!bookmark.note.isEmpty()) {
-            label += ": " + bookmark.note;
-        }
-        label += "\n";
-        int chapterIndex = book_->chapterFromPart(bookmark.part);
-        if (chapterIndex != -1) {
-            QString chapterId = book_->chapters[chapterIndex];
-            label += "In \"" + book_->content[chapterId].name + "\"";
-        }
-        data.append(label);
+        data.append(bookmarkToText(bookmark));
     }
     QStringListModel *model = new QStringListModel(data, this);
     setModel(model);
@@ -111,5 +98,41 @@ void BookmarksDialog::reallyDelete()
 
 void BookmarksDialog::onEdit()
 {
-    // FIXME: Implement me
+    TRACE;
+    QModelIndex current = currentItem();
+    if (!current.isValid()) {
+        return;
+    }
+    int row = current.row();
+    Book::Bookmark b = book->bookmarks()[row];
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Edit bookmark"),
+        tr("Note:"), QLineEdit::Normal, b.note, &ok);
+    if (!ok) {
+        return;
+    }
+    b.note = text;
+    book->setBookmarkNote(row, text);
+    QStringListModel *m = qobject_cast<QStringListModel *>(model());
+    if (m) {
+        m->setData(current, bookmarkToText(b), Qt::DisplayRole);
+    }
+}
+
+QString BookmarksDialog::bookmarkToText(const Book::Bookmark &bookmark)
+{
+    // FIXME: Localize me
+    QString label("At ");
+    label += QString::number((int)(100 * book->
+        getProgress(bookmark.part, bookmark.pos))) + "%";
+    if (!bookmark.note.isEmpty()) {
+        label += ": " + bookmark.note;
+    }
+    label += "\n";
+    int chapterIndex = book->chapterFromPart(bookmark.part);
+    if (chapterIndex != -1) {
+        QString chapterId = book->chapters[chapterIndex];
+        label += "In \"" + book->content[chapterId].name + "\"";
+    }
+    return label;
 }

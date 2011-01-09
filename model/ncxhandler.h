@@ -29,6 +29,8 @@ public:
             contentItem.size = 0;
             book.content[id] = contentItem;
             book.chapters.append(id);
+            qDebug() << "TreeItem::addToBook" << id << contentItem.href
+                    << contentItem.name;
             foreach (TreeItem *child, children) {
                 child->addToBook(book);
             }

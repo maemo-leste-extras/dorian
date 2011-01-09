@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent):
 #endif
 
     // Central widget. Must be an intermediate, because the book view widget
-    // can be re-parented later
+    // might be re-parented later
     QFrame *central = new QFrame(this);
     QVBoxLayout *layout = new QVBoxLayout(central);
     layout->setMargin(0);
@@ -60,42 +60,41 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Tool bar actions
 
-#ifdef Q_OS_SYMBIAN
-    fullScreenAction = addToolBarAction(this, SLOT(showBig()),
-                                        "view-fullscreen", tr("Full screen"));
-#endif
-
     chaptersAction = addToolBarAction(this, SLOT(showChapters()),
                                       "chapters", tr("Chapters"), true);
     bookmarksAction = addToolBarAction(this, SLOT(showBookmarks()),
                                        "bookmarks", tr("Bookmarks"), true);
-    infoAction = addToolBarAction(this, SLOT(showInfo()),
-                                  "info", tr("Book info"), true);
     libraryAction = addToolBarAction(this, SLOT(showLibrary()),
-                                     "library", tr("Library"), true);
+                                     "library", tr("Library"), false);
+    rotateAction = addToolBarAction(this, SLOT(rotate()),
+                                    "rotate", tr("Rotate"), true);
 
 #ifdef Q_WS_MAEMO_5
     settingsAction = menuBar()->addAction(tr("Settings"));
     connect(settingsAction, SIGNAL(triggered()), this, SLOT(showSettings()));
     devToolsAction = menuBar()->addAction(tr("Developer"));
     connect(devToolsAction, SIGNAL(triggered()), this, SLOT(showDevTools()));
-    QAction *aboutAction = menuBar()->addAction(tr("About"));
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
     settingsAction = addToolBarAction(this, SLOT(showSettings()),
                                       "preferences-system", tr("Settings"));
     devToolsAction = addToolBarAction(this, SLOT(showDevTools()),
                                       "developer", tr("Developer"));
-    addToolBarAction(this, SLOT(about()), "about", tr("About"));
-#endif // Q_WS_MAEMO_5
+#endif
 
-#ifndef Q_OS_SYMBIAN
     addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
-                                        "view-fullscreen", tr("Full screen"));
+        "view-fullscreen", tr("Full screen"), true);
+
+#if defined(Q_WS_MAEMO_5)
+    QAction *aboutAction = menuBar()->addAction(tr("About"));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 #else
-    (void)addToolBarAction(this, SLOT(close()), "", tr("Exit"));
-#endif
+    addToolBarAction(this, SLOT(about()), "about", tr("About"));
+#endif // defined(Q_WS_MAEMO_5)
+
+#if defined(Q_OS_SYMBIAN)
+    (void)addToolBarAction(this, SLOT(close()), "", tr("Exit"), false);
+#endif // defined(Q_OS_SYMBIAN)
 
     // Decorations
     prev = new TranslucentButton("back", this);
@@ -229,12 +228,12 @@ void MainWindow::showSettings()
     (new SettingsWindow(this))->show();
 }
 
-void MainWindow::showInfo()
+void MainWindow::rotate()
 {
-    if (mCurrent.isValid()) {
-        (new InfoDialog(Library::instance()->book(mCurrent), this, false))->
-                exec();
-    }
+    QString current = Settings::instance()->value("orientation",
+        Platform::instance()->defaultOrientation()).toString();
+    QString target = (current == "landscape")? "portrait": "landscape";
+    Settings::instance()->setValue("orientation", target);
 }
 
 void MainWindow::showDevTools()
@@ -257,36 +256,27 @@ void MainWindow::showBookmarks()
 
 void MainWindow::onSettingsChanged(const QString &key)
 {
-#if defined(Q_WS_MAEMO_5)
+    TRACE;
+    qDebug() << "Key" << key;
+
     if (key == "orientation") {
+        view->setLastBookmark();
         QString value = Settings::instance()->value(key,
             Platform::instance()->defaultOrientation()).toString();
-        qDebug() << "MainWindow::onSettingsChanged: orientation" << value;
-        if (value == "portrait") {
-            setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
-            setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5LandscapeOrientation,
-                                           false);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
-        } else {
-            setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
-            setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5PortraitOrientation,
-                                           false);
-            fullScreenWindow->setAttribute(Qt::WA_Maemo5LandscapeOrientation,
-                                           true);
-        }
-    } else if (key == "lightson") {
+        qDebug() << "Value: orientation" << value;
+        Platform::instance()->setOrientation(this, value);
+        Platform::instance()->setOrientation(fullScreenWindow, value);
+    }
+
+#if defined(Q_WS_MAEMO_5)
+    else if (key == "lightson") {
         bool enable = Settings::instance()->value(key, false).toBool();
-        qDebug() << "MainWindow::onSettingsChanged: lightson" << enable;
         killTimer(preventBlankingTimer);
         if (enable) {
             preventBlankingTimer = startTimer(29 * 1000);
         }
     }
-#else
-    Q_UNUSED(key);
-#endif // Q_WS_MAEMO_5
+#endif // defined(Q_WS_MAEMO_5)
 }
 
 void MainWindow::onPartLoadStart()

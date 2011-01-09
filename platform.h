@@ -20,6 +20,7 @@ public:
     QString defaultFont();
     int defaultZoom();
     QString defaultOrientation();
+    void setOrientation(QWidget *widget, const QString &orientation);
     void information(const QString &label, QWidget *parent = 0);
     void showBusy(QWidget *w, bool isBusy);
     QString traceFileName();

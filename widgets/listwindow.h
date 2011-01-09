@@ -12,6 +12,7 @@ class FlickCharm;
 class QAbstractItemModel;
 class QListWidget;
 class QModelIndex;
+class QListWidgetItem;
 
 /** A window with a list and menu actions (Maemo) or buttons (non-Maemo). */
 class ListWindow: public MainBase
@@ -57,6 +58,9 @@ signals:
     /** Emitted when a list item is activated. */
     void activated(const QModelIndex &index);
 
+    /** Emitted when selection has changed. */
+    void itemSelectionChanged();
+
 public slots:
     /** Set the current (selected) item. */
     void setCurrentItem(const QModelIndex &item);
@@ -64,6 +68,7 @@ public slots:
 protected slots:
     void onItemActivated(const QModelIndex &);
     void populateList();
+    void onItemSelectionChanged();
 
 protected:
     struct Button {

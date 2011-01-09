@@ -59,6 +59,7 @@ int SortedLibrary::compareBy(SortBy key, Book *left, Book *right) const
         return QString::localeAwareCompare(left->creators.join(" "),
                                            right->creators.join(" "));
     default:
-        return QString::localeAwareCompare(left->shortName(), right->shortName());
+        return QString::localeAwareCompare(left->shortName(),
+                                           right->shortName());
     }
 }

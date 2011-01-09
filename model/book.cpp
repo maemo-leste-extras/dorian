@@ -53,6 +53,7 @@ bool Book::open()
     if (!parse()) {
         return false;
     }
+    dateOpened = QDateTime::currentDateTime().toUTC();
     save();
     emit opened(path());
     return true;
@@ -190,8 +191,8 @@ bool Book::parse()
         cover = makeCover(coverPath);
     }
 
-    // If there is an "ncx" item in content, parse it: That's the real table of
-    // contents
+    // If there is an "ncx" item in content, parse it: That's the real table
+    // of contents
     QString ncxFileName;
     if (content.contains("ncx")) {
         ncxFileName = content["ncx"].href;
@@ -303,6 +304,8 @@ void Book::load()
         QString note = data[QString("bookmark%1note").arg(i)].toString();
         mBookmarks.append(Bookmark(part, pos, note));
     }
+    dateAdded = data["dateadded"].toDateTime();
+    dateOpened = data["dateopened"].toDateTime();
 }
 
 void Book::save()
@@ -328,16 +331,22 @@ void Book::save()
         data[QString("bookmark%1pos").arg(i)] = mBookmarks[i].pos;
         data[QString("bookmark%1note").arg(i)] = mBookmarks[i].note;
     }
+    data["dateadded"] = dateAdded;
+    data["dateopened"] = dateOpened;
     BookDb::instance()->save(path(), data);
 }
 
-void Book::setLastBookmark(int part, qreal position)
+void Book::setLastBookmark(int part, qreal position, bool fast)
 {
     TRACE;
-    load();
+    if (!fast) {
+        load();
+    }
     mLastBookmark.part = part;
     mLastBookmark.pos = position;
-    save();
+    if (!fast) {
+        save();
+    }
 }
 
 Book::Bookmark Book::lastBookmark()
@@ -352,6 +361,16 @@ void Book::addBookmark(int part, qreal position, const QString &note)
     mBookmarks.append(Bookmark(part, position, note));
     qSort(mBookmarks.begin(), mBookmarks.end());
     save();
+}
+
+void Book::setBookmarkNote(int index, const QString &note)
+{
+    load();
+    if (index >= 0 && index < mBookmarks.length()) {
+        mBookmarks[index].note = note;
+    }
+    save();
+
 }
 
 void Book::deleteBookmark(int index)
@@ -404,10 +423,7 @@ QString Book::name()
     if (title.size()) {
         QString ret = title;
         if (creators.length()) {
-            ret += "\nBy " + creators[0];
-            for (int i = 1; i < creators.length(); i++) {
-                ret += ", " + creators[i];
-            }
+            ret += "\nBy " + creators.join(", ");
         }
         return ret;
     }
@@ -438,18 +454,17 @@ int Book::chapterFromPart(int index)
     for (int i = 0; i < chapters.size(); i++) {
         QString id = chapters[i];
         QString href = content[id].href;
-        QString baseRef(href);
-        QUrl url(QString("file://") + href);
-        if (url.hasFragment()) {
-            QString fragment = url.fragment();
-            baseRef.chop(fragment.length() + 1);
+        int hashPos = href.indexOf("#");
+        if (hashPos != -1) {
+            href = href.left(hashPos);
         }
-        if (baseRef == partHref) {
+        if (href == partHref) {
             ret = i;
             // Don't break, keep looking
         }
     }
 
+    qDebug() << "Part" << index << partId << partHref << ":" << ret;
     return ret;
 }
 

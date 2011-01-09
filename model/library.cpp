@@ -121,6 +121,7 @@ bool Library::add(const QString &path)
     beginInsertRows(QModelIndex(), size, size);
     Book *book = new Book(path);
     book->peek();
+    book->dateAdded = QDateTime::currentDateTime().toUTC();
     mBooks.append(book);
     save();
     endInsertRows();

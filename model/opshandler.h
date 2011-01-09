@@ -9,7 +9,9 @@
 class OpsHandler: public XmlHandler
 {
 public:
-    OpsHandler(Book &b): book(b), partCount(0) {}
+    OpsHandler(Book &b): book(b), partCount(0) {
+        book.creators.clear();
+    }
 
     bool endElement(const QString &namespaceUri, const QString &name,
                     const QString &qName) {

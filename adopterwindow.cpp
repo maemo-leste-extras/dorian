@@ -137,9 +137,13 @@ void AdopterWindow::resizeEvent(QResizeEvent *event)
     Trace t("AdopterWindow::resizeEvent");
     MainBase::resizeEvent(event);
     placeDecorations();
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+    // Restore previous reading position
     if (bookView) {
         QTimer::singleShot(110, bookView, SLOT(restoreLastBookmark()));
     }
+#endif // defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
 }
 
 void AdopterWindow::closeEvent(QCloseEvent *event)
@@ -209,9 +213,9 @@ void AdopterWindow::placeDecorations()
 #ifdef Q_OS_SYMBIAN
     // Work around Symbian bug: If tool bar is hidden, increase bottom
     // decorator widgets' Y coordinates by the tool bar's height
-    if (isToolBarHidden()) {
-        extraHeight = toolBarHeight();
-    }
+    // if (isToolBarHidden()) {
+    //     extraHeight = toolBarHeight();
+    // }
 
     // Work around another Symbian bug: When returning from full screen mode
     // in landscape, the book view widget's height is miscalculated.

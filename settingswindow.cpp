@@ -100,7 +100,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
         box->toggle(SchemeDefault);
     }
 
-#ifndef Q_OS_SYMBIAN
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     QLabel *orientationLabel = new QLabel(tr("Orientation:"), contents);
     layout->addWidget(orientationLabel);
     orientationBox = new ToolButtonBox(this);
@@ -117,7 +117,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     } else {
         orientationBox->toggle(OrientationLandscape);
     }
-#endif // !Q_OS_SYMBIAN
+#endif // defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
 
     layout->addStretch();
     scroller->setWidget(contents);
@@ -180,9 +180,6 @@ void SettingsWindow::onSchemeButtonClicked(int id)
 
 void SettingsWindow::onOrientationButtonClicked(int id)
 {
-#ifdef Q_WS_MAEMO_5
-    Q_UNUSED(id);
-#else
     QString orientation;
     switch (id) {
     case OrientationLandscape:
@@ -193,7 +190,6 @@ void SettingsWindow::onOrientationButtonClicked(int id)
         break;
     }
     Settings::instance()->setValue("orientation", orientation);
-#endif // Q_WS_MAEMO_5
 }
 
 void SettingsWindow::closeEvent(QCloseEvent *e)
@@ -202,11 +198,9 @@ void SettingsWindow::closeEvent(QCloseEvent *e)
     Settings *settings = Settings::instance();
     settings->setValue("zoom", zoomSlider->value());
     settings->setValue("font", fontButton->currentFont().family());
-#ifndef Q_OS_SYMBIAN
     settings->setValue("orientation",
         (orientationBox->checkedId() == OrientationLandscape)?
         "landscape": "portrait");
-#endif // Q_OS_SYMBIAN
     e->accept();
 }
 
