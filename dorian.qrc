@@ -53,5 +53,6 @@
         <file>icons/splash.jpg</file>
         <file>icons/goto.png</file>
         <file>icons/edit.png</file>
+        <file>icons/rotate.png</file>
     </qresource>
 </RCC>
