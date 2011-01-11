@@ -42,6 +42,11 @@ protected:
     /** Return the height of the tool bar (or 0 if there is no tool bar). */
     int toolBarHeight();
 
+#ifdef Q_OS_SYMBIAN
+    /** Handle resize. */
+    void resizeEvent(QResizeEvent *e);
+#endif
+
 private:
     QToolBar *toolBar;      /**< Tool bar. */
 };

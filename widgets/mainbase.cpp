@@ -36,7 +36,8 @@ void MainBase::addToolBar()
 
 #if defined(Q_OS_SYMBIAN)
     toolBar = new QToolBar("", this);
-    QMainWindow::addToolBar(Qt::BottomToolBarArea, toolBar);
+    toolBar->setFixedHeight(Platform::softKeyHeight());
+    QMainWindow::addToolBar(Qt::NoToolBarArea, toolBar);
 #else
     toolBar = QMainWindow::addToolBar("");
 #endif
@@ -47,7 +48,8 @@ void MainBase::addToolBar()
     toolBar->toggleViewAction()->setVisible(false);
 
 #if defined(Q_WS_X11) && !defined(Q_WS_MAEMO_5)
-    toolBar->setIconSize(QSize(42, 42));
+    toolBar->setIconSize(QSize(Platform::toolBarIconHeight(),
+                               Platform::toolBarIconHeight()));
 #endif
 }
 
@@ -112,3 +114,20 @@ void MainBase::show()
     QMainWindow::show();
 #endif
 }
+
+#ifdef Q_OS_SYMBIAN
+
+void MainBase::resizeEvent(QResizeEvent *e)
+{
+    Trace t("MainBase::resizeEvent");
+
+    QMainWindow::resizeEvent(e);
+    if (!toolBar) {
+        return;
+    }
+    QSize available = Platform::availableSize();
+    toolBar->setGeometry(0, available.height() - Platform::softKeyHeight(),
+                         available.width(), Platform::softKeyHeight());
+}
+
+#endif // Q_OS_SYMBIAN

@@ -185,8 +185,12 @@ void MainWindow::showRegular()
     // Re-parent children
     fullScreenWindow->leaveBookView();
     takeBookView(view, prog, prev, next);
-
     fullScreenWindow->hide();
+
+#ifdef Q_OS_SYMBIAN
+    view->setFixedSize(Platform::availableSize().width(),
+        Platform::availableSize().height() - Platform::softKeyHeight());
+#endif
     show();
 }
 
@@ -197,8 +201,11 @@ void MainWindow::showBig()
     // Re-parent children
     leaveBookView();
     fullScreenWindow->takeBookView(view, prog, prev, next);
-
     hide();
+
+#ifdef Q_OS_SYMBIAN
+    view->setFixedSize(Platform::size());
+#endif
     fullScreenWindow->showFullScreen();
 }
 

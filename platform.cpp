@@ -187,3 +187,41 @@ void Platform::setOrientation(QWidget *widget, const QString &orientation)
 #endif
     }
 }
+
+int Platform::softKeyHeight()
+{
+#if defined(Q_OS_SYMBIAN)
+    return 62;
+#else
+    return 0;
+#endif
+}
+
+int Platform::toolBarIconHeight()
+{
+#if defined(Q_OS_SYMBIAN)
+    return 60;
+#elif defined(Q_WS_X11)  && !defined(Q_WS_MAEMO_5)
+    return 40;
+#else
+    return 0;
+#endif
+}
+
+QSize Platform::size()
+{
+    return QApplication::desktop()->geometry().size();
+}
+
+QSize Platform::availableSize()
+{
+    QSize s = QApplication::desktop()->availableGeometry().size();
+#if defined(Q_OS_SYMBIAN)
+    // Work around a Qt bug on Symbian which sometimes forgets to reduce the
+    // available height by the soft key area height
+    if (s.height() == 548) {
+        s.setHeight(s.height() - softKeyHeight());
+    }
+#endif
+    return s;
+}
