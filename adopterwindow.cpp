@@ -44,7 +44,9 @@ void AdopterWindow::takeBookView(BookView *view,
 
     bookView = view;
     bookView->setParent(this);
+#ifndef Q_OS_SYMBIAN
     centralWidget()->layout()->addWidget(bookView);
+#endif
     // bookView->show();
 
     progress = prog;
@@ -70,7 +72,9 @@ void AdopterWindow::leaveBookView()
     }
 
     // bookView->hide();
+#ifndef Q_OS_SYMBIAN
     centralWidget()->layout()->removeWidget(bookView);
+#endif
     bookView = 0;
     progress = 0;
     nextButton = 0;

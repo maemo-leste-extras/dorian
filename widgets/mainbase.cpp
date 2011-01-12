@@ -37,7 +37,8 @@ void MainBase::addToolBar()
 #if defined(Q_OS_SYMBIAN)
     toolBar = new QToolBar("", this);
     toolBar->setFixedHeight(Platform::softKeyHeight());
-    QMainWindow::addToolBar(Qt::NoToolBarArea, toolBar);
+    toolBar->show();
+    // QMainWindow::addToolBar(Qt::NoToolBarArea, toolBar);
 #else
     toolBar = QMainWindow::addToolBar("");
 #endif
