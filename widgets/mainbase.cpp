@@ -38,7 +38,7 @@ void MainBase::addToolBar()
     toolBar = new QToolBar("", this);
     toolBar->setFixedHeight(Platform::softKeyHeight());
     toolBar->show();
-    // QMainWindow::addToolBar(Qt::NoToolBarArea, toolBar);
+    QMainWindow::addToolBar(Qt::BottomToolBarArea, toolBar);
 #else
     toolBar = QMainWindow::addToolBar("");
 #endif
@@ -116,7 +116,7 @@ void MainBase::show()
 #endif
 }
 
-#ifdef Q_OS_SYMBIAN
+#if 0 // ifdef Q_OS_SYMBIAN
 
 void MainBase::resizeEvent(QResizeEvent *e)
 {
