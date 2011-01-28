@@ -182,7 +182,7 @@ void MainWindow::showRegular()
 {
     TRACE;
 
-    // Re-parent children
+    view->setLastBookmark();
     fullScreenWindow->leaveBookView();
     takeBookView(view, prog, prev, next);
 
@@ -194,7 +194,7 @@ void MainWindow::showBig()
 {
     TRACE;
 
-    // Re-parent children
+    view->setLastBookmark();
     leaveBookView();
     fullScreenWindow->takeBookView(view, prog, prev, next);
 

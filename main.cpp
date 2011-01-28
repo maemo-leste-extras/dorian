@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     splash.finish(mainWindow);
 #endif
 
-    // Run event loop, Re-start application if event loop exit code was 1000
+    // Run event loop, re-start application if event loop exit code was 1000
     ret = app.exec();
     if (ret == 1000) {
         Platform::instance()->restart(argv);
