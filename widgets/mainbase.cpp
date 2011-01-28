@@ -92,10 +92,12 @@ QAction *MainBase::addToolBarAction(QObject *receiver,
 
 void MainBase::addToolBarSpace()
 {
+#ifndef Q_OS_SYMBIAN
     addToolBar();
     QFrame *frame = new QFrame(toolBar);
     frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     toolBar->addWidget(frame);
+#endif
 }
 
 int MainBase::toolBarHeight()

@@ -129,7 +129,7 @@ void ListWindow::addItemButton(const QString &title, QObject *receiver,
     Q_UNUSED(title);
     Q_UNUSED(receiver);
     Q_UNUSED(slot);
-    Q_UNUSED(iconPath);
+    Q_UNUSED(iconName);
 #else
     QAction *toolBarAction =
             addToolBarAction(receiver, slot, iconName, title, true);

@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent):
 
     rotateAction = addToolBarAction(this, SLOT(rotate()),
                                     "rotate", tr("Rotate"), true);
-    // addToolBarSpace();
+    addToolBarSpace();
     fullScreenAction = addToolBarAction(this, SLOT(showBig()),
         "view-fullscreen", tr("Full screen"), true);
 
@@ -198,7 +198,11 @@ void MainWindow::showBig()
     leaveBookView();
     fullScreenWindow->takeBookView(view, prog, prev, next);
 
+#ifdef Q_WS_MAEMO_5
+    fullScreenWindow->raise();
+#else
     hide();
+#endif
     fullScreenWindow->showFullScreen();
 }
 
@@ -230,7 +234,7 @@ void MainWindow::rotate()
 
 void MainWindow::showDevTools()
 {
-    (new DevTools())->exec();
+    (new DevTools(this))->exec();
 }
 
 void MainWindow::showBookmarks()
