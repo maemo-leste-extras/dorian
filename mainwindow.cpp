@@ -188,6 +188,7 @@ void MainWindow::showRegular()
 
     fullScreenWindow->hide();
     show();
+    view->restoreLastBookmark();
 }
 
 void MainWindow::showBig()
@@ -204,6 +205,7 @@ void MainWindow::showBig()
     hide();
 #endif
     fullScreenWindow->showFullScreen();
+    view->restoreLastBookmark();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)
@@ -229,6 +231,7 @@ void MainWindow::rotate()
     QString current = Settings::instance()->value("orientation",
         Platform::instance()->defaultOrientation()).toString();
     QString target = (current == "landscape")? "portrait": "landscape";
+    view->setLastBookmark();
     Settings::instance()->setValue("orientation", target);
 }
 
@@ -256,7 +259,6 @@ void MainWindow::onSettingsChanged(const QString &key)
     qDebug() << "Key" << key;
 
     if (key == "orientation") {
-        view->setLastBookmark();
         QString value = Settings::instance()->value(key,
             Platform::instance()->defaultOrientation()).toString();
         qDebug() << "Value: orientation" << value;

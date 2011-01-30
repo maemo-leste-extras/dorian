@@ -146,7 +146,7 @@ void AdopterWindow::resizeEvent(QResizeEvent *event)
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     // Restore previous reading position
     if (bookView) {
-        QTimer::singleShot(110, bookView, SLOT(restoreLastBookmark()));
+        QTimer::singleShot(230, bookView, SLOT(restoreLastBookmark()));
     }
 #endif // defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
 }

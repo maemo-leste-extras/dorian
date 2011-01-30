@@ -339,6 +339,7 @@ void Book::save()
 void Book::setLastBookmark(int part, qreal position, bool fast)
 {
     TRACE;
+    qDebug() << "Part" << part << "position" << position << "fast?" << fast;
     if (!fast) {
         load();
     }
