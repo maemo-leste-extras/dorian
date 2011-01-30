@@ -41,7 +41,6 @@ private:
     QSlider *zoomSlider;
     QLabel *zoomLabel;
     QFontComboBox *fontButton;
-    ToolButtonBox *orientationBox;
 };
 
 #endif // SETTINGSWINDOW_H

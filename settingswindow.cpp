@@ -71,7 +71,8 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 
     QLabel *fontLabel = new QLabel(tr("Font:"), contents);
     layout->addWidget(fontLabel);
-    QString family = settings->value("font", platform->defaultFont()).toString();
+    QString family =
+            settings->value("font", platform->defaultFont()).toString();
     fontButton = new QFontComboBox(contents);
     fontButton->setCurrentFont(QFont(family));
     fontButton->setEditable(false);
@@ -85,7 +86,8 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
                    Platform::instance()->icon("style-default"));
     box->addButton(SchemeNight, tr("Night"),
                    Platform::instance()->icon("style-night"));
-    box->addButton(SchemeDay, tr("Day"), Platform::instance()->icon("style-day"));
+    box->addButton(SchemeDay, tr("Day"),
+                   Platform::instance()->icon("style-day"));
     box->addButton(SchemeSand, tr("Sand"),
                    Platform::instance()->icon("style-sand"));
     box->addStretch();
@@ -99,25 +101,6 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     } else {
         box->toggle(SchemeDefault);
     }
-
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    QLabel *orientationLabel = new QLabel(tr("Orientation:"), contents);
-    layout->addWidget(orientationLabel);
-    orientationBox = new ToolButtonBox(this);
-    layout->addWidget(orientationBox);
-    orientationBox->addButton(OrientationPortrait, tr("Portrait"),
-                              ":/icons/settings-portrait.png");
-    orientationBox->addButton(OrientationLandscape, tr("Landscape"),
-                              ":/icons/settings-landscape.png");
-    orientationBox->addStretch();
-    QString orientation =
-        settings->value("orientation", platform->defaultOrientation()).toString();
-    if (orientation == "portrait") {
-        orientationBox->toggle(OrientationPortrait);
-    } else {
-        orientationBox->toggle(OrientationLandscape);
-    }
-#endif // defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
 
     layout->addStretch();
     scroller->setWidget(contents);
@@ -138,10 +121,6 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
             this, SLOT(onCurrentFontChanged(const QFont &)));
     connect(box, SIGNAL(buttonClicked(int)),
             this, SLOT(onSchemeButtonClicked(int)));
-#ifndef Q_OS_SYMBIAN
-    connect(orientationBox, SIGNAL(buttonClicked(int)),
-            this, SLOT(onOrientationButtonClicked(int)));
-#endif
 
 #ifdef Q_OS_SYMBIAN
     QAction *closeAction = new QAction(parent? tr("Back"): tr("Exit"), this);
@@ -198,9 +177,6 @@ void SettingsWindow::closeEvent(QCloseEvent *e)
     Settings *settings = Settings::instance();
     settings->setValue("zoom", zoomSlider->value());
     settings->setValue("font", fontButton->currentFont().family());
-    settings->setValue("orientation",
-        (orientationBox->checkedId() == OrientationLandscape)?
-        "landscape": "portrait");
     e->accept();
 }
 
