@@ -110,7 +110,9 @@ OTHER_FILES += \
     pkg/maemo/autobuild-scratchbox.sh \
     LICENSE.txt \
     pkg/symbian/book.svg \
-    pkg/symbian/clean.bat
+    pkg/symbian/clean.bat \
+    pkg/maemo/icon-48/dorian.png \
+    pkg/maemo/icon-scalable/dorian.png
 
 DEFINES += \
     USE_FILE32API
