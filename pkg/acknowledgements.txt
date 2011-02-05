@@ -1,15 +1,16 @@
-Book PNG icon by bmson (http://bmson.deviantart.com/)
+Splash images and book PNG icons are by Mikey (mikey@orcap.net), licensed
+under the Creative Commons Attribution-NonCommercial 3.0 Unported License.
 
-Basic Icons by PixelMixer (http://pixel-mixer.com/)
+Basic Icons by PixelMixer (http://pixel-mixer.com/).
 
 Sample book "2 B R 0 2 B" by Kurt Vonnegut, digitized by
-Project Gutenberg (http://www.gutenberg.org/)
+Project Gutenberg (http://www.gutenberg.org/).
 
 Zlib data compression library are copyright (C) 1995-2010 Jean-loup Gailly and
-Mark Adler (http://zlib.net/)
+Mark Adler (http://zlib.net/).
 
 Minizip library copyright (C) 1998-2010 Gilles Vollant, Even Rouault and
-Mathias Svensson (http://www.winimage.com/zLibDll/minizip.html)
+Mathias Svensson (http://www.winimage.com/zLibDll/minizip.html).
 
 Book SVG icon by Chris Down of the Tango project:
 http://tango.freedesktop.org/Tango_Desktop_Project. The icon is released into
