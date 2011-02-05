@@ -22,6 +22,9 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
 {
     TRACE;
 
+    // Create timer for scheduling restores
+    restoreTimer = new QTimer(this);
+
     // Set up web view defaults
     settings()->setAttribute(QWebSettings::AutoLoadImages, true);
     settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
@@ -111,26 +114,34 @@ void BookView::setBook(Book *book)
 {
     TRACE;
 
-    // Save position in current book
+    // Bail out if new book is the same as current book
+    if (book == mBook) {
+        return;
+    }
+
+    // Save reading position of current book
     setLastBookmark();
 
-    // Open new book, restore last position
-    if (book != mBook) {
-        mBook = book;
-        if (book) {
-            contentIndex = -1;
-            if (book->open()) {
-                restoreLastBookmark();
-            } else {
-                mBook = 0;
-                contentIndex = 0;
-                setHtml(tr("Failed to open book"));
-            }
-        }
-        else {
-            contentIndex = 0;
-            setHtml(tr("No book"));
-        }
+    // Set new book as the current book
+    mBook = book;
+
+    // Bail out if new book is null
+    if (!book) {
+        contentIndex = 0;
+        setHtml(tr("No book"));
+        return;
+    }
+
+    // Open new book
+    if (book->open()) {
+        // Restore last reading position - this will force
+        // a reload as well
+        contentIndex = -1;
+        restoreLastBookmark();
+    } else {
+        mBook = 0;
+        contentIndex = 0;
+        setHtml(tr("Failed to open book"));
     }
 }
 
@@ -167,6 +178,8 @@ void BookView::setLastBookmark(bool fast)
         qDebug() << QString("At %1 (%2%, height %3)").
                 arg(pos).arg((qreal)pos / (qreal)height * 100).arg(height);
         mBook->setLastBookmark(contentIndex, (qreal)pos / (qreal)height, fast);
+    } else {
+        qDebug() << "(no book)";
     }
 }
 
@@ -236,8 +249,36 @@ void BookView::onLoadFinished(bool ok)
     onSettingsChanged("scheme");
     onSettingsChanged("zoom");
     onSettingsChanged("font");
+    scheduleRestoreAfterLoad();
+}
 
-    QTimer::singleShot(210, this, SLOT(restoreAfterLoad()));
+void BookView::scheduleRestoreAfterLoad()
+{
+    TRACE;
+    if (restoreTimer->isActive()) {
+        // Ignore request if a restore is already in progress
+        return;
+    }
+
+    disconnect(restoreTimer, SIGNAL(timeout()), this, 0);
+    connect(restoreTimer, SIGNAL(timeout()), this, SLOT(restoreAfterLoad()));
+    restoreTimer->setSingleShot(true);
+    restoreTimer->start(210);
+}
+
+void BookView::scheduleRestoreLastBookmark()
+{
+    TRACE;
+    if (restoreTimer->isActive()) {
+        // Ignore request if a restore is already in progress
+        return;
+    }
+
+    disconnect(restoreTimer, SIGNAL(timeout()), this, 0);
+    connect(restoreTimer, SIGNAL(timeout()), this,
+            SLOT(restoreLastBookmark()));
+    restoreTimer->setSingleShot(true);
+    restoreTimer->start(210);
 }
 
 void BookView::restoreAfterLoad()
@@ -421,11 +462,13 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
 
 void BookView::addJavaScriptObjects()
 {
+    TRACE;
     page()->mainFrame()->addToJavaScriptWindowObject("bv", this);
 }
 
 void BookView::goToPosition(qreal position)
 {
+    TRACE;
     int contentsHeight = page()->mainFrame()->contentsSize().height();
     int scrollPos = (int)((qreal)contentsHeight * position);
     page()->mainFrame()->setScrollPosition(QPoint(0, scrollPos));

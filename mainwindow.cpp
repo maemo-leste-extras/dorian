@@ -143,6 +143,9 @@ void MainWindow::initialize()
     TRACE;
     Library *library = Library::instance();
 
+    // Show in regular (non full-screen) mode
+    showRegular();
+
     // Upgrade library if needed, then load it
     library->upgrade();
     library->load();
@@ -167,9 +170,6 @@ void MainWindow::initialize()
             library->setNowReading(sorted.mapToSource(sorted.index(0, 0)));
         }
     }
-
-    // Show in regular (non full-screen) mode
-    showRegular();
 }
 
 void MainWindow::onCurrentBookChanged()
@@ -188,7 +188,7 @@ void MainWindow::showRegular()
 
     fullScreenWindow->hide();
     show();
-    view->restoreLastBookmark();
+    view->scheduleRestoreLastBookmark();
 }
 
 void MainWindow::showBig()
@@ -205,7 +205,7 @@ void MainWindow::showBig()
     hide();
 #endif
     fullScreenWindow->showFullScreen();
-    view->restoreLastBookmark();
+    view->scheduleRestoreLastBookmark();
 }
 
 void MainWindow::setCurrentBook(const QModelIndex &current)

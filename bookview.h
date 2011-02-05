@@ -19,6 +19,7 @@ class Progress;
 class QAbstractKineticScroller;
 class ProgressDialog;
 class FlickCharm;
+class QTimer;
 
 /** Visual representation of a book. */
 class BookView: public QWebView
@@ -52,6 +53,12 @@ public:
     /** If grab is true, volume keys will generate act as page up/down. */
     void grabVolumeKeys(bool grab);
 
+    /** Schedule restoring last reading position after loading part. */
+    void scheduleRestoreAfterLoad();
+
+    /** Schedule restoring last reading position. */
+    void scheduleRestoreLastBookmark();
+
 signals:
     /** Part loading started. */
     void partLoadStart(int index);
@@ -84,13 +91,13 @@ public slots:
     /** Go to next page. */
     void goNextPage();
 
-    /** Restore saved position after URL loading finished. */
+protected slots:
+    /** Restore last reading position after part loading finished. */
     void restoreAfterLoad();
 
-    /** Restore book's last reading position. */
+    /** Restore book's last reading position, load new part if needed. */
     void restoreLastBookmark();
 
-protected slots:
 #ifdef Q_OS_SYMBIAN
     /** Observe media keys. */
     void onMediaKeysPressed(MediaKeysObserver::MediaKeys key);
@@ -117,22 +124,27 @@ protected:
     void showProgress();
 
 private:
-    int contentIndex;       /**< Current part in book. */
-    Book *mBook;            /**< Book to show. */
+    int contentIndex;   /**< Current part in book. */
+    Book *mBook;        /**< Book to show. */
     bool restorePositionAfterLoad;
-                            /**< If true, restore current position after load. */
-    qreal positionAfterLoad;/**< Position to be restored after load. */
+                        /**< If true, restore reading position after load. */
+    qreal positionAfterLoad;
+                        /**< Position to be restored after load. */
     bool restoreFragmentAfterLoad;
-                            /**< If true, restore fragment location after load. */
+                        /**< If true, restore fragment location after load. */
     QString fragmentAfterLoad;
-                            /**< Fragment location to be restored after load. */
-    QImage bookmarkImage;   /**< Bookmark icon pre-loaded. */
-    bool loaded;            /**< True, if content has been loaded. */
-    bool mousePressed;      /**< Event filter's mouse button state. */
-    bool grabbingVolumeKeys;/**< True, if volume keys should be grabbed. */
+                        /**< Fragment location to be restored after load. */
+    QImage bookmarkImage;
+                        /**< Bookmark icon pre-loaded. */
+    bool loaded;        /**< True, if content has been loaded. */
+    bool mousePressed;  /**< Event filter's mouse button state. */
+    bool grabbingVolumeKeys;
+                        /**< True, if volume keys should be grabbed. */
+    QTimer *restoreTimer;
+                        /**< Single timer for scheduling all restore ops. */
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    int scrollerMonitor;    /**< ID of timer monitoring kinetic scroll. */
+    int scrollerMonitor;/**< ID of timer monitoring kinetic scroll. */
 #endif
 
 #if defined(Q_WS_MAEMO_5)
@@ -140,7 +152,7 @@ private:
 #endif
 
 #if defined(Q_OS_SYMBIAN)
-    FlickCharm *charm;      /**< Kinetic scroller. */
+    FlickCharm *charm;  /**< Kinetic scroller. */
 #endif
 };
 
