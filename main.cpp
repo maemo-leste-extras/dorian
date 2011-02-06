@@ -44,22 +44,18 @@ int main(int argc, char *argv[])
     Trace::setFileName(settings->value("tracefilename").toString());
     qInstallMsgHandler(Trace::messageHandler);
 
-#ifdef Q_OS_SYMBIAN
     // Show splash screen
     Splash splash;
     splash.show();
     app.processEvents();
-#endif
 
     // Initialize main window
     MainWindow *mainWindow = new MainWindow();
     settings->apply();
     mainWindow->initialize();
 
-#ifdef Q_OS_SYMBIAN
     // Hide splash screen
     splash.finish(mainWindow);
-#endif
 
     // Run event loop, re-start application if event loop exit code was 1000
     ret = app.exec();

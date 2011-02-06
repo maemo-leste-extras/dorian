@@ -202,6 +202,7 @@ void BookView::goToBookmark(const Book::Bookmark &bookmark)
             positionAfterLoad = bookmark.pos;
             loadContent(bookmark.part);
         } else {
+            emit partLoadEnd(contentIndex);
             goToPosition(bookmark.pos);
         }
     }

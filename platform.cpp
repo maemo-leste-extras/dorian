@@ -26,6 +26,8 @@
 #   define DORIAN_ICON_PREFIX ":/icons/mac/"
 #elif defined(Q_OS_SYMBIAN)
 #   define DORIAN_ICON_PREFIX ":/icons/symbian/"
+#elif defined(Q_WS_MAEMO_5)
+#   define DORIAN_ICON_PREFIX ":/icons/maemo/"
 #else
 #   define DORIAN_ICON_PREFIX ":/icons/"
 #endif
@@ -64,13 +66,13 @@ QString Platform::dbPath()
     return QDir(base).absoluteFilePath("books.db");
 }
 
-QString Platform::icon(const QString &name)
+QString Platform::icon(const QString &name, const QString &extension)
 {
-    QString iconName = QString(DORIAN_ICON_PREFIX) + name + ".png";
+    QString iconName = QString(DORIAN_ICON_PREFIX) + name + extension;
     if (QFile(iconName).exists()) {
         return iconName;
     } else {
-        return QString(":/icons/") + name + ".png";
+        return QString(":/icons/") + name + extension;
     }
 }
 

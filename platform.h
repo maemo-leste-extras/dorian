@@ -14,7 +14,7 @@ public:
     static void close();
 
     QString dbPath();
-    QString icon(const QString &name);
+    QString icon(const QString &name, const QString &externsion = ".png");
     void restart(char *argv[]);
     QString version();
     QString downloadDir();
