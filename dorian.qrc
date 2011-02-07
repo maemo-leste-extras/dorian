@@ -55,5 +55,6 @@
         <file>icons/edit.png</file>
         <file>icons/rotate.png</file>
         <file>icons/maemo/splash-landscape.jpg</file>
+        <file>icons/maemo/splash.jpg</file>
     </qresource>
 </RCC>

@@ -2,9 +2,12 @@
 
 #include "splash.h"
 #include "platform.h"
+#include "settings.h"
+#include "trace.h"
 
 Splash::Splash(): QSplashScreen()
 {
+    TRACE;
     Platform *platform = Platform::instance();
 #if defined(Q_OS_SYMBIAN)
     QRect geo = QApplication::desktop()->availableGeometry();
@@ -17,6 +20,7 @@ Splash::Splash(): QSplashScreen()
                    Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     }
 #elif defined(Q_WS_MAEMO_5)
+    // Force landscape: QSplash seems to be broken in portrait
     platform->setOrientation(this, "landscape");
     setPixmap(QPixmap(platform->icon("splash-landscape", ".jpg")));
 #endif

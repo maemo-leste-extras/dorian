@@ -51,11 +51,13 @@ int main(int argc, char *argv[])
 
     // Initialize main window
     MainWindow *mainWindow = new MainWindow();
-    settings->apply();
     mainWindow->initialize();
 
     // Hide splash screen
     splash.finish(mainWindow);
+
+    // Apply settings (orientation, style etc.)
+    settings->apply();
 
     // Run event loop, re-start application if event loop exit code was 1000
     ret = app.exec();
