@@ -23,3 +23,6 @@ His Sayings: The Folk-Lore of the Old Plantation, by Joel Chandler Harris.
 Illustrations by Frederick S. Church and James H. Moser. New York: D. Appleton
 and Company, 1881. The cover image is in the public domain in the United
 States: http://commons.wikimedia.org/wiki/File:Brer_Rabbit_cover,_1881.jpg.
+
+Smooth paging patch by Felix Braun <Felix.Braun@mail.McGill.ca>, released
+under the GNU GPL version 3.

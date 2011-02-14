@@ -235,7 +235,6 @@ void BookView::goToFragment(const QString &fragment)
         QVariant ret = page()->mainFrame()->evaluateJavaScript(
                 QString("window.location='") + fragment + "'");
         qDebug() << ret;
-        // FIXME: setLastBookmark();
     }
 }
 
@@ -521,8 +520,8 @@ void BookView::hideEvent(QHideEvent *e)
 void BookView::goPreviousPage()
 {
     QWebFrame *frame = page()->mainFrame();
-    int pos = frame->scrollPosition().y();
-    frame->scroll(0, -(height() - 19));
+    const int pos = frame->scrollPosition().y();
+    frame->scroll(0, -1);
     if (pos == frame->scrollPosition().y()) {
         if (contentIndex > 0) {
             Book::Bookmark bookmark(contentIndex - 1, 1.0);
@@ -531,6 +530,15 @@ void BookView::goPreviousPage()
         }
     } else {
         showProgress();
+        QPropertyAnimation *slide =
+                new QPropertyAnimation(frame, "scrollPosition");
+        const QPoint *offset = new QPoint(0, height() - 18);
+        slide->setDuration(400);
+        slide->setStartValue(frame->scrollPosition());
+        slide->setEndValue(frame->scrollPosition() - *offset);
+        slide->setEasingCurve(QEasingCurve::OutQuad);
+        slide->start(QAbstractAnimation::DeleteWhenStopped);
+        delete offset;
     }
 }
 
@@ -538,12 +546,21 @@ void BookView::goNextPage()
 {
     TRACE;
     QWebFrame *frame = page()->mainFrame();
-    int pos = frame->scrollPosition().y();
-    frame->scroll(0, height() - 19);
+    const int pos = frame->scrollPosition().y();
+    frame->scroll(0, 1);
     if (pos == frame->scrollPosition().y()) {
         goNext();
     } else {
         showProgress();
+        QPropertyAnimation *slide =
+                new QPropertyAnimation(frame, "scrollPosition");
+        const QPoint *offset = new QPoint(0, (height() - 18));
+        slide->setDuration(400);
+        slide->setStartValue(frame->scrollPosition());
+        slide->setEndValue(frame->scrollPosition() + *offset);
+        slide->setEasingCurve(QEasingCurve::OutQuad);
+        slide->start(QAbstractAnimation::DeleteWhenStopped);
+        delete offset;
     }
 }
 
