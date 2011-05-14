@@ -42,16 +42,18 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     QVBoxLayout *layout = new QVBoxLayout(contents);
     contents->setLayout(layout);
 
-#ifndef Q_OS_SYMBIAN
+#if defined(Q_WS_MAEMO_5)
     QCheckBox *backlight = new QCheckBox(tr("Keep backlight on"), contents);
     layout->addWidget(backlight);
     backlight->setChecked(settings->value("lightson", false).toBool());
 #endif
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     QCheckBox *grabVolume =
             new QCheckBox(tr("Navigate with volume keys"), contents);
     layout->addWidget(grabVolume);
     grabVolume->setChecked(settings->value("usevolumekeys", false).toBool());
+#endif
 
     int zoom = settings->value("zoom", platform->defaultZoom()).toInt();
     if (zoom < ZOOM_MIN) {
@@ -82,24 +84,20 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
     layout->addWidget(colorLabel);
     ToolButtonBox *box = new ToolButtonBox(this);
     layout->addWidget(box);
-    box->addButton(SchemeDefault, tr("Default"),
-                   Platform::instance()->icon("style-default"));
-    box->addButton(SchemeNight, tr("Night"),
-                   Platform::instance()->icon("style-night"));
     box->addButton(SchemeDay, tr("Day"),
                    Platform::instance()->icon("style-day"));
+    box->addButton(SchemeNight, tr("Night"),
+                   Platform::instance()->icon("style-night"));
     box->addButton(SchemeSand, tr("Sand"),
                    Platform::instance()->icon("style-sand"));
     box->addStretch();
-    QString scheme = settings->value("scheme", "default").toString();
+    QString scheme = settings->value("scheme", "day").toString();
     if (scheme == "night") {
         box->toggle(SchemeNight);
-    } else if (scheme == "day") {
-        box->toggle(SchemeDay);
     } else if (scheme == "sand") {
         box->toggle(SchemeSand);
     } else {
-        box->toggle(SchemeDefault);
+        box->toggle(SchemeDay);
     }
 
     layout->addStretch();
@@ -109,12 +107,14 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 
     setCentralWidget(scroller);
 
-#ifndef Q_OS_SYMBIAN
+#if defined(Q_WS_MAEMO_5)
     connect(backlight, SIGNAL(toggled(bool)),
             this, SLOT(onLightsToggled(bool)));
 #endif
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
     connect(grabVolume, SIGNAL(toggled(bool)),
             this, SLOT(onGrabVolumeToggled(bool)));
+#endif
     connect(zoomSlider, SIGNAL(valueChanged(int)),
             this, SLOT(onSliderValueChanged(int)));
     connect(fontButton, SIGNAL(currentFontChanged(const QFont &)),
@@ -138,21 +138,27 @@ void SettingsWindow::onSliderValueChanged(int value)
         return;
     }
     zoomLabel->setText(tr("Zoom level: %1%").arg(value));
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    Settings::instance()->setValue("zoom", zoomSlider->value());
+#endif
 }
 
 void SettingsWindow::onCurrentFontChanged(const QFont &font)
 {
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    Settings::instance()->setValue("font", font.family());
+#else
     Q_UNUSED(font);
+#endif
 }
 
 void SettingsWindow::onSchemeButtonClicked(int id)
 {
     QString scheme;
     switch (id) {
-    case SchemeDay: scheme = "day"; break;
     case SchemeNight: scheme = "night"; break;
     case SchemeSand: scheme = "sand"; break;
-    default: scheme = "default"; break;
+    default: scheme = "day"; break;
     }
     Settings::instance()->setValue("scheme", scheme);
 }

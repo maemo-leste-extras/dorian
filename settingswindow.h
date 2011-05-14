@@ -21,7 +21,7 @@ class SettingsWindow: public AdopterWindow
 
 public:
     explicit SettingsWindow(QWidget *parent = 0);
-    enum {SchemeDefault, SchemeDay, SchemeNight, SchemeSand};
+    enum {SchemeDay, SchemeNight, SchemeSand};
     enum {OrientationPortrait, OrientationLandscape};
 
 signals:
