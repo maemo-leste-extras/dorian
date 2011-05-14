@@ -357,6 +357,12 @@ void MainWindow::about()
     Dyalog *aboutDialog = new Dyalog(this, false);
     aboutDialog->setWindowTitle(tr("About Dorian"));
     QString version = Platform::instance()->version();
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    QLabel *icon = new QLabel(aboutDialog);
+    QPixmap pixmap(Platform::instance()->icon("dorian"));
+    icon->setPixmap(pixmap);
+    aboutDialog->addWidget(icon);
+#endif
     QLabel *label = new QLabel(aboutDialog);
     label->setTextFormat(Qt::RichText);
     label->setOpenExternalLinks(true);

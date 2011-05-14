@@ -51,10 +51,10 @@
         <file>icons/symbian/style-default.png</file>
         <file>icons/symbian/style-night.png</file>
         <file>icons/splash.jpg</file>
-        <file>icons/goto.png</file>
         <file>icons/edit.png</file>
         <file>icons/rotate.png</file>
         <file>icons/maemo/splash-landscape.jpg</file>
         <file>icons/maemo/splash.jpg</file>
+        <file>icons/dorian.png</file>
     </qresource>
 </RCC>
