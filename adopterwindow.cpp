@@ -20,7 +20,7 @@ AdopterWindow::AdopterWindow(QWidget *parent): MainBase(parent), bookView(0),
 {
     TRACE;
 
-    // Monitor settings
+    // Monitor settings changes
     connect(Settings::instance(), SIGNAL(valueChanged(const QString &)),
             this, SLOT(onSettingsChanged(const QString &)));
 
@@ -157,6 +157,7 @@ void AdopterWindow::closeEvent(QCloseEvent *event)
     if (bookView) {
         bookView->setLastBookmark();
     }
+    hide();
     MainBase::closeEvent(event);
 }
 

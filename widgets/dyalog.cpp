@@ -27,6 +27,10 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
 #endif
     scroller->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scroller->setFrameStyle(QFrame::NoFrame);
+#if defined(Q_OS_SYMBIAN)
+    setStyleSheet("QFrame {margin:0; border:0; padding:0}");
+    setStyleSheet("QScrollArea {margin:0; border:0; padding:0}");
+#endif
 
     content = new QWidget(scroller);
     contentLayout = new QVBoxLayout(content);
