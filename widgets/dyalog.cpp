@@ -28,13 +28,15 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
     scroller->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scroller->setFrameStyle(QFrame::NoFrame);
 #if defined(Q_OS_SYMBIAN)
-    setStyleSheet("QFrame {margin:0; border:0; padding:0}");
+    // setStyleSheet("QFrame {margin:0; border:0; padding:0}");
     setStyleSheet("QScrollArea {margin:0; border:0; padding:0}");
 #endif
 
     content = new QWidget(scroller);
     contentLayout = new QVBoxLayout(content);
+#if !defined(Q_OS_SYMBIAN)
     contentLayout->setMargin(0);
+#endif
     content->setLayout(contentLayout);
 
     QBoxLayout *boxLayout;
@@ -54,6 +56,7 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
 #endif
         boxLayout = new QHBoxLayout(this);
     }
+    boxLayout->setMargin(0);
     boxLayout->addWidget(scroller);
 #ifndef Q_OS_SYMBIAN
     if (showButtons) {
@@ -129,7 +132,7 @@ void Dyalog::show()
     foreach (QWidget *w, QApplication::allWidgets()) {
         w->setContextMenuPolicy(Qt::NoContextMenu);
     }
-    showMaximized();
+    QDialog::showMaximized();
 }
 
 int Dyalog::exec()

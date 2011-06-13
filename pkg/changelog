@@ -1,3 +1,10 @@
+dorian (0.4.8-1) unstable; urgency=low
+
+  * Switch to Qt 4.7
+  * Symbian UI improvements
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 12 Jun 2011 02:00:00 +0100
+
 dorian (0.4.7-1) unstable; urgency=low
 
   * Introduce smooth paging

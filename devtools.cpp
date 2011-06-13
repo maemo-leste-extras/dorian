@@ -21,7 +21,7 @@ DevTools::DevTools(QWidget *parent): Dyalog(parent, false)
     ToolButtonBox *box = new ToolButtonBox(this);
     addWidget(box);
     box->addButton(QtDebugMsg, tr("Debug"));
-    box->addButton(QtWarningMsg, tr("Warning"));
+    box->addButton(QtWarningMsg, tr("Warn"));
     box->addButton(QtCriticalMsg, tr("Critical"));
     box->addButton(QtFatalMsg, tr("Fatal"));
     box->toggle(Trace::level);

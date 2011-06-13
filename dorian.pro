@@ -140,24 +140,8 @@ symbian {
     TARGET.UID3 = 0xA89FC85B
     TARGET.CAPABILITY = UserEnvironment NetworkServices ReadUserData \
         WriteUserData
-    TARGET.EPOCHEAPSIZE = 0x100000 0x4000000
     ICON = $$PWD/pkg/symbian/book.svg
 
-    # FIXME: Package header for Qt 4.6.2:
-    packageheader = \
-        "$${LITERAL_HASH}{\"Dorian\"},(0xA89FC85B),0,4,7" \
-        "[0x101F7961],0,0,0,{\"S60ProductID\"}" \
-        "[0x102032BE],0,0,0,{\"S60ProductID\"}" \
-        "[0x102752AE],0,0,0,{\"S60ProductID\"}" \
-        "[0x1028315F],0,0,0,{\"S60ProductID\"}"
-    default_deployment.pkg_prerules = packageheader
-
-    # FIXME: Package header for Qt 4.6.3 or later:
-    # packageheader = "$${LITERAL_HASH}{\"Dorian\"},(0xA89FC85B),0,4,7"
-    # my_deployment.pkg_prerules = packageheader
-    # DEPLOYMENT += my_deployment
-
-    INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
     HEADERS += \
         widgets/flickcharm.h \
         widgets/mediakeysobserver.h
@@ -191,3 +175,6 @@ maemo5 {
     iconscalable.path = $$DATADIR/icons/hicolor/scalable/hildon
     iconscalable.files += pkg/maemo/icon-scalable/dorian.png
 }
+
+include(deployment.pri)
+qtcAddDeployment()
