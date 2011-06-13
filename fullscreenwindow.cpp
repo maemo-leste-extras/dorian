@@ -12,7 +12,7 @@ static const int MARGIN = 9;
 FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 {
     TRACE;
-    Q_ASSERT(parent);
+
 #if defined(Q_WS_MAEMO_5)
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
     setAttribute(Qt::WA_Maemo5NonComposited, true);
