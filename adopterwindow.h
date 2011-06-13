@@ -12,7 +12,7 @@ class TranslucentButton;
 
 /**
  * A toplevel window that can adopt a BookView and other children.
- * On Maemo, it can also grab the volume keys.
+ * On some platforms, it can also grab the volume keys.
  */
 class AdopterWindow: public MainBase
 {
@@ -51,14 +51,15 @@ protected:
 
     /**
      * Handle show events.
-     * On Symbian, volume keys can only be grabbed, if the window is shown.
+     * On Symbian, volume keys can only be grabbed, when the window is shown.
+     * So we do it from here.
      */
     void showEvent(QShowEvent *event);
 
     /** Handle resize event: Restore reading position. */
     void resizeEvent(QResizeEvent *event);
 
-    /** Handle close event. */
+    /** Handle close event: Save reading position. */
     void closeEvent(QCloseEvent *event);
 
     /** Handle leave event: Save reading position. */

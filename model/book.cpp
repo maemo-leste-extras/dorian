@@ -82,7 +82,7 @@ void Book::peek()
 
 void Book::close()
 {
-    TRACE;
+    Trace t("Book::close");
     content.clear();
     parts.clear();
     QDir::setCurrent(QDir::rootPath());

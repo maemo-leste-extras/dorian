@@ -43,10 +43,6 @@ MainWindow::MainWindow(QWidget *parent):
     setAttribute(Qt::WA_Maemo5StackedWindow, true);
 #endif
 
-#ifndef Q_OS_SYMBIAN
-    setWindowTitle("Dorian");
-#endif
-
     // Central widget. Must be an intermediate, because the book view widget
     // might be re-parented later
     QFrame *central = new QFrame(this);
@@ -122,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent):
     connect(view, SIGNAL(progress(qreal)), prog, SLOT(setProgress(qreal)));
 
     // Shadow window for full screen reading
-    fullScreenWindow = new FullScreenWindow(this);
+    fullScreenWindow = new FullScreenWindow();
     connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
 
     // Handle settings changes
@@ -136,6 +132,11 @@ MainWindow::MainWindow(QWidget *parent):
 #ifdef DORIAN_TEST_MODEL
     (void)new ModelTest(Library::instance(), this);
 #endif
+}
+
+MainWindow::~MainWindow()
+{
+    delete fullScreenWindow;
 }
 
 void MainWindow::initialize()
@@ -199,7 +200,7 @@ void MainWindow::showBig()
     leaveBookView();
     fullScreenWindow->takeBookView(view, prog, prev, next);
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
     fullScreenWindow->raise();
 #else
     hide();

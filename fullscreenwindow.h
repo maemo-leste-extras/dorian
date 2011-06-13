@@ -18,7 +18,7 @@ class FullScreenWindow: public AdopterWindow
     Q_OBJECT
 
 public:
-    explicit FullScreenWindow(QWidget *parent);
+    explicit FullScreenWindow(QWidget *parent = 0);
 
     /**
      * Adopt children.
@@ -38,6 +38,9 @@ protected:
 
     /** Handle show event. */
     void showEvent(QShowEvent *e);
+
+    /** Handle close event. */
+    void closeEvent(QCloseEvent *e);
 
 protected slots:
     /** Re-align adopted child windows. */

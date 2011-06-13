@@ -172,7 +172,8 @@ void AdopterWindow::leaveEvent(QEvent *event)
 
 void AdopterWindow::keyPressEvent(QKeyEvent *event)
 {
-    TRACE;
+    Trace t("AdopterWindow::keyPressEvent");
+
     switch (event->key()) {
     case Qt::Key_PageDown:
 #ifdef Q_WS_MAEMO_5
