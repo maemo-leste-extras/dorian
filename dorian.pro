@@ -112,7 +112,13 @@ OTHER_FILES += \
     pkg/symbian/book.svg \
     pkg/symbian/clean.bat \
     pkg/maemo/icon-48/dorian.png \
-    pkg/maemo/icon-scalable/dorian.png
+    pkg/maemo/icon-scalable/dorian.png \
+    qtc_packaging/debian_fremantle/rules \
+    qtc_packaging/debian_fremantle/README \
+    qtc_packaging/debian_fremantle/copyright \
+    qtc_packaging/debian_fremantle/control \
+    qtc_packaging/debian_fremantle/compat \
+    qtc_packaging/debian_fremantle/changelog
 
 DEFINES += \
     USE_FILE32API

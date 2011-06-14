@@ -355,18 +355,18 @@ void BookView::paintEvent(QPaintEvent *e)
         int bookmarkPos = (int)((qreal)height * (qreal)b.pos);
         painter.drawPixmap(2, bookmarkPos - scrollPos.y(), bookmarkPixmap);
     }
-    if (mBook) {
-        QPen pen(Qt::gray);
-        pen.setStyle(Qt::DotLine);
-        pen.setWidth(3);
-        painter.setPen(pen);
-        if (contentIndex > 0) {
-            painter.drawLine(0, -scrollPos.y(), width(), -scrollPos.y());
-        }
-        if (contentIndex < (mBook->parts.size() - 1)) {
-            int h = contentsHeight - scrollPos.y() - 1;
-            painter.drawLine(0, h, width(), h);
-        }
+
+    // Paint page separator(s)
+    QPen pen(Qt::gray);
+    pen.setStyle(Qt::DotLine);
+    pen.setWidth(3);
+    painter.setPen(pen);
+    if (contentIndex > 0) {
+        painter.drawLine(0, -scrollPos.y(), width(), -scrollPos.y());
+    }
+    if (contentIndex < (mBook->parts.size() - 1)) {
+        int h = contentsHeight - scrollPos.y() - 1;
+        painter.drawLine(0, h, width(), h);
     }
 }
 
