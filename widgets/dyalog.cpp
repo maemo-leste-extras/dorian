@@ -56,7 +56,9 @@ Dyalog::Dyalog(QWidget *parent, bool showButtons_):
 #endif
         boxLayout = new QHBoxLayout(this);
     }
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
     boxLayout->setMargin(0);
+#endif
     boxLayout->addWidget(scroller);
 #ifndef Q_OS_SYMBIAN
     if (showButtons) {
