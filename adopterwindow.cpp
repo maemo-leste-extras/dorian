@@ -216,6 +216,10 @@ void AdopterWindow::placeDecorations()
     qDebug() << "Has the book view";
     int extraHeight = 0;
 
+#if defined(Q_WS_X11) && !defined(Q_WS_MAEMO_5)
+    extraHeight += toolBarHeight();
+#endif
+
     QRect geo = bookView->geometry();
     qDebug() << "bookView:" << geo;
 
@@ -225,8 +229,10 @@ void AdopterWindow::placeDecorations()
     previousButton->setGeometry(geo.x(),
         geo.y() + geo.height() - TranslucentButton::pixels + extraHeight,
         TranslucentButton::pixels, TranslucentButton::pixels);
-    nextButton->setGeometry(geo.x() + geo.width() - TranslucentButton::pixels,
-        geo.y(), TranslucentButton::pixels, TranslucentButton::pixels);
+    nextButton->setGeometry(
+        geo.x() + geo.width() - TranslucentButton::pixels,
+        geo.y() + extraHeight, TranslucentButton::pixels,
+        TranslucentButton::pixels);
     progress->flash();
     previousButton->flash();
     nextButton->flash();
