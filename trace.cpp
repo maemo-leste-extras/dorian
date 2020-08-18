@@ -229,7 +229,7 @@ Trace::EventName Trace::eventTab[] = {
 
 Trace::Trace(const QString &s): name(s)
 {
-    messageHandler(QtDebugMsg, QString(">%1").arg(name).toAscii().constData());
+    messageHandler(QtDebugMsg, QString(">%1").arg(name).toLatin1().constData());
     indent++;
 }
 
@@ -238,7 +238,7 @@ Trace::~Trace()
     if (--indent < 0) {
         indent = 0;
     }
-    messageHandler(QtDebugMsg, QString("<%1").arg(name).toAscii().constData());
+    messageHandler(QtDebugMsg, QString("<%1").arg(name).toLatin1().constData());
 }
 
 QString Trace::event(QEvent::Type t)

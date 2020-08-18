@@ -2,6 +2,7 @@
 #define DEVTOOLS_H
 
 #include "dyalog.h"
+#include <QCoreApplication>
 
 class QWidget;
 

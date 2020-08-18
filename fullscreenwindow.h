@@ -3,6 +3,9 @@
 
 #include <QRect>
 #include <QObject>
+#include <QVBoxLayout>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include "adopterwindow.h"
 

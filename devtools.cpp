@@ -46,7 +46,7 @@ void DevTools::onClear()
                               QMessageBox::Yes | QMessageBox::No)) {
         QSettings().clear();
         BookDb::instance()->removeAll();
-        QApplication::exit(1000);
+        QCoreApplication::exit(1000);
     }
 }
 

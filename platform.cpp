@@ -1,4 +1,6 @@
 #include <QtGlobal>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDir>
 #include <QtGui>
 

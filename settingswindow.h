@@ -3,6 +3,9 @@
 
 #include <QLabel>
 #include <QSlider>
+#include <QScrollArea>
+#include <QFontComboBox>
+#include <QVBoxLayout>
 
 #include "adopterwindow.h"
 

@@ -2,6 +2,9 @@
 #define TOOLBUTTONBOX_H
 
 #include <QFrame>
+#include <QHBoxLayout>
+#include <QButtonGroup>
+#include <QToolButton>
 
 class QString;
 class QButtonGroup;

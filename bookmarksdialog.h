@@ -2,6 +2,8 @@
 #define BOOKMARKSDIALOG_H
 
 #include <QStringList>
+#include <QInputDialog>
+#include <QLineEdit>
 
 #include "listwindow.h"
 #include "book.h"

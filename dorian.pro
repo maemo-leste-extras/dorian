@@ -1,4 +1,4 @@
-QT += webkit xml sql network
+QT += webkit xml sql network widgets webkitwidgets
 
 INCLUDEPATH += $$PWD \
     $$PWD/model \

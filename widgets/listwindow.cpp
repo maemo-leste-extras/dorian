@@ -1,6 +1,8 @@
 #include <QtGui>
 #include <QListWidget>
 #include <QAbstractItemModel>
+#include <QPushButton>
+#include <QAction>
 
 #include "listwindow.h"
 #include "trace.h"

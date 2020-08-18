@@ -42,6 +42,9 @@
 #ifndef FLICKABLE_H
 #define FLICKABLE_H
 
+#include <QApplication>
+#include <QCoreApplication>
+
 class QMouseEvent;
 class QPoint;
 class QWidget;

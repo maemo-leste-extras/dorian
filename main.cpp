@@ -1,4 +1,5 @@
-#include <QtGui/QApplication>
+#include <QApplication>
+#include <QtGlobal>
 
 #include "mainwindow.h"
 #include "trace.h"

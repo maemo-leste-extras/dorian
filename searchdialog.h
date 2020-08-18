@@ -2,6 +2,7 @@
 #define SEARCHDIALOG_H
 
 #include <QVariantHash>
+#include <QLineEdit>
 
 #include "dyalog.h"
 #include "search.h"

@@ -1,8 +1,16 @@
 #ifndef DYALOG_H
 #define DYALOG_H
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QCheckBox>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QScrollArea>
 
 class QWidget;
 class QPushButton;

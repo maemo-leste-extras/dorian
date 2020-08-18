@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QString>
 #include <QModelIndexList>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QAction>
 
 #include "listwindow.h"
 

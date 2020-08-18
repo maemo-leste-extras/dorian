@@ -2,6 +2,10 @@
 #define MAINBASE_H
 
 #include <QMainWindow>
+#include <QFrame>
+#include <QVBoxLayout>
+#include <QToolBar>
+#include <QAction>
 
 class QToolBar;
 

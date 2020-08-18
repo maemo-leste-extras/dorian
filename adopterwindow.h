@@ -2,6 +2,7 @@
 #define ADOPTERWINDOW_H
 
 #include <QList>
+#include <QLayout>
 #include "mainbase.h"
 
 class QWidget;
