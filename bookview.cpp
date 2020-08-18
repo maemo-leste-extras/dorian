@@ -69,8 +69,8 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
 
     // Enable kinetic scrolling
 #if defined(Q_WS_MAEMO_5)
-    scrollerMonitor = 0;
-    scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
+    //scrollerMonitor = 0;
+    //scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
 #elif defined(Q_OS_SYMBIAN)
     scrollerMonitor = 0;
     charm = new FlickCharm(this);
@@ -374,14 +374,14 @@ void BookView::mousePressEvent(QMouseEvent *e)
 {
     QWebView::mousePressEvent(e);
 #if defined(Q_WS_MAEMO_5)
-    // Start monitoring kinetic scroll
-    if (scrollerMonitor) {
-        killTimer(scrollerMonitor);
-        scrollerMonitor = 0;
-    }
-    if (scroller) {
-        scrollerMonitor = startTimer(500);
-    }
+    //// Start monitoring kinetic scroll
+    //if (scrollerMonitor) {
+    //    killTimer(scrollerMonitor);
+    //    scrollerMonitor = 0;
+    //}
+    //if (scroller) {
+    //    scrollerMonitor = startTimer(500);
+    //}
 #elif defined(Q_OS_SYMBIAN)
     // Do nothing
 #else
@@ -491,16 +491,16 @@ void BookView::showProgress()
 void BookView::timerEvent(QTimerEvent *e)
 {
 #if defined(Q_WS_MAEMO_5)
-    if (e->timerId() == scrollerMonitor) {
-        if (scroller &&
-            ((scroller->state() == QAbstractKineticScroller::AutoScrolling) ||
-             (scroller->state() == QAbstractKineticScroller::Pushing))) {
-            showProgress();
-        } else {
-            killTimer(scrollerMonitor);
-            scrollerMonitor = -1;
-        }
-    }
+    //if (e->timerId() == scrollerMonitor) {
+    //    if (scroller &&
+    //        ((scroller->state() == QAbstractKineticScroller::AutoScrolling) ||
+    //         (scroller->state() == QAbstractKineticScroller::Pushing))) {
+    //        showProgress();
+    //    } else {
+    //        killTimer(scrollerMonitor);
+    //        scrollerMonitor = -1;
+    //    }
+    //}
 #endif // Q_WS_MAEMO_5
 
     QWebView::timerEvent(e);

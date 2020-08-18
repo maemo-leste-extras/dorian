@@ -144,11 +144,11 @@ private:
                         /**< Single timer for scheduling all restore ops. */
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
-    int scrollerMonitor;/**< ID of timer monitoring kinetic scroll. */
+    //int scrollerMonitor;/**< ID of timer monitoring kinetic scroll. */
 #endif
 
 #if defined(Q_WS_MAEMO_5)
-    QAbstractKineticScroller *scroller;
+    //QAbstractKineticScroller *scroller;
 #endif
 
 #if defined(Q_OS_SYMBIAN)

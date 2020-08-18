@@ -1,13 +1,12 @@
+
 #include <QtGui>
 #include <QEvent>
 
 #ifdef Q_WS_MAEMO_5
-#   include <QtDBus>
-#   include <QtGui/QX11Info>
-#   include <X11/Xlib.h>
-#   include <X11/Xatom.h>
-#   include <mce/mode-names.h>
-#   include <mce/dbus-names.h>
+#include <QDBusInterface>
+#include <QX11Info>
+#include <mce/mode-names.h>
+#include <mce/dbus-names.h>
 #endif // Q_WS_MAEMO_5
 
 #include "bookview.h"
@@ -30,6 +29,11 @@
 #include "platform.h"
 #include "progressdialog.h"
 #include "sortedlibrary.h"
+
+#ifdef Q_WS_MAEMO_5
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#endif
 
 #ifdef DORIAN_TEST_MODEL
 #   include "modeltest.h"

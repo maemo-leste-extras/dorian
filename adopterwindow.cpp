@@ -1,10 +1,10 @@
 #include <QtGui>
 
 #if defined(Q_WS_MAEMO_5)
-#   include <QtGui/QX11Info>
-#   include <X11/Xlib.h>
-#   include <X11/Xatom.h>
-#   include <QAbstractKineticScroller>
+#include <QX11Info>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+//#include <QAbstractKineticScroller>
 #endif
 
 #include "adopterwindow.h"
