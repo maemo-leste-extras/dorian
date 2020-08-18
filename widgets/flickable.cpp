@@ -190,8 +190,9 @@ void Flickable::handleMouseRelease(QMouseEvent *event)
             QMouseEvent *event2 = new QMouseEvent(*event);
             d->ignoreList << event1;
             d->ignoreList << event2;
-            QApplication::postEvent(d->target, event1);
-            QApplication::postEvent(d->target, event2);
+            QObject* realtarget = reinterpret_cast<QObject*>(d->target);
+            QCoreApplication::postEvent(realtarget, event1);
+            QCoreApplication::postEvent(realtarget, event2);
         }
         break;
 
