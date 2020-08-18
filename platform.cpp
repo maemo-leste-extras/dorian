@@ -132,7 +132,7 @@ void Platform::information(const QString &label, QWidget *parent)
 void Platform::showBusy(QWidget *w, bool isBusy)
 {
 #ifdef Q_WS_MAEMO_5
-    w->setAttribute(Qt::WA_Maemo5ShowProgressIndicator, isBusy);
+    w->setProperty("X-Maemo-Progress", isBusy);;
 #else
     Q_UNUSED(w);
     Q_UNUSED(isBusy);
@@ -175,16 +175,16 @@ void Platform::setOrientation(QWidget *widget, const QString &orientation)
 
     if (orientation == "portrait") {
 #if defined(Q_WS_MAEMO_5)
-        widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
-        widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
+        //widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
+        //widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
 #elif defined(Q_OS_SYMBIAN)
         TRAPD(error,
               appUi->SetOrientationL(CAknAppUi::EAppUiOrientationPortrait););
 #endif
     } else {
 #if defined(Q_WS_MAEMO_5)
-        widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
-        widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
+        //widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
+        //widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
 #elif defined(Q_OS_SYMBIAN)
         TRAPD(error,
               appUi->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape););

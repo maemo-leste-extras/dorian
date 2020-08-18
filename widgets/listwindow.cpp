@@ -3,6 +3,7 @@
 #include <QAbstractItemModel>
 #include <QPushButton>
 #include <QAction>
+#include <QMenuBar>
 
 #include "listwindow.h"
 #include "trace.h"
@@ -16,7 +17,7 @@ ListWindow::ListWindow(const QString &noItems_, QWidget *parent):
         MainBase(parent), mModel(0), noItems(noItems_)
 {
 #if defined(Q_WS_MAEMO_5)
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
+    setProperty("X-Maemo-StackedWindow", 1);
 #endif
     setAttribute(Qt::WA_DeleteOnClose);
 

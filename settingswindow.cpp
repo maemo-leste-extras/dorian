@@ -17,8 +17,8 @@ const int ZOOM_STEP = 25;
 SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 {
 #ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
-    setAttribute(Qt::WA_Maemo5AutoOrientation, true);
+    setProperty("X-Maemo-StackedWindow", 1);
+    //setAttribute(Qt::WA_Maemo5AutoOrientation, true);
 #endif
     setWindowTitle("Settings");
 

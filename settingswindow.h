@@ -6,6 +6,7 @@
 #include <QScrollArea>
 #include <QFontComboBox>
 #include <QVBoxLayout>
+#include <QCheckBox>
 
 #include "adopterwindow.h"
 

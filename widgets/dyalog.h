@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QMenuBar>
 
 class QWidget;
 class QPushButton;

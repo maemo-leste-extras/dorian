@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent):
 {
     TRACE;
 #ifdef Q_WS_MAEMO_5
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
+    setProperty("X-Maemo-StackedWindow", 1);
 #endif
 
     // Central widget. Must be an intermediate, because the book view widget

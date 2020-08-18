@@ -9,7 +9,7 @@ MainBase::MainBase(QWidget *parent): QMainWindow(parent), toolBar(0)
     TRACE;
 
 #if defined(Q_WS_MAEMO_5)
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
+    setProperty("X-Maemo-StackedWindow", 1);
 #endif
 
     QFrame *frame = new QFrame(this);

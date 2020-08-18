@@ -1,8 +1,12 @@
-QT += webkit xml sql network widgets webkitwidgets
+QT += webkit xml sql network widgets webkitwidgets maemo5 dbus x11extras
 
 INCLUDEPATH += $$PWD \
     $$PWD/model \
     $$PWD/widgets
+
+DEFINES += Q_WS_MAEMO_5
+
+LIBS += -lX11
 
 SOURCES += \
     main.cpp \

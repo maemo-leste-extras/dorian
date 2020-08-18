@@ -14,8 +14,8 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
     TRACE;
 
 #if defined(Q_WS_MAEMO_5)
-    setAttribute(Qt::WA_Maemo5StackedWindow, true);
-    setAttribute(Qt::WA_Maemo5NonComposited, true);
+    setProperty("X-Maemo-StackedWindow", 1);
+    setProperty("X-Maemo-NotComposited", 1);
 #endif
     QFrame *frame = new QFrame(this);
     QVBoxLayout *layout = new QVBoxLayout(frame);
