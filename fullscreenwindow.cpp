@@ -35,8 +35,8 @@ FullScreenWindow::FullScreenWindow(QWidget *parent): AdopterWindow(parent)
 void FullScreenWindow::showEvent(QShowEvent *e)
 {
     Trace t("FullScreenWindow::showEvent");
-    qDebug() << "Softkeys visible?"
-             << (windowFlags() & Qt::WindowSoftkeysVisibleHint);
+    //qDebug() << "Softkeys visible?"
+    //         << (windowFlags() & Qt::WindowSoftkeysVisibleHint);
     placeChildren();
     AdopterWindow::showEvent(e);
 }

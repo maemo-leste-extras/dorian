@@ -78,7 +78,7 @@ Trace::EventName Trace::eventTab[] = {
     {QEvent::DeactivateControl, "QEvent::DeactivateControl"},
     {QEvent::ContextMenu, "QEvent::ContextMenu"},
     {QEvent::InputMethod, "QEvent::InputMethod"},
-    {QEvent::AccessibilityPrepare, "QEvent::AccessibilityPrepare"},
+    //{QEvent::AccessibilityPrepare, "QEvent::AccessibilityPrepare"},
     {QEvent::TabletMove, "QEvent::TabletMove"},
     {QEvent::LocaleChange, "QEvent::LocaleChange"},
     {QEvent::LanguageChange, "QEvent::LanguageChange"},
@@ -145,8 +145,8 @@ Trace::EventName Trace::eventTab[] = {
     {QEvent::HoverLeave, "QEvent::HoverLeave"},
     {QEvent::HoverMove, "QEvent::HoverMove"},
 
-    {QEvent::AccessibilityHelp, "QEvent::AccessibilityHelp"},
-    {QEvent::AccessibilityDescription, "QEvent::AccessibilityDescription"},
+    //{QEvent::AccessibilityHelp, "QEvent::AccessibilityHelp"},
+    //{QEvent::AccessibilityDescription, "QEvent::AccessibilityDescription"},
 
 #ifdef QT_KEYPAD_NAVIGATION
     {QEvent::EnterEditFocus, "QEvent::EnterEditFocus"},
@@ -154,7 +154,7 @@ Trace::EventName Trace::eventTab[] = {
 #endif
     {QEvent::AcceptDropsChange, "QEvent::AcceptDropsChange"},
 
-    {QEvent::MenubarUpdated, "QEvent::MenubarUpdated"},
+    //{QEvent::MenubarUpdated, "QEvent::MenubarUpdated"},
     {QEvent::ZeroTimerEvent, "QEvent::ZeroTimerEvent"},
 
     {QEvent::GraphicsSceneMouseMove, "QEvent::GraphicsSceneMouseMove"},
@@ -218,7 +218,7 @@ Trace::EventName Trace::eventTab[] = {
     {QEvent::RequestSoftwareInputPanel, "QEvent::RequestSoftwareInputPanel"},
     {QEvent::CloseSoftwareInputPanel, "QEvent::CloseSoftwareInputPanel"},
 
-    {QEvent::UpdateSoftKeys, "QEvent::UpdateSoftKeys"},
+    //{QEvent::UpdateSoftKeys, "QEvent::UpdateSoftKeys"},
 
     {QEvent::WinIdChange, "QEvent::WinIdChange"},
     {QEvent::Gesture, "QEvent::Gesture"},
@@ -263,21 +263,21 @@ QString Trace::prefix()
 
 void Trace::messageHandler(QtMsgType type, const char *msg)
 {
-    if (type >= Trace::level) {
-        QtMsgHandler oldHandler = qInstallMsgHandler(0);
-        switch (type) {
-        case QtDebugMsg:
-            qt_message_output(QtDebugMsg, (prefix()+msg).toUtf8().constData());
-            break;
-        default:
-            qt_message_output(type, msg);
-        }
-        qInstallMsgHandler(oldHandler);
-        if (Trace::file.isOpen()) {
-            Trace::file.write((prefix() + msg + "\n").toUtf8());
-            Trace::file.flush();
-        }
-    }
+    //if (type >= Trace::level) {
+    //    QtMsgHandler oldHandler = qInstallMsgHandler(0);
+    //    switch (type) {
+    //    case QtDebugMsg:
+    //        qt_message_output(QtDebugMsg, (prefix()+msg).toUtf8().constData());
+    //        break;
+    //    default:
+    //        qt_message_output(type, msg);
+    //    }
+    //    qInstallMsgHandler(oldHandler);
+    //    if (Trace::file.isOpen()) {
+    //        Trace::file.write((prefix() + msg + "\n").toUtf8());
+    //        Trace::file.flush();
+    //    }
+    //}
 }
 
 void Trace::setFileName(const QString &fileName)

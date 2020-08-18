@@ -40,10 +40,10 @@ int main(int argc, char *argv[])
 
     // Initialize tracing
     Settings *settings = Settings::instance();
-    Trace::level = (QtMsgType)settings->
-        value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
-    Trace::setFileName(settings->value("tracefilename").toString());
-    qInstallMsgHandler(Trace::messageHandler);
+    //Trace::level = (QtMsgType)settings->
+    //    value("tracelevel", (int)DORIAN_DEFAULT_TRACE_LEVEL).toInt();
+    //Trace::setFileName(settings->value("tracefilename").toString());
+    //qInstallMsgHandler(Trace::messageHandler);
 
     // Show splash screen
     Splash splash;
