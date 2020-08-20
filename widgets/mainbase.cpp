@@ -41,6 +41,15 @@ void MainBase::addToolBar()
     QMainWindow::addToolBar(Qt::BottomToolBarArea, toolBar);
 #else
     toolBar = QMainWindow::addToolBar("");
+
+#if defined(Q_WS_MAEMO_5)
+    // Move toolbar to the bottom
+    QToolBar* tmptoolbar = toolBar;
+    QMainWindow::removeToolBar(toolBar);
+    QMainWindow::addToolBar(Qt::BottomToolBarArea, tmptoolbar);
+    tmptoolbar->show();
+#endif
+
 #endif
 
     setUnifiedTitleAndToolBarOnMac(true);
