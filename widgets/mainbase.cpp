@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <QMenuBar>
 
 #include "mainbase.h"
 #include "trace.h"
@@ -124,6 +125,10 @@ void MainBase::show()
     showMaximized();
 #else
     QMainWindow::show();
+#endif
+
+#ifdef Q_WS_MAEMO_5
+    menuBar()->hide(); // hide menubar
 #endif
 }
 
