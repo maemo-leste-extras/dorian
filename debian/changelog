@@ -1,0 +1,373 @@
+dorian (0.5.0-1) unstable; urgency=low
+
+  * Initial Maemo Leste port
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Fri, 21 Aug 2020 13:06:28 +0200
+
+dorian (0.4.7-1) unstable; urgency=low
+
+  * Introduce smooth paging
+
+ -- Akos Polster <akos@pipacs.com>  Mon, 14 Feb 2011 02:00:00 +0100
+
+dorian (0.4.6-1) unstable; urgency=low
+
+  * Update splash image on Maemo
+  * Have a splash screen on Maemo, too
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  6 Feb 2011 02:00:00 +0100
+
+dorian (0.4.5-1) unstable; urgency=low
+
+  * Remove orientation settings from Settings (can be changed directly)
+
+ -- Akos Polster <akos@pipacs.com>  Mon, 10 Jan 2011 02:00:00 +0100
+
+dorian (0.4.4-1) unstable; urgency=low
+
+  * Have an overlap between current/next page
+  * Add tool bars to list windows on Symbian
+  * Fix author name in libary and book info
+  * Improve identification of bookmark's chapter
+  * Maintain date book added to the library and date book last read
+  * Show presence of extra book parts
+  * Allow editing bookmark notes
+  * Make orientation switch explicit on Symbian, too
+  * Show button for full screen mode on Symbian, too
+  * Add tool bar button to change orientation
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  5 Dec 2010 02:00:00 +0100
+
+dorian (0.4.3-1) unstable; urgency=low
+
+  * Fix downloading several books from search result list
+
+ -- Akos Polster <akos@pipacs.com>  Fri,  3 Dec 2010 02:00:00 +0100
+
+dorian (0.4.2-1) unstable; urgency=low
+
+  * Speed up paging through the book
+  * Make progress indicator more subtle
+  * Prefer mass memory on Symbian for downloads
+
+ -- Akos Polster <akos@pipacs.com>  Wed,  1 Dec 2010 02:00:00 +0100
+
+dorian (0.4.1-1) unstable; urgency=low
+
+  * Update home page link in About box
+  * Add back splash screen on Symbian
+
+ -- Akos Polster <akos@pipacs.com>  Fri, 26 Nov 2010 02:00:00 +0100
+
+dorian (0.4.0-1) unstable; urgency=low
+
+  * Fix popup button positions
+  * Add tool bar on Symbian
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 21 Nov 2010 02:00:00 +0100
+
+dorian (0.3.9-1) unstable; urgency=low
+
+  * Don't close library dialog when deleting current book
+  * Really delete current book [#6614]
+  * Remove inactive items from Options menu on Symbian [#6606]
+  * Fix Library window content scrolling [#6622]
+  * Allow PNG cover images
+  * Improve cover images
+  * Reduce speed of kinetic scrolling on Symbian
+  * Improve splash screen display on Symbian
+  * Add versioning to SIS package
+
+ -- Akos Polster <akos@pipacs.com>  Wed, 17 Nov 2010 02:00:00 +0100
+
+dorian (0.3.8-1) unstable; urgency=low
+
+  * Move progress bar to the bottom
+  * Fix disappearing "exit full screen" button [#6391]
+
+ -- Akos Polster <akos@pipacs.com>  Mon, 15 Nov 2010 02:00:00 +0100
+
+dorian (0.3.7-1) unstable; urgency=low
+
+  * Sort library by title or author
+
+ -- Akos Polster <akos@pipacs.com>  Sat, 13 Nov 2010 02:00:00 +0100
+
+dorian (0.3.6-1) unstable; urgency=low
+
+  * Show Qt versions in Developer dialog box
+  * Delete temporary files
+  * Don't require Qt 4.7 on Symbian
+
+ -- Akos Polster <akos@pipacs.com>  Fri, 12 Nov 2010 02:00:00 +0100
+
+dorian (0.3.5-1) unstable; urgency=low
+
+  * Fix chapter navigation on Maemo
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  7 Nov 2010 02:00:00 +0100
+
+dorian (0.3.4-1) unstable; urgency=low
+
+  * On Symbian, display confirmation after downloading a book
+  * Navigate with volume keys on Symbian, too
+  * Speed up startup, load books on demand
+  * Show splash screen on Symbian
+  * Fix restoring last position
+  * Use proper UID on Symbian
+
+ -- Akos Polster <akos@pipacs.com>  Fri,  5 Nov 2010 02:00:00 +0100
+
+dorian (0.3.3-1) unstable; urgency=low
+
+  * Fix font scaling on Symbian
+  * Jump to the exact position on page, as described in TOC
+  * Confirm bookmark creation
+
+ -- Akos Polster <akos@pipacs.com>  Wed,  3 Nov 2010 02:00:00 +0100
+
+dorian (0.3.2-1) unstable; urgency=low
+
+  * Fix dialog softkeys on Symbian
+  * Fix full screen mode on Symbian
+  * Fix TOC in O'Reilly books (and handle TOC properly in general)
+  * Fix icon on Symbian^3
+  * Improve settings on Symbian
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 31 Oct 2010 02:00:00 +0200
+
+dorian (0.3.1-1) unstable; urgency=low
+
+  * Fix sorting of library
+  * Fix book view kinetic scrolling on Symbian
+  * Fix database creation on Symbian
+  * Bookmarks to have notes
+  * Actually delete books from database
+  * Search and download books from Project Gutenberg
+
+ -- Akos Polster <akos@pipacs.com>  Sat, 10 Oct 2010 02:00:00 +0200
+
+dorian (0.3.0-1) unstable; urgency=low
+
+  * Keep library data in database
+  * Upgrade from old data format if needed
+  * Show progress during library load and upgrade
+
+ -- Akos Polster <akos@pipacs.com>  Fri,  8 Oct 2010 02:00:00 +0200
+
+dorian (0.2.2-1) unstable; urgency=low
+
+  * Speed up book parsing
+  * Improve default book
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  3 Oct 2010 02:00:00 +0200
+
+dorian (0.2.1-1) unstable; urgency=low
+
+  * Fix TOC in "The Awakening" (and possibly other Google books) [#6318]
+  * Works on Symbian (far from usable)
+  * Make modal dialogs closeable on Mac
+  * Fix progress and bookmark positions
+  * Improve chapter navigation: Work around a QUrl bug
+
+ -- Akos Polster <akos@pipacs.com>  Thu, 16 Sep 2010 02:00:00 +0200
+
+dorian (0.2.0-1) unstable; urgency=low
+
+  * Add support for Windows
+  * Add support for Symbian
+  * Fix tracing on Windows
+  * Fix TOC and navigation with O'Reilly books
+  * Reduce RAM footprint
+  * Fix library icon on Mac
+
+ -- Akos Polster <akos@pipacs.com>  Sun,  5 Sep 2010 02:00:00 +0200
+
+dorian (0.1.7-1) unstable; urgency=low
+
+  * Navigate through pages instead of book parts
+  * Move some menu items to the toolbar
+  * Don't show buttons in current book's information dialog
+
+ -- Akos Polster <akos@pipacs.com>  Wed,  1 Sep 2010 02:00:00 +0200
+
+dorian (0.1.6-1) unstable; urgency=low
+
+  * Adjust zoom level in steps
+  * Adjust dialog boxes according to orientation
+  * Add icons to buttons
+  * Use Maemo icons for Maemo
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 29 Aug 2010 02:00:00 +0200
+
+dorian (0.1.5-1) unstable; urgency=lowœ
+
+  * Show better bookmark descriptions
+  * Fix part navigation on desktops
+  * Improve folder management
+  * Improve bookmark management
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 22 Aug 2010 02:00:00 +0200
+
+dorian (0.1.4-1) unstable; urgency=low
+
+  * Show better bookmark descriptions
+  * Fix part navigation on desktops
+  * Add LICENSE.txt
+  * Update home page in package description
+  * Add About box
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 22 Aug 2010 02:00:00 +0200
+
+dorian (0.1.3-1) unstable; urgency=low
+
+  * Retrieve book metadata when adding it to library
+  * Show progress while scanning folders for books
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 15 Aug 2010 20:00:00 +0200
+
+dorian (0.1.2-1) unstable; urgency=low
+
+  * Improve cover image display
+  * Fix naming: book parts vs. chapters
+  * Show reading progress
+  * Navigate with volume keys
+
+ -- Akos Polster <akos@pipacs.com>  Sat,  8 Aug 2010 20:00:00 +0200
+
+dorian (0.1.1-1) unstable; urgency=low
+
+  * Improve chances to find cover image
+  * Don't lose pages
+  * Handle fragments in chapter URLs
+
+ -- Akos Polster <akos@pipacs.com>  Fri,  6 Aug 2010 20:00:00 +0200
+
+dorian (0.1.0-1) unstable; urgency=low
+
+  * Add setting to prevent display blanking
+  * Be more tolerant to removed books
+  * Modularize source code
+  * Manage folders
+
+ -- Akos Polster <akos@pipacs.com>  Tue,  2 Aug 2010 20:00:00 +0200
+
+dorian (0.0.15-1) unstable; urgency=low
+
+  * Fix jumping to new chapter
+  * Make cover images larger in library
+
+ -- Akos Polster <akos@pipacs.com>  Mon,  1 Aug 2010 20:00:00 +0200
+
+dorian (0.0.14-1) unstable; urgency=low
+
+  * Make returning from full screen even more obvious
+  * Add more restrictions to JavaScript handling
+  * Restore bookmarks to the correct position
+  * Save and restore positon when application changes orientation temporarily
+  * Increase default trace level. Set level from Developer dialog
+
+ -- Akos Polster <akos@pipacs.com>  Sat, 31 Jul 2010 20:00:00 +0200
+
+dorian (0.0.13-1) unstable; urgency=low
+
+  * Fix multiple navigation arrows [#6041]
+  * Make full screen switching more robust
+  * Show cover images in library
+
+ -- Akos Polster <akos@pipacs.com>  Thu, 29 Jul 2010 20:00:00 +0200
+
+dorian (0.0.12-1) unstable; urgency=low
+
+  * Make full screen truly full screen
+
+ -- Akos Polster <akos@pipacs.com>  Wed, 28 Jul 2010 20:00:00 +0200
+
+dorian (0.0.11-1) unstable; urgency=low
+
+  * Facelift bookmark manager
+  * Make Maemo friendly dialog box class
+  * Add chapter navigation
+  * Move some toobar items to menu items on Maemo
+
+ -- Akos Polster <akos@pipacs.com>  Tue, 27 Jul 2010 20:00:00 +0200
+
+dorian (0.0.10-1) unstable; urgency=low
+
+  * Turn library into proper model
+  * Show message if selected book is already in the library
+  * Make library window full screen on Maemo
+  * Show busy indicator while loading book
+  * Create Maemo Garage web page
+  * Read chapter titles from NCX directory
+  * Display chapter titles for bookmarks
+
+ -- Akos Polster <akos@pipacs.com>  Sat, 24 Jul 2010 20:00:00 +0200
+
+dorian (0.0.9-1) unstable; urgency=low
+
+  * Optify Maemo package
+  * Better dialogs on Mac
+  * Make returning from full screen mode more obvious
+  * Keep bookmarks sorted
+  * Don't reload volume if the bookmark is in the same volume
+
+ -- Akos Polster <akos@pipacs.com>  Fri, 16 Jul 2010 20:00:00 +0200
+
+dorian (0.0.8-1) unstable; urgency=low
+
+  * Ensure icons and desktop file are installed, too
+
+ -- Akos Polster <akos@pipacs.com>  Thu, 15 Jul 2010 20:00:00 +0200
+
+dorian (0.0.7-1) unstable; urgency=low
+
+  * Make building and packaging with Maemo autobuilder work
+
+ -- Akos Polster <akos@pipacs.com>  Thu, 15 Jul 2010 19:00:00 +0200
+
+dorian (0.0.6-1) unstable; urgency=low
+
+  * Fix crash when deleting book: https://code.nokia.com/dorian/ticket/1
+  * Fix slow zooming on N900: https://code.nokia.com/dorian/ticket/2
+  * Disable arrows when can't be used: https://code.nokia.com/dorian/ticket/4
+
+ -- Akos Polster <akos@pipacs.com>  Tue, 13 Jul 2010 19:00:00 +0200
+
+dorian (0.0.5-1) unstable; urgency=low
+
+  * Improve full-screen navigation even further
+  * Add support for portait/landscape modes
+
+ -- Akos Polster <akos@pipacs.com>  Tue,  9 Jul 2010 19:00:00 +0200
+
+dorian (0.0.4-1) unstable; urgency=low
+
+  * Make color schemes work
+  * Improve full-screen navigation
+
+ -- Akos Polster <akos@pipacs.com>  Tue,  9 Jul 2010 19:00:00 +0200
+
+dorian (0.0.3-1) unstable; urgency=low
+
+  * Improve compatibility with Project Gutenberg books
+  * Bundle with a book
+  * Add simple bookmark manager
+  * Improve book navigation
+  * Apply EPUB style sheet to pages
+  * Make zoom level, font and colors configurable
+  * Fix reported Maemo package size
+
+ -- Akos Polster <akos@pipacs.com>  Sat, 19 Jun 2010 14:25:00 +0200
+
+dorian (0.0.2-1) unstable; urgency=low
+
+  * Scrolling fixes on Mac
+
+ -- Akos Polster <akos@pipacs.com>  Wed, 16 Jun 2010 23:33:32 +0200
+
+dorian (0.0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Akos Polster <akos@pipacs.com>  Sun, 13 Jun 2010 18:06:32 +0200

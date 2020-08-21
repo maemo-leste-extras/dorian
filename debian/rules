@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --parallel
+
+override_dh_auto_configure:
+	qmake PREFIX=/usr dorian.pro && make
+
+override_dh_auto_install:
+	dh_auto_install
+	mkdir -p $(CURDIR)/debian/dorian/usr/share/applications/hildon
+	cp $(CURDIR)/pkg/maemo/*.desktop $(CURDIR)/debian/dorian/usr/share/applications/hildon
+	mkdir -p $(CURDIR)/debian/dorian/usr/share/icons/hicolor/48x48/hildon
+	cp $(CURDIR)/pkg/maemo/icon-48/* $(CURDIR)/debian/dorian/usr/share/icons/hicolor/48x48/hildon
+	mkdir -p $(CURDIR)/debian/dorian/usr/share/icons/hicolor/scalable/hildon
+	cp $(CURDIR)/pkg/maemo/icon-scalable/* $(CURDIR)/debian/dorian/usr/share/icons/hicolor/scalable/hildon
