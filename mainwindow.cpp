@@ -122,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent):
     connect(view, SIGNAL(progress(qreal)), prog, SLOT(setProgress(qreal)));
 
     // Shadow window for full screen reading
-    fullScreenWindow = new FullScreenWindow();
+    fullScreenWindow = new FullScreenWindow(this);
     connect(fullScreenWindow, SIGNAL(restore()), this, SLOT(showRegular()));
 
     // Handle settings changes
