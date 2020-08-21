@@ -71,6 +71,7 @@ BookView::BookView(QWidget *parent): QWebView(parent), contentIndex(-1),
 #if defined(Q_WS_MAEMO_5)
     //scrollerMonitor = 0;
     //scroller = property("kineticScroller").value<QAbstractKineticScroller *>();
+    QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
 #elif defined(Q_OS_SYMBIAN)
     scrollerMonitor = 0;
     charm = new FlickCharm(this);
@@ -437,6 +438,45 @@ bool BookView::eventFilter(QObject *o, QEvent *e)
 
     // Work around Qt bug that sometimes selects web view contents during swipe
     switch (e->type()) {
+    case QEvent::ScrollPrepare:
+    {
+        QScroller *scroller = QScroller::scroller(this);
+
+        // Disable snapping
+        scroller->setSnapPositionsY(0.0, 0.0);
+
+        QScrollPrepareEvent *spe = static_cast<QScrollPrepareEvent *>(e);
+
+        int contentsHeight = page()->mainFrame()->contentsSize().height();
+        spe->setViewportSize(size());
+
+        spe->setContentPos(page()->mainFrame()->scrollPosition());
+        spe->setContentPosRange(QRectF(0.0, 0.0, 0.0, contentsHeight));
+
+        update();
+
+        spe->accept();
+        return true;
+    }
+
+    case QEvent::Scroll:
+    {
+        QScrollEvent *se = static_cast<QScrollEvent *>(e);
+
+        QPoint pt = page()->mainFrame()->scrollPosition();
+
+        qreal y = se->contentPos().y();
+        pt.setY(y);
+
+        page()->mainFrame()->setScrollPosition(pt);
+
+        showProgress();
+
+        se->accept();
+        return true;
+    }
+
+    // Work around Qt bug that sometimes selects web view contents during swipe
     case QEvent::MouseButtonPress:
         mousePressed = true;
         break;

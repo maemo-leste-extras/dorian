@@ -7,6 +7,7 @@
 #include <QHash>
 #include <QImage>
 #include <QPoint>
+#include <QScroller>
 
 #include "book.h"
 
@@ -16,7 +17,6 @@
 
 class QModelIndex;
 class Progress;
-class QAbstractKineticScroller;
 class ProgressDialog;
 class FlickCharm;
 class QTimer;
@@ -148,7 +148,7 @@ private:
 #endif
 
 #if defined(Q_WS_MAEMO_5)
-    //QAbstractKineticScroller *scroller;
+    QScroller *scroller;
 #endif
 
 #if defined(Q_OS_SYMBIAN)
