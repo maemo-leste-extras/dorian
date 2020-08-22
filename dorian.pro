@@ -5,6 +5,7 @@ INCLUDEPATH += $$PWD \
     $$PWD/widgets
 
 DEFINES += Q_WS_MAEMO_5
+maemo5 = 1;
 
 LIBS += -lX11
 
@@ -163,9 +164,7 @@ symbian {
 
 maemo5 {
     QT += maemo5 dbus
-    isEmpty(PREFIX) {
-        PREFIX = /usr
-    }
+    PREFIX = /usr
     BINDIR = $$PREFIX/bin
     DATADIR =$$PREFIX/share
     DEFINES += DATADIR=\\\"$$DATADIR\\\" PKGDATADIR=\\\"$$PKGDATADIR\\\"
