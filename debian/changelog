@@ -1,3 +1,9 @@
+dorian (0.5.1-1) unstable; urgency=low
+
+  * Minor build fixes
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sat, 22 Aug 2020 12:22:21 +0200
+
 dorian (0.5.0-1) unstable; urgency=low
 
   * Initial Maemo Leste port
