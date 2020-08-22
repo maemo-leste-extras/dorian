@@ -7,6 +7,7 @@ Build-Depends: debhelper (>= 10),
     qt5-default,
     libqt5webkit5-dev,
     libqt5x11extras5-dev,
+    libqt5maemo5-dev,
     libhildon1-dev,
     libhildondesktop1-dev,
     mce-dev
@@ -21,6 +22,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
     libqt5webkit5,
     libqt5x11extras5,
     libqt5network5,
+    qt-platform-maemo,
 Description: E-book reader
  Read books published in DRM-free EPUB format
 XB-Maemo-Display-Name: Dorian
