@@ -1,5 +1,3 @@
 #!/bin/sh
 gtk-update-icon-cache -f /usr/share/icons/hicolor
-gtk-update-icon-cache -f /usr/share/icons/hicolor/48x48/hildon
-gtk-update-icon-cache -f /usr/share/icons/hicolor/scalable/hildon
 # maemo-select-menu-location dorian.desktop
