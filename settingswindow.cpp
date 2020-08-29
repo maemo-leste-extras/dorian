@@ -27,8 +27,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 
     QScrollArea *scroller = new QScrollArea(this);
 #if defined(Q_WS_MAEMO_5)
-    scroller->setProperty("FingerScrollable", true);
-    scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    QScroller::grabGesture(scroller->viewport(), QScroller::LeftMouseButtonGesture);
 #elif defined(Q_OS_SYMBIAN)
     FlickCharm *charm = new FlickCharm(this);
     charm->activateOn(scroller);

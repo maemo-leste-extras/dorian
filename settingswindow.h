@@ -7,6 +7,7 @@
 #include <QFontComboBox>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QScroller>
 
 #include "adopterwindow.h"
 
