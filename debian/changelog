@@ -1,3 +1,9 @@
+dorian (0.5.3-1) unstable; urgency=low
+
+  * Allow for scrolling in the settings window
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sat, 29 Aug 2020 21:48:23 +0200
+
 dorian (0.5.2-1) unstable; urgency=low
 
   * Minor build fixes (again)
