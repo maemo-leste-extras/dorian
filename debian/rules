@@ -4,7 +4,7 @@
 	dh $@ --parallel
 
 override_dh_auto_configure:
-	qmake PREFIX=/usr dorian.pro && make
+	qmake PREFIX=/usr dorian.pro -spec maemo && make
 
 override_dh_auto_install:
 	dh_auto_install

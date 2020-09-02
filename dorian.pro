@@ -1,11 +1,8 @@
-QT += webkit xml sql network widgets webkitwidgets maemo5 dbus x11extras
+QT += webkit xml sql network widgets webkitwidgets
 
 INCLUDEPATH += $$PWD \
     $$PWD/model \
     $$PWD/widgets
-
-DEFINES += Q_WS_MAEMO_5
-maemo5 = 1;
 
 LIBS += -lX11
 
@@ -133,7 +130,7 @@ DEFINES += \
     include(model/modeltest/modeltest.pri)
 }
 
-unix {
+unix | maemo {
     symbian {
     } else {
         LIBS += -lz
@@ -163,7 +160,7 @@ symbian {
 }
 
 maemo5 {
-    QT += maemo5 dbus
+    QT += maemo5 dbus x11extras
     PREFIX = /usr
     BINDIR = $$PREFIX/bin
     DATADIR =$$PREFIX/share
