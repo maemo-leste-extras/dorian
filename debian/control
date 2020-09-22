@@ -13,6 +13,8 @@ Build-Depends: debhelper (>= 10),
     mce-dev
 Homepage: https://github.com/maemo-leste-extras/dorian
 XSBC-Bugtracker: https://github.com/maemo-leste-extras/dorian/issues
+Vcs-Git: https://github.com/maemo-leste-extras/dorian/
+Vcs-Browser: https://github.com/maemo-leste-extras/dorian/
 
 Package: dorian
 Architecture: any
