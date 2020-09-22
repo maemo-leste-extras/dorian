@@ -18,7 +18,7 @@ SettingsWindow::SettingsWindow(QWidget *parent):  AdopterWindow(parent)
 {
 #ifdef Q_WS_MAEMO_5
     setProperty("X-Maemo-StackedWindow", 1);
-    //setAttribute(Qt::WA_Maemo5AutoOrientation, true);
+    setProperty("X-Maemo-Orientation", 2);
 #endif
     setWindowTitle("Settings");
 

@@ -175,16 +175,14 @@ void Platform::setOrientation(QWidget *widget, const QString &orientation)
 
     if (orientation == "portrait") {
 #if defined(Q_WS_MAEMO_5)
-        //widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, false);
-        //widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, true);
+        widget->window()->setProperty("X-Maemo-Orientation", 1);
 #elif defined(Q_OS_SYMBIAN)
         TRAPD(error,
               appUi->SetOrientationL(CAknAppUi::EAppUiOrientationPortrait););
 #endif
     } else {
 #if defined(Q_WS_MAEMO_5)
-        //widget->setAttribute(Qt::WA_Maemo5PortraitOrientation, false);
-        //widget->setAttribute(Qt::WA_Maemo5LandscapeOrientation, true);
+        widget->window()->setProperty("X-Maemo-Orientation", 0);
 #elif defined(Q_OS_SYMBIAN)
         TRAPD(error,
               appUi->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape););
