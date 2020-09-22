@@ -26,8 +26,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Description: E-book reader
  Read books published in DRM-free EPUB format
 XB-Maemo-Display-Name: Dorian
-Version: 0.5.0
-Installed-Size: 9312
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsT
  AAALEwEAmpwYAAABOWlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjarZGx
