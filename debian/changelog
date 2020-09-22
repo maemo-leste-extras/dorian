@@ -1,3 +1,12 @@
+dorian (0.5.5-1) unstable; urgency=low
+
+  * Support portrait mode
+  * Adjust Gutenberg search URL and use https (thanks Petter Reinholdtsen)
+  * Add Vcs links to control file
+  * Drop obsolete Version and Installed-Size fields from d/control
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Wed, 23 Sep 2020 01:11:11 +0200
+
 dorian (0.5.4-1) unstable; urgency=low
 
   * Use qmake -spec maemo
