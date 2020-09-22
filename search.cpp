@@ -41,7 +41,7 @@ void Search::start(const Query &query)
 
     searchResults.clear();
     QNetworkRequest request;
-    request.setUrl(QUrl("http://www.gutenberg.org/catalog/world/results"));
+    request.setUrl(QUrl("http://www.gutenberg.org/ebooks/results"));
     // request.setRawHeader("User-Agent", "Dorian " + Platform::version());
     QString title = query.title;
     if (title.isEmpty()) {
@@ -68,7 +68,7 @@ void Search::download(const Search::Result &result, const QString &fileName)
     qDebug() << "UID" << result.id;
     Q_UNUSED(fileName);
     emit beginDownload(0);
-    QUrl url("http://www.gutenberg.org/ebooks/" + result.id + ".epub");
+    QUrl url("https://www.gutenberg.org/ebooks/" + result.id + ".epub");
     qDebug() << "Requesting" << url;
     QNetworkRequest request;
     request.setUrl(url);
