@@ -3,6 +3,10 @@
 %:
 	dh $@ --parallel
 
+override_dh_gencontrol:
+	debian/dh_maemo_icon
+	dh_gencontrol
+
 override_dh_auto_configure:
 	qmake PREFIX=/usr dorian.pro -spec maemo && make
 
