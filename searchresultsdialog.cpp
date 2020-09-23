@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include <QtGui>
+#include <QByteArray>
 #include <QStringListModel>
 #include <QDir>
 #include <QFile>
@@ -63,9 +64,7 @@ QString SearchResultsDialog::downloadName() const
     unsigned i = 0;
     QString fileName;
     do {
-        char tmp[9];
-        snprintf(tmp, 8, "%8.8x", i++);
-        tmp[8] = '\0';
+        QByteArray tmp = QByteArray::number(i++, 16).rightJustified(8, '0');
         fileName = QDir(dir).absoluteFilePath(QString(tmp) + ".epub");
     } while (QFile(fileName).exists());
     qDebug() << fileName;
