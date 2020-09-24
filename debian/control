@@ -25,8 +25,12 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
     libqt5x11extras5,
     libqt5network5,
     qt-platform-maemo,
-Description: E-book reader
- Read books published in DRM-free EPUB format
+Description: EPUB e-book reader
+ Dorian is a full screen digital book reader.
+ .
+ Main features:
+  * Search for public domain books on Project Gutenberg.
+  * Read non-encrypted EPUB files.
 XB-Maemo-Display-Name: Dorian
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsT
