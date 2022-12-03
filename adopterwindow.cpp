@@ -1,12 +1,5 @@
 #include <QtGui>
 
-#if defined(Q_WS_MAEMO_5)
-#include <QX11Info>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-//#include <QAbstractKineticScroller>
-#endif
-
 #include "adopterwindow.h"
 #include "trace.h"
 #include "bookview.h"
@@ -14,6 +7,14 @@
 #include "settings.h"
 #include "progress.h"
 #include "translucentbutton.h"
+
+#if defined(Q_WS_MAEMO_5)
+#include <QX11Info>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+//#include <QAbstractKineticScroller>
+#endif
+
 
 AdopterWindow::AdopterWindow(QWidget *parent): MainBase(parent), bookView(0),
     grabbingVolumeKeys(false), progress(0), previousButton(0), nextButton(0)
