@@ -1,3 +1,9 @@
+dorian (0.5.6-1) unstable; urgency=low
+
+  * Chimaera import
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sat, 03 Dec 2022 23:15:51 +0100
+
 dorian (0.5.5-1) unstable; urgency=low
 
   * Support portrait mode
