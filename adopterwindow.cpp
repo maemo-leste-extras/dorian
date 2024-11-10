@@ -179,6 +179,7 @@ void AdopterWindow::keyPressEvent(QKeyEvent *event)
     case Qt::Key_PageDown:
 #ifdef Q_WS_MAEMO_5
     case Qt::Key_F7:
+    case Qt::Key_VolumeDown:
 #endif
         emit pageDown();
         event->accept();
@@ -186,6 +187,7 @@ void AdopterWindow::keyPressEvent(QKeyEvent *event)
     case Qt::Key_PageUp:
 #ifdef Q_WS_MAEMO_5
     case Qt::Key_F8:
+    case Qt::Key_VolumeUp:
 #endif
         emit pageUp();
         event->accept();
