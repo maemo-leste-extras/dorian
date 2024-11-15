@@ -41,7 +41,7 @@ void Search::start(const Query &query)
 
     searchResults.clear();
     QNetworkRequest request;
-    request.setUrl(QUrl("http://www.gutenberg.org/ebooks/results"));
+    request.setUrl(QUrl("https://www.gutenberg.org/ebooks/results/"));
     // request.setRawHeader("User-Agent", "Dorian " + Platform::version());
     QString title = query.title;
     if (title.isEmpty()) {
