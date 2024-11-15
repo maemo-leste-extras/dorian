@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# Insert debian/maemo-icon.png into ${MaemoIcon26} substition variable
+# for use in debian/control file.
+
+pkg=dorian
+
+if ! grep -q MaemoIcon26= debian/$pkg.substvars; then
+   echo MaemoIcon26=\${Newline}$(base64 debian/maemo-icon.png  | awk 1 ORS='${Newline}') >> debian/$pkg.substvars
+fi
