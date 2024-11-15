@@ -1,7 +1,7 @@
 Source: dorian
 Section: user/education
 Priority: extra
-Maintainer: Merlijn Wajer <merlijn@wizzup.org>
+Maintainer: Sicelo A. Mhlongo <absicsz@gmail.com>
 Build-Depends: debhelper (>= 10),
     qtbase5-dev,
     libqt5webkit5-dev,
