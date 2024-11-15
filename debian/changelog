@@ -1,3 +1,9 @@
+dorian (0.5.8-1) unstable; urgency=low
+
+  * Update book search URL
+
+ -- Sicelo A. Mhlongo <absicsz@gmail.com>  Fri, 15 Nov 2024 23:45:16 +0200
+
 dorian (0.5.7-1) unstable; urgency=low
 
   * Fix scrolling with volume keys
